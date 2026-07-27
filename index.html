@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>KyPost — A self-hosted email ecosystem</title>
-<meta name="description" content="KyPost is a self-hosted email ecosystem: a server you run yourself, paired with native apps for Android, iOS, macOS, and Linux — with local AI sorting, PGP encryption, and shared themes.">
+<meta name="description" content="KyPost is a self-hosted email ecosystem: a server you run yourself, paired with native apps for Android, iOS, macOS, and Linux — with local AI sorting, end-to-end PGP your server can't read, and shared themes.">
 <link rel="icon" type="image/png" href="assets/ky50p.png">
 <link rel="stylesheet" href="css/styles.css">
 </head>
@@ -39,7 +39,7 @@
       <div class="hero-copy">
         <span class="status-pill">In active development — self-host today</span>
         <h1>One inbox.<br>Every device.<br><span>Zero third parties.</span></h1>
-        <p class="lede">KyPost is a self-hosted email ecosystem: a server you run yourself, paired with native apps for Android, iOS, macOS, and Linux — built around local AI sorting, PGP encryption, and themes that follow you everywhere.</p>
+        <p class="lede">KyPost is a self-hosted email ecosystem: a server you run yourself, paired with native apps for Android, iOS, macOS, and Linux — built around local AI sorting, end-to-end PGP your own server can't read, and themes that follow you everywhere.</p>
         <div class="hero-actions">
           <a class="btn btn-primary" href="https://github.com/Yoshiofthewire" target="_blank" rel="noopener">View on GitHub</a>
           <a class="btn" href="#ecosystem">See how it connects</a>
@@ -62,7 +62,7 @@
           <div class="hub-icon">SRV</div>
           <div>
             <h3>KyPost Server</h3>
-            <p>Runs on your own hardware. Connects to your real mailbox over IMAP/SMTP, classifies unread mail with a local Ollama model, and hands off mail, push, contacts, and PGP key exchange to every paired client.</p>
+            <p>Runs on your own hardware. Connects to your real mailbox over IMAP/SMTP, classifies unread mail with a local Ollama model, looks up and publishes PGP keys over WKD, and hands off mail, push, and contacts to every paired client.</p>
           </div>
         </div>
 
@@ -79,7 +79,7 @@
           </div>
           <div class="hub-node">
             <h3>Linux</h3>
-            <p>One Qt/Kirigami codebase for Linux Desktop, Plasma Mobile, and Ubuntu Touch — relay-only, just like the Apple and Android clients.</p>
+            <p>One Qt6/Kirigami codebase for Linux Desktop and Plasma Mobile, shipped as a signed Flatpak — relay-only, just like the Apple and Android clients.</p>
           </div>
         </div>
       </div>
@@ -96,12 +96,12 @@
         <div class="platform-card">
           <span class="tag">Kotlin · Relay</span>
           <h3>Android</h3>
-          <p>Relay-only, keyword tabs, PGP key signing via QR, MFA push approval.</p>
+          <p>Relay-only, keyword tabs, encrypted and signed send, PGP key signing via QR, MFA push approval.</p>
         </div>
         <div class="platform-card">
           <span class="tag">SwiftUI · Relay</span>
           <h3>iOS</h3>
-          <p>Pairs to your server once; native inbox, PGP QR key exchange, APNs push.</p>
+          <p>Pairs to your server once; native inbox, encrypted send, PGP QR key exchange, APNs push.</p>
         </div>
         <div class="platform-card">
           <span class="tag">SwiftUI · Relay</span>
@@ -109,19 +109,19 @@
           <p>Same codebase as iOS — three-pane view, pop-out readers, menu-bar shortcuts.</p>
         </div>
         <div class="platform-card">
-          <span class="tag">Qt / Kirigami · Relay</span>
+          <span class="tag">Qt6 / Kirigami · Relay</span>
           <h3>Linux Desktop</h3>
-          <p>KDE Plasma sidebar layout, built from the same shared components as mobile.</p>
+          <p>KDE Plasma sidebar layout, installed from KyPost's own signed Flatpak remote.</p>
         </div>
         <div class="platform-card">
-          <span class="tag">Qt / Kirigami · Relay</span>
+          <span class="tag">Qt6 / Kirigami · Relay</span>
           <h3>Plasma Mobile</h3>
-          <p>Same mobile UI root as Ubuntu Touch — bottom tabs, swipe-to-archive and delete.</p>
+          <p>Same Flatpak, mobile UI root — bottom tabs, swipe-to-archive and delete.</p>
         </div>
         <div class="platform-card">
-          <span class="tag">Qt / Kirigami · Relay</span>
-          <h3>Ubuntu Touch</h3>
-          <p>Packaged as a Click for OpenStore, pixel-identical to Plasma Mobile.</p>
+          <span class="tag">OpenPGP · WKD</span>
+          <h3>Any OpenPGP client</h3>
+          <p>Publish your key over Web Key Directory and Thunderbird, GnuPG, or any WKD-aware app can encrypt to you — no KyPost required on their end.</p>
         </div>
         <div class="platform-card">
           <span class="tag">Go + React · Server</span>
@@ -135,29 +135,44 @@
         </div>
       </div>
 
-      <p class="platform-note">Every client is relay-only: you pair once via QR code or deep link, and mail, push, and contacts flow through your own KyPost Server from then on.</p>
+      <p class="platform-note">Every KyPost client is relay-only: you pair once via QR code or deep link, and mail, push, and contacts flow through your own KyPost Server from then on. People outside your server just need OpenPGP.</p>
     </div>
   </section>
 
   <section id="privacy">
     <div class="wrap">
       <span class="eyebrow">Privacy by default</span>
-      <h2>Encrypted when you can be, protected when you can't</h2>
-      <p class="lede">KyPost layers PGP encryption on top of a self-hosted core, and never falls back to sending plaintext when it doesn't have to.</p>
+      <h2>End-to-end means your server can't read it either</h2>
+      <p class="lede">KyPost now lets your private key live in your browser instead of on the server — and everywhere encryption would quietly weaken, it stops and asks first.</p>
 
       <div class="privacy-grid">
         <div class="privacy-card">
-          <div class="step">01 — In person</div>
-          <h3>PGP, verified face to face</h3>
-          <p>Scan a contact's public key with your camera, confirm their fingerprint out loud, and every message to them is encrypted end-to-end from then on — Android and Mac/iOS both support this today.</p>
+          <div class="step">01 — Key custody</div>
+          <h3>Your key, or your server's</h3>
+          <p>Choose client-held keys and your private key is wrapped under your password and unwrapped only in your browser — the server can't decrypt your mail, and it no longer caches decrypted bodies to disk. Choose server-held and you keep the convenience, honestly labeled.</p>
         </div>
         <div class="privacy-card">
-          <div class="step">02 — No key on file</div>
-          <h3>Secure pickup, not plaintext</h3>
-          <p>If a recipient doesn't have a PGP key yet, KyPost never sends the message body in the clear. It emails them a login link instead — the real content only unlocks after they sign in to the server.</p>
+          <div class="step">02 — Finding keys</div>
+          <h3>Encryption without the key-signing party</h3>
+          <p>Your server looks recipients up through Web Key Directory, then keyservers, and harvests Autocrypt headers from DKIM-authenticated mail — pinning what it finds on first use. Each rung is yours to switch off, any discovered key is yours to reject, and scanning a fingerprint in person is still there when it matters.</p>
         </div>
         <div class="privacy-card">
-          <div class="step">03 — Under the hood</div>
+          <div class="step">03 — Publishing</div>
+          <h3>Be findable on your own domain</h3>
+          <p>Verify a domain once by DNS, and your server serves WKD for it — so anyone in Thunderbird or GnuPG can encrypt to you unprompted. Publication is opt-out per user and only ever for addresses you actually send from.</p>
+        </div>
+        <div class="privacy-card">
+          <div class="step">04 — No silent downgrade</div>
+          <h3>It refuses rather than weakens</h3>
+          <p>An encrypted send to someone with no key on file is refused, not quietly turned into something weaker. Confirm the fallback and you get a one-time pickup link — sealed in your own browser, so your server stores only ciphertext it can't open.</p>
+        </div>
+        <div class="privacy-card">
+          <div class="step">05 — Metadata</div>
+          <h3>The subject line is inside the envelope</h3>
+          <p>Encrypted mail carries its real subject inside the encrypted part using the LAMPS protected-headers convention, so the outer envelope says nothing. Push notifications are generic by default — sender and subject only travel to Google or Apple if you turn previews on.</p>
+        </div>
+        <div class="privacy-card">
+          <div class="step">06 — Under the hood</div>
           <h3>Your server, your rules</h3>
           <p>Mail lives on infrastructure you control, and unread-mail classification runs on a local Ollama model — no cloud AI provider ever sees your inbox.</p>
         </div>
@@ -169,12 +184,12 @@
     <div class="wrap">
       <span class="eyebrow">Hardened by design</span>
       <h2>Encryption is the start, not the finish</h2>
-      <p class="lede">Beyond PGP, KyPost is rolling out device-level protections across every client — because a compromised device shouldn't mean a compromised inbox.</p>
+      <p class="lede">Beyond PGP, every client now ships device-level protections — because a compromised device, or a convincing email, shouldn't mean a compromised inbox.</p>
 
       <div class="security-grid">
         <div class="security-card">
           <h3>App Lock</h3>
-          <p>A PIN and optional biometric unlock gate the app before your inbox ever opens, with escalating delays on wrong attempts and an automatic wipe if someone keeps guessing.</p>
+          <p>An unlock gates the app before your inbox ever opens — a PIN with escalating delays and wipe-on-repeat on Android and Linux, Face ID, Touch ID or your passcode on Apple platforms.</p>
         </div>
         <div class="security-card">
           <h3>Hostile Location Protection</h3>
@@ -182,15 +197,31 @@
         </div>
         <div class="security-card">
           <h3>Pinned server certificate</h3>
-          <p>Your server's certificate is pinned the moment you pair, so a network that turns hostile later can't quietly swap in a fake one.</p>
+          <p>Your server's certificate is pinned the moment you pair and the check fails closed after that, so a network that turns hostile later can't quietly swap in a fake one.</p>
+        </div>
+        <div class="security-card">
+          <h3>Credentials behind the lock</h3>
+          <p>Your relay credential can be sealed behind your PIN, so background mail checks and MFA approvals wait until you actually unlock the app rather than running on their own.</p>
+        </div>
+        <div class="security-card">
+          <h3>Phishing that wears our face</h3>
+          <p>Every client registers the kypost:// link scheme, so a link in an email could once raise a real pairing prompt pointing at an attacker's server. Mail impersonating KyPost is now flagged on the server, and the clients refuse the scheme outright.</p>
+        </div>
+        <div class="security-card">
+          <h3>Sandboxed message rendering</h3>
+          <p>Sender HTML renders with JavaScript off, remote content blocked, and navigation out of the message denied — and a blocked link is labeled as blocked instead of silently doing nothing.</p>
         </div>
         <div class="security-card">
           <h3>No backups, no extraction</h3>
           <p>Device backup and data-extraction are disabled at the OS level, so nothing here ends up in a cloud backup or a forensic pull.</p>
         </div>
+        <div class="security-card">
+          <h3>Screen-capture protection</h3>
+          <p>Mail, PGP, and security screens are excluded from recordings and screen sharing — as far as each OS actually allows, which is documented rather than overstated.</p>
+        </div>
       </div>
 
-      <p class="security-note">These protections are landing client-by-client — Android first, with Linux, Mac, and iOS following the same design.</p>
+      <p class="security-note">These protections have landed on Android, Mac &amp; iOS, and Linux, each using the strongest primitive its platform offers — so the details differ where the OS does.</p>
     </div>
   </section>
 
@@ -219,7 +250,7 @@
         </div>
         <div class="pillar">
           <h3>Notifications</h3>
-          <p>Pick your delivery path per device: Firebase, APNs, or UnifiedPush for instant push, or plain client pull if you'd rather trade a little immediacy for a lot more privacy.</p>
+          <p>Pick your delivery path per device: Firebase, APNs, or UnifiedPush for instant push, or plain client pull if you'd rather trade a little immediacy for a lot more privacy. Either way the alert is generic unless you opt into previews.</p>
         </div>
         <div class="pillar">
           <h3>Contacts</h3>
@@ -281,7 +312,7 @@
             </div>
             <span class="status status-beta">Available Now — Early Beta</span>
           </div>
-          <p>Self-hosted IMAP/SMTP web client with local-AI keyword labeling, multi-user roles, push relays for mobile, and a dozen+ shared themes.</p>
+          <p>Self-hosted IMAP/SMTP web client with local-AI keyword labeling, client-held PGP keys, WKD publishing and lookup, multi-user roles, push relays for mobile, and 15 shared themes.</p>
           <a class="btn" href="https://github.com/Yoshiofthewire/KyPost-Server" target="_blank" rel="noopener">View on GitHub</a>
         </div>
 
@@ -293,7 +324,7 @@
             </div>
             <span class="status status-beta">Available Now — Early Beta</span>
           </div>
-          <p>Native, relay-only email client with keyword inbox tabs, PGP key signing via QR, and MFA push approval.</p>
+          <p>Native, relay-only email client with keyword inbox tabs, encrypted and signed send, PGP key signing via QR, app lock, and MFA push approval.</p>
           <a class="btn" href="https://github.com/Yoshiofthewire/KyPost-for-Android" target="_blank" rel="noopener">View on GitHub</a>
         </div>
 
@@ -305,7 +336,7 @@
             </div>
             <span class="status status-testing">Currently Testing</span>
           </div>
-          <p>One SwiftUI codebase for macOS and iOS — relay-only, with PGP QR key exchange, contact sync, and APNs push.</p>
+          <p>One SwiftUI codebase for macOS and iOS — relay-only, with encrypted send, PGP QR key exchange, server folders, biometric app lock, contact sync, and APNs push.</p>
           <a class="btn" href="https://github.com/Yoshiofthewire/KyPost-for-Mac" target="_blank" rel="noopener">View on GitHub</a>
         </div>
 
@@ -317,7 +348,7 @@
             </div>
             <span class="status status-alpha">Available Now — Early Alpha</span>
           </div>
-          <p>One Qt codebase, two UI roots — Linux Desktop, Plasma Mobile, and Ubuntu Touch, with UnifiedPush notifications.</p>
+          <p>One Qt6 codebase, two UI roots — Linux Desktop and Plasma Mobile — installed from KyPost's own signed Flatpak remote, with UnifiedPush notifications.</p>
           <a class="btn" href="https://github.com/Yoshiofthewire/KyPost-for-Linux" target="_blank" rel="noopener">View on GitHub</a>
         </div>
       </div>

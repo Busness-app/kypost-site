@@ -23,11 +23,13 @@ assets/          Logos, mascot art, self-hosted fonts (Space Grotesk, IBM Plex M
                  and real KyPost web app screenshots used in the theme demo
 ```
 
-The page covers the ecosystem overview, cross-platform reach, the PGP +
-secure-pickup privacy model, the shared 15-theme customization system (with
-a scroll-driven preview built from real app screenshots), and the current
-status of each project.
+The page covers the ecosystem overview, cross-platform reach, the privacy
+model (client-held PGP keys, WKD/Autocrypt key discovery, sealed pickup
+links, protected subjects, generic push), the device-level security
+hardening shipped across the clients, the shared 15-theme customization
+system (with a scroll-driven preview built from real app screenshots), and
+the current status of each project.
 
 ## License
 
-AGPL-3.0 — GPL-2.0
+AGPL / GPL-3.0
