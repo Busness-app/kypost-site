@@ -87,7 +87,7 @@
 
       <div class="section-actions">
         <a class="btn btn-primary" href="architecture/">Open the architecture map</a>
-        <p class="section-note">Every service, module, and connection across the five repos — open any piece to see what is inside it, or recolour the whole map by data flow, security, or load.</p>
+        <p class="section-note">Every service, module, and connection across the four repos — open any piece to see what is inside it, or recolour the whole map by data flow, security, or load.</p>
       </div>
     </div>
   </section>
@@ -130,14 +130,14 @@
           <p>Publish your key over Web Key Directory and Thunderbird, GnuPG, or any WKD-aware app can encrypt to you — no KyPost required on their end.</p>
         </div>
         <div class="platform-card">
-          <span class="tag">Go + React · Server</span>
-          <h3>Web</h3>
-          <p>The server's own browser UI — config, logs, compose, and every theme, no install required.</p>
+          <span class="tag">CardDAV · Standard</span>
+          <h3>Any CardDAV client</h3>
+          <p>Your server is a CardDAV server, so iOS Contacts, DAVx5, Thunderbird, or anything else that speaks the standard can sync your address book directly.</p>
         </div>
         <div class="platform-card">
-          <span class="tag">PWA · Installable</span>
-          <h3>Progressive Web App</h3>
-          <p>Install the same web UI to your home screen or dock — service worker and manifest included, no app store needed.</p>
+          <span class="tag">Go + React · PWA</span>
+          <h3>Web</h3>
+          <p>The server's own browser UI — config, logs, compose, and every theme, no install required. Add it to your home screen or dock and the same UI installs as a PWA, no app store needed.</p>
         </div>
       </div>
 
@@ -190,7 +190,7 @@
     <div class="wrap">
       <span class="eyebrow">Hardened by design</span>
       <h2>Encryption is the start, not the finish</h2>
-      <p class="lede">Beyond PGP, every client now ships device-level protections — because a compromised device, or a convincing email, shouldn't mean a compromised inbox.</p>
+      <p class="lede">Beyond PGP, every client ships device-level protections and the server guards its own front door — because a compromised device, a convincing email, or a patient guesser shouldn't mean a compromised inbox.</p>
 
       <div class="security-grid">
         <div class="security-card">
@@ -225,9 +225,17 @@
           <h3>Screen-capture protection</h3>
           <p>Mail, PGP, and security screens are excluded from recordings and screen sharing — as far as each OS actually allows, which is documented rather than overstated.</p>
         </div>
+        <div class="security-card">
+          <h3>A sign-in that costs to guess</h3>
+          <p>Three wrong passwords locks the account for fifteen minutes — that's the real brute-force defence. On top of it you can switch on a proof-of-work check that makes each retry cost the attacker CPU, self-hosted with no account to open and no third party in the request. Turnstile and Friendly Captcha are there if you'd rather. It prices repetition; it doesn't stop a determined campaign, and it isn't sold as though it does.</p>
+        </div>
+        <div class="security-card">
+          <h3>MFA you can't approve by reflex</h3>
+          <p>A push approval shows the number your browser is displaying and asks you to pick it, rather than offering a bare Approve button — because a reflexive tap is exactly what an MFA-fatigue attack is fishing for. The notification itself only ever offers Deny.</p>
+        </div>
       </div>
 
-      <p class="security-note">These protections have landed on Android, Mac &amp; iOS, and Linux, each using the strongest primitive its platform offers — so the details differ where the OS does.</p>
+      <p class="security-note">The device protections have landed on Android, Mac &amp; iOS, and Linux, each using the strongest primitive its platform offers — so the details differ where the OS does. The sign-in defences live on your server and cover every client at once.</p>
     </div>
   </section>
 
@@ -260,7 +268,7 @@
         </div>
         <div class="pillar">
           <h3>Contacts</h3>
-          <p>Manage your contacts from any client, with full synchronization across web, Android, Mac, iOS, and Linux.</p>
+          <p>Manage your contacts from any client, synced across web, Android, Mac, iOS, and Linux — and over CardDAV to anything else that speaks it.</p>
         </div>
       </div>
     </div>
