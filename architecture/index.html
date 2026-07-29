@@ -1,0 +1,1006 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>KyPost architecture</title>
+<meta name="description" content="A self-hosted email ecosystem: one server you run yourself, paired with native clients on every desktop and phone.">
+<meta property="og:title" content="KyPost architecture">
+<meta property="og:description" content="A self-hosted email ecosystem: one server you run yourself, paired with native clients on every desktop and phone.">
+<meta property="og:type" content="website">
+<link rel="icon" href="../assets/ky.png">
+<style>
+@font-face {
+  font-family: "Space Grotesk";
+  src: url("../assets/fonts/Space_Grotesk/SpaceGrotesk-VariableFont_wght.ttf") format("truetype");
+  font-weight: 300 700;
+  font-display: swap;
+}
+@font-face {
+  font-family: "IBM Plex Mono";
+  src: url("../assets/fonts/IBM_Plex_Mono/IBMPlexMono-Regular.ttf") format("truetype");
+  font-weight: 400;
+  font-display: swap;
+}
+@font-face {
+  font-family: "IBM Plex Mono";
+  src: url("../assets/fonts/IBM_Plex_Mono/IBMPlexMono-Medium.ttf") format("truetype");
+  font-weight: 500;
+  font-display: swap;
+}
+
+:root {
+  --bg: #0d0f14;
+  --panel: #161a22;
+  --ink: #64748b;
+  --ink-strong: #e2e8f0;
+  --accent: #4deeea;
+  --accent-soft: #0e4a48;
+  --line: #1e293b;
+  --glow: rgba(77, 238, 234, 0.22);
+  --edge: #475569;
+  --grid: rgba(148, 163, 184, 0.10);
+  --kind-service: #4deeea;
+  --kind-client: #7dd3fc;
+  --kind-module: #94a3b8;
+  --kind-datastore: #fbbf24;
+  --kind-external: #64748b;
+  --surface-public: #f87171;
+  --surface-paired: #fbbf24;
+  --surface-internal: #4ade80;
+  --surface-none: #64748b;
+  --surface-unknown: #334155;
+  --sens-public: #64748b;
+  --sens-pii: #fbbf24;
+  --sens-secret: #f87171;
+  --sens-e2ee: #4deeea;
+  --lat-realtime: #f472b6;
+  --lat-interactive: #4deeea;
+  --lat-batch: #94a3b8;
+  --lat-unknown: #334155;
+}
+
+:root[data-theme="light"] {
+  --bg: #eef2f6;
+  --panel: #ffffff;
+  --ink: #475569;
+  --ink-strong: #0f172a;
+  --accent: #0891b2;
+  --accent-soft: #cffafe;
+  --line: #cbd5e1;
+  --glow: rgba(8, 145, 178, 0.18);
+  --edge: #94a3b8;
+  --grid: rgba(71, 85, 105, 0.13);
+  --kind-service: #0891b2;
+  --kind-client: #0369a1;
+  --kind-module: #475569;
+  --kind-datastore: #b45309;
+  --kind-external: #94a3b8;
+  --surface-public: #dc2626;
+  --surface-paired: #b45309;
+  --surface-internal: #15803d;
+  --surface-none: #94a3b8;
+  --surface-unknown: #cbd5e1;
+  --sens-public: #64748b;
+  --sens-pii: #b45309;
+  --sens-secret: #dc2626;
+  --sens-e2ee: #0891b2;
+  --lat-realtime: #be185d;
+  --lat-interactive: #0891b2;
+  --lat-batch: #475569;
+  --lat-unknown: #cbd5e1;
+}
+
+@media (prefers-color-scheme: light) {
+  :root:not([data-theme]) {
+  --bg: #eef2f6;
+  --panel: #ffffff;
+  --ink: #475569;
+  --ink-strong: #0f172a;
+  --accent: #0891b2;
+  --accent-soft: #cffafe;
+  --line: #cbd5e1;
+  --glow: rgba(8, 145, 178, 0.18);
+  --edge: #94a3b8;
+  --grid: rgba(71, 85, 105, 0.13);
+  --kind-service: #0891b2;
+  --kind-client: #0369a1;
+  --kind-module: #475569;
+  --kind-datastore: #b45309;
+  --kind-external: #94a3b8;
+  --surface-public: #dc2626;
+  --surface-paired: #b45309;
+  --surface-internal: #15803d;
+  --surface-none: #94a3b8;
+  --surface-unknown: #cbd5e1;
+  --sens-public: #64748b;
+  --sens-pii: #b45309;
+  --sens-secret: #dc2626;
+  --sens-e2ee: #0891b2;
+  --lat-realtime: #be185d;
+  --lat-interactive: #0891b2;
+  --lat-batch: #475569;
+  --lat-unknown: #cbd5e1;
+  }
+}
+
+/* KyData — all colour comes from the custom properties emitted by src/theme.js. */
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  height: 100%;
+  margin: 0;
+}
+
+body {
+  background: var(--bg);
+  color: var(--ink-strong);
+  font-family: "Space Grotesk", system-ui, sans-serif;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+code,
+.mono {
+  font-family: "IBM Plex Mono", ui-monospace, monospace;
+}
+
+/* ---------- top bar ---------- */
+
+.topbar {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  padding: 12px 20px;
+  border-bottom: 1px solid var(--line);
+  background: var(--panel);
+  flex-wrap: wrap;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: inherit;
+  text-decoration: none;
+}
+
+a.brand:hover span {
+  color: var(--accent);
+}
+
+a.brand:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+  border-radius: 6px;
+}
+
+.brand img {
+  width: 30px;
+  height: 30px;
+  border-radius: 7px;
+}
+
+.brand small {
+  display: block;
+  color: var(--ink);
+  font-weight: 400;
+  font-size: 11px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.views {
+  display: flex;
+  gap: 2px;
+  padding: 3px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+}
+
+.views button {
+  border: 0;
+  background: transparent;
+  color: var(--ink);
+  font: inherit;
+  font-size: 13px;
+  padding: 5px 14px;
+  border-radius: 999px;
+  cursor: pointer;
+}
+
+.views button:hover {
+  color: var(--ink-strong);
+}
+
+.views button[aria-selected="true"] {
+  background: var(--accent);
+  color: var(--bg);
+  font-weight: 600;
+}
+
+.tools {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.tools input,
+.tools button {
+  font: inherit;
+  font-size: 13px;
+  padding: 7px 12px;
+  border-radius: 8px;
+  border: 1px solid var(--line);
+  background: var(--bg);
+  color: var(--ink-strong);
+}
+
+.tools input {
+  width: 190px;
+}
+
+.tools input::placeholder {
+  color: var(--ink);
+}
+
+.tools input:focus-visible,
+.tools button:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 1px;
+}
+
+.tools button {
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.tools button:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+/* ---------- stage ---------- */
+
+.stage {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+}
+
+/* The panel sits in the layout rather than over it, so the graph never hides underneath. */
+.canvas {
+  position: relative;
+  flex: 1;
+  min-width: 0;
+}
+
+svg#graph {
+  width: 100%;
+  height: 100%;
+  display: block;
+  touch-action: none;
+}
+
+/* A faint measured grid. It gives the diagram a surface to sit on and reads as drafting paper
+   rather than an empty div, which is most of the difference between "chart" and "document". */
+.canvas {
+  background-image: radial-gradient(var(--grid) 1px, transparent 1px);
+  background-size: 26px 26px;
+  background-position: -1px -1px;
+}
+
+/* ---------- group hulls ---------- */
+
+/* The enclosure. When a system opens, its contents get a boundary — the thing that answers
+   "which of these belong together?" before you have read a single label. */
+.hull {
+  fill: var(--accent);
+  fill-opacity: 0.05;
+  stroke: var(--accent);
+  stroke-opacity: 0.35;
+  stroke-width: 1.25;
+  stroke-dasharray: 1 5;
+  stroke-linecap: round;
+  pointer-events: none;
+}
+
+/* Containment, not connection: quiet enough to be structure rather than information. */
+.spoke {
+  stroke: var(--accent);
+  stroke-opacity: 0.16;
+  stroke-width: 1;
+  pointer-events: none;
+}
+
+/* ---------- links ---------- */
+
+.link-line,
+.arrow {
+  transition: opacity 0.18s ease;
+}
+
+.link-line {
+  fill: none;
+  stroke: var(--edge);
+  stroke-width: 1.4;
+  stroke-linecap: round;
+  opacity: 0.85;
+}
+
+.arrow {
+  fill: var(--edge);
+  stroke: none;
+  opacity: 0.85;
+}
+
+/* Chords across the open ring, at rest. Hovering a node brings its own back to full. */
+.link.inside .link-line,
+.link.inside .arrow,
+.arrow.inside {
+  opacity: 0.32;
+}
+
+.link.inside.related .link-line,
+.arrow.inside.related {
+  opacity: 1;
+}
+
+.link.kind-push .link-line,
+.link.kind-sync .link-line {
+  stroke-dasharray: 6 5;
+}
+
+.link.kind-depends .link-line {
+  stroke-dasharray: 2 4;
+  stroke-width: 1.2;
+}
+
+/* Data-flow view: colour by what kind of relationship it is, and set it moving. */
+[data-view="flow"] .link.kind-api-call .link-line,
+[data-view="flow"] .link.kind-data-flow .link-line {
+  stroke: var(--accent);
+  stroke-dasharray: 7 6;
+  animation: flow 1.1s linear infinite;
+}
+
+[data-view="flow"] .link.kind-api-call .arrow,
+[data-view="flow"] .link.kind-data-flow .arrow {
+  fill: var(--accent);
+}
+
+[data-view="flow"] .link.kind-push .link-line {
+  stroke: var(--lat-realtime);
+  animation: flow 0.8s linear infinite;
+}
+
+[data-view="flow"] .arrow.kind-push {
+  fill: var(--lat-realtime);
+}
+
+@keyframes flow {
+  to {
+    stroke-dashoffset: -26;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  [data-view="flow"] .link-line {
+    animation: none;
+  }
+}
+
+/* Security view: colour every line by the most sensitive thing travelling on it. */
+[data-view="security"] .link.sens-public .link-line { stroke: var(--sens-public); }
+[data-view="security"] .link.sens-pii .link-line { stroke: var(--sens-pii); }
+[data-view="security"] .link.sens-secret .link-line { stroke: var(--sens-secret); }
+[data-view="security"] .link.sens-e2ee .link-line { stroke: var(--sens-e2ee); stroke-width: 2.4; }
+[data-view="security"] .arrow.sens-public { fill: var(--sens-public); }
+[data-view="security"] .arrow.sens-pii { fill: var(--sens-pii); }
+[data-view="security"] .arrow.sens-secret { fill: var(--sens-secret); }
+[data-view="security"] .arrow.sens-e2ee { fill: var(--sens-e2ee); }
+
+/* Performance view: thicken the paths that carry continuous load. */
+[data-view="performance"] .link.hot .link-line {
+  stroke: var(--accent);
+  stroke-width: 4;
+}
+
+[data-view="performance"] .arrow.hot {
+  fill: var(--accent);
+}
+
+/* ---------- edge labels ---------- */
+
+.edge-label {
+  fill: var(--ink);
+  font-size: 10px;
+  font-family: "IBM Plex Mono", ui-monospace, monospace;
+  text-anchor: middle;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.18s ease;
+}
+
+/* Showing every edge label at once turns a dense graph into unreadable overlapping text, so
+   labels appear on hover. The detail panel lists the same information per connection. */
+.edge-label.related {
+  opacity: 1;
+  fill: var(--ink-strong);
+}
+
+/* ---------- nodes ---------- */
+
+.node {
+  cursor: pointer;
+}
+
+.node:focus {
+  outline: none;
+}
+
+.node {
+  color: var(--kind-module);
+}
+
+.node-dot {
+  fill: currentColor;
+  stroke: var(--bg);
+  stroke-width: 2;
+  transition: fill 0.2s ease, r 0.25s ease;
+}
+
+/* Solid is yours, outline is somebody else's. External systems are the parts of the picture you
+   do not run, and drawing them hollow says so before any label is read — while also taking the
+   visual weight off nodes that are context by definition. */
+.node.kind-external .node-dot,
+.node.em-periphery .node-dot {
+  fill: var(--bg);
+  stroke: currentColor;
+  stroke-width: 1.5;
+}
+
+/* A detached ring rather than a thicker border: it reads as a terminal on a schematic, and it
+   gives "openable" a shape of its own instead of relying on colour. */
+.node-ring {
+  fill: none;
+  stroke: var(--edge);
+  stroke-width: 1;
+  opacity: 0;
+  transition: opacity 0.2s ease, r 0.25s ease;
+}
+
+.node.expandable .node-ring {
+  opacity: 0.55;
+  stroke-dasharray: 2 4;
+}
+
+.node.open .node-ring {
+  opacity: 1;
+  stroke: var(--accent);
+  stroke-dasharray: none;
+  stroke-width: 1.5;
+}
+
+.node-halo {
+  fill: none;
+  stroke: var(--accent);
+  stroke-width: 1.5;
+  opacity: 0;
+  transition: opacity 0.18s ease, r 0.25s ease;
+}
+
+.node:hover .node-halo,
+.node:focus-visible .node-halo,
+.node.focus .node-halo {
+  opacity: 0.75;
+}
+
+.node-label {
+  fill: var(--ink-strong);
+  font-size: 13.5px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  text-anchor: middle;
+  pointer-events: none;
+  paint-order: stroke;
+  stroke: var(--bg);
+  stroke-width: 4;
+  stroke-linejoin: round;
+  transition: opacity 0.2s ease;
+}
+
+/* Modules sit a clear step below their system: smaller, lighter, and quieter, so the eye reads
+   the enclosure first and its contents second. */
+.node.level-1 .node-label,
+.node.level-2 .node-label {
+  font-size: 10.5px;
+  font-weight: 500;
+  letter-spacing: 0.01em;
+  fill: var(--ink);
+}
+
+/* Language and role, in the utility face. Small, quiet, and factual. */
+.node-meta {
+  fill: var(--ink);
+  font-family: "IBM Plex Mono", ui-monospace, monospace;
+  font-size: 9px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  text-anchor: middle;
+  pointer-events: none;
+  paint-order: stroke;
+  stroke: var(--bg);
+  stroke-width: 3;
+  stroke-linejoin: round;
+}
+
+/* A label that lost its fight for space. Hovering the node brings it back. */
+.node.label-hidden .node-label,
+.node.label-hidden .node-meta {
+  opacity: 0;
+}
+
+.node.label-hidden:hover .node-label,
+.node.label-hidden.focus .node-label {
+  opacity: 1;
+}
+
+.node-toggle {
+  fill: var(--bg);
+  font-size: 14px;
+  font-weight: 700;
+  text-anchor: middle;
+  dominant-baseline: middle;
+  pointer-events: none;
+}
+
+.node.em-periphery .node-toggle {
+  opacity: 0;
+}
+
+/* Context, not subject: still there, still clickable, no longer competing.
+   Hollow rather than merely faded — an outline reads as background at any size, where a large
+   dimmed disc still carries more visual weight than the small solid nodes it surrounds. */
+.node.em-periphery {
+  opacity: 0.75;
+}
+
+/* The fill itself is overridden after the per-view colour rules, which outrank this block. */
+
+.node.em-periphery .node-label {
+  font-size: 10.5px;
+  font-weight: 400;
+  fill: var(--ink);
+}
+
+.node.em-periphery:hover {
+  opacity: 1;
+}
+
+/* Each view sets one `color` per node and the shapes inherit it through currentColor. That
+   keeps "what colour is this node" and "solid or outline" as separate, non-competing rules —
+   otherwise every fill override has to be restated once per view. */
+
+/* Architecture and data flow colour by what a thing is. */
+[data-view="architecture"] .node.kind-service,
+[data-view="flow"] .node.kind-service { color: var(--kind-service); }
+[data-view="architecture"] .node.kind-client,
+[data-view="flow"] .node.kind-client { color: var(--kind-client); }
+[data-view="architecture"] .node.kind-module,
+[data-view="flow"] .node.kind-module { color: var(--kind-module); }
+[data-view="architecture"] .node.kind-datastore,
+[data-view="flow"] .node.kind-datastore { color: var(--kind-datastore); }
+[data-view="architecture"] .node.kind-external,
+[data-view="flow"] .node.kind-external { color: var(--kind-external); }
+
+/* Security view colours by who can reach it. Unassessed stays deliberately grey. */
+[data-view="security"] .node.surface-public { color: var(--surface-public); }
+[data-view="security"] .node.surface-paired { color: var(--surface-paired); }
+[data-view="security"] .node.surface-internal { color: var(--surface-internal); }
+[data-view="security"] .node.surface-none { color: var(--surface-none); }
+[data-view="security"] .node.surface-unknown { color: var(--surface-unknown); }
+
+[data-view="performance"] .node.lat-realtime { color: var(--lat-realtime); }
+[data-view="performance"] .node.lat-interactive { color: var(--lat-interactive); }
+[data-view="performance"] .node.lat-batch { color: var(--lat-batch); }
+[data-view="performance"] .node.lat-unknown { color: var(--lat-unknown); }
+
+/* ---------- emphasis ---------- */
+
+svg.focused .node:not(.related),
+svg.focused .link:not(.related),
+svg.focused .arrow:not(.related) {
+  opacity: 0.2;
+}
+
+svg.searching .node:not(.match) {
+  opacity: 0.25;
+}
+
+svg.searching .node.match .node-halo {
+  opacity: 1;
+  stroke: var(--accent);
+}
+
+.node,
+.link {
+  transition: opacity 0.18s ease;
+}
+
+/* ---------- detail panel ---------- */
+
+.panel {
+  flex: 0 0 340px;
+  overflow-y: auto;
+  padding: 20px 22px 28px;
+  border-left: 1px solid var(--line);
+  background: var(--panel);
+}
+
+.panel .howto {
+  font-size: 12.5px;
+  color: var(--ink);
+}
+
+.panel .howto li {
+  margin-bottom: 5px;
+  padding-left: 12px;
+  position: relative;
+}
+
+.panel .howto li::before {
+  content: "›";
+  position: absolute;
+  left: 0;
+  color: var(--accent);
+}
+
+.panel h2 {
+  margin: 2px 0 4px;
+  font-size: 19px;
+  letter-spacing: -0.015em;
+}
+
+.panel h3 {
+  margin: 18px 0 6px;
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink);
+}
+
+.panel .crumb {
+  margin: 0;
+  font-size: 11px;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+
+.panel .lang {
+  margin: 0;
+  font-size: 12px;
+  color: var(--ink);
+  font-family: "IBM Plex Mono", ui-monospace, monospace;
+}
+
+.panel .summary {
+  margin: 12px 0 0;
+  font-size: 13.5px;
+  color: var(--ink-strong);
+}
+
+.panel .notes {
+  margin: 8px 0 0;
+  font-size: 12.5px;
+  color: var(--ink);
+}
+
+.panel dl {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 3px 12px;
+  margin: 0;
+  font-size: 12.5px;
+}
+
+.panel dt {
+  color: var(--ink);
+}
+
+.panel dd {
+  margin: 0;
+  color: var(--ink-strong);
+}
+
+.panel dd.surface-public { color: var(--surface-public); font-weight: 600; }
+.panel dd.surface-paired { color: var(--surface-paired); font-weight: 600; }
+.panel dd.surface-internal { color: var(--surface-internal); font-weight: 600; }
+.panel dd.lat-realtime { color: var(--lat-realtime); font-weight: 600; }
+.panel dd.lat-interactive { color: var(--lat-interactive); font-weight: 600; }
+
+.panel .unassessed p {
+  margin: 0;
+  font-size: 12.5px;
+  color: var(--ink);
+  font-style: italic;
+}
+
+.panel ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.panel .paths li {
+  font-size: 11.5px;
+  margin-bottom: 3px;
+  word-break: break-all;
+}
+
+.panel .paths a {
+  color: var(--accent);
+  text-decoration: none;
+}
+
+.panel .paths a:hover {
+  text-decoration: underline;
+}
+
+.panel .conns li {
+  font-size: 12px;
+  padding: 5px 0;
+  border-top: 1px solid var(--line);
+}
+
+.panel .conn-arrow {
+  color: var(--accent);
+}
+
+.panel .conn-kind {
+  font-family: "IBM Plex Mono", ui-monospace, monospace;
+  font-size: 10px;
+  color: var(--ink);
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  padding: 0 4px;
+}
+
+.panel .conn-data {
+  display: block;
+  color: var(--ink);
+  font-size: 11.5px;
+}
+
+/* ---------- legend + hint ---------- */
+
+.legend {
+  position: absolute;
+  left: 16px;
+  bottom: 16px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 14px;
+  max-width: 460px;
+  padding: 10px 14px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: var(--panel);
+  font-size: 11.5px;
+  color: var(--ink);
+}
+
+.legend .key {
+  display: none;
+  align-items: center;
+  gap: 6px;
+}
+
+body[data-view="architecture"] .legend .key.for-architecture,
+body[data-view="flow"] .legend .key.for-flow,
+body[data-view="security"] .legend .key.for-security,
+body[data-view="performance"] .legend .key.for-performance {
+  display: flex;
+}
+
+.legend .swatch {
+  width: 10px;
+  height: 10px;
+  border-radius: 3px;
+  background: var(--sw, var(--ink));
+}
+
+.legend .swatch.outline {
+  background: transparent;
+  border: 1.5px solid var(--sw, var(--ink));
+}
+
+/* Bottom right, clear of the legend, which is wide enough to reach the centre on its own. */
+.hint {
+  position: absolute;
+  right: 18px;
+  bottom: 20px;
+  margin: 0;
+  font-size: 11.5px;
+  color: var(--ink);
+  pointer-events: none;
+  text-align: right;
+  max-width: 240px;
+}
+
+/* ---------- narrow screens ---------- */
+
+@media (max-width: 900px) {
+  /* Not enough width for a sidebar, so the panel becomes a sheet that slides up on selection. */
+  .panel {
+    position: fixed;
+    inset: auto 0 0 0;
+    flex: none;
+    max-height: 55%;
+    border-left: 0;
+    border-top: 1px solid var(--line);
+    border-radius: 16px 16px 0 0;
+    box-shadow: 0 -12px 34px rgba(0, 0, 0, 0.3);
+    transform: translateY(100%);
+    transition: transform 0.22s ease;
+  }
+
+  body.panel-open .panel {
+    transform: translateY(0);
+  }
+
+  .legend,
+  .hint {
+    display: none;
+  }
+
+  /* The header was wrapping to three rows and taking a third of a phone screen. */
+  .topbar {
+    gap: 10px 12px;
+    padding: 9px 12px;
+  }
+
+  .brand small {
+    display: none;
+  }
+
+  .views {
+    order: 3;
+    width: 100%;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+
+  .views button {
+    padding: 5px 11px;
+    font-size: 12px;
+    white-space: nowrap;
+  }
+
+  .tools input {
+    width: 100%;
+    min-width: 0;
+  }
+
+  .tools {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .tools button {
+    padding: 6px 9px;
+    font-size: 12px;
+  }
+}
+
+@media (max-width: 900px) and (prefers-reduced-motion: reduce) {
+  .panel {
+    transition: none;
+  }
+}
+
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <a class="brand" href="https://www.kypost.org/"><img src="../assets/ky.png" alt=""><span>KyPost<small>architecture</small></span></a>
+
+  <div class="views" role="tablist" aria-label="View mode">
+    <button data-view="architecture" role="tab" aria-selected="true">Architecture</button>
+    <button data-view="flow" role="tab" aria-selected="false">Data flow</button>
+    <button data-view="security" role="tab" aria-selected="false">Security</button>
+    <button data-view="performance" role="tab" aria-selected="false">Performance</button>
+  </div>
+
+  <div class="tools">
+    <input id="search" type="search" placeholder="Search components…" aria-label="Search components">
+    <button id="reset">Reset</button>
+    <button id="theme-toggle">Polished Ky</button>
+  </div>
+</header>
+
+<main class="stage">
+  <div class="canvas">
+    <svg id="graph" role="application" aria-label="KyPost architecture graph"></svg>
+
+    <div class="legend">
+      <span class="key for-architecture"><i class="swatch" style="--sw: var(--kind-service)"></i>Service</span>
+    <span class="key for-architecture"><i class="swatch" style="--sw: var(--kind-client)"></i>Client</span>
+    <span class="key for-architecture"><i class="swatch" style="--sw: var(--kind-module)"></i>Module</span>
+    <span class="key for-architecture"><i class="swatch" style="--sw: var(--kind-datastore)"></i>Datastore</span>
+    <span class="key for-architecture"><i class="swatch outline" style="--sw: var(--kind-external)"></i>External</span>
+    <span class="key for-flow"><i class="swatch" style="--sw: var(--accent)"></i>Request / data</span>
+    <span class="key for-flow"><i class="swatch" style="--sw: var(--lat-realtime)"></i>Push</span>
+    <span class="key for-security"><i class="swatch" style="--sw: var(--surface-public)"></i>Internet-facing</span>
+    <span class="key for-security"><i class="swatch" style="--sw: var(--surface-paired)"></i>Paired devices only</span>
+    <span class="key for-security"><i class="swatch" style="--sw: var(--surface-internal)"></i>Internal only</span>
+    <span class="key for-security"><i class="swatch" style="--sw: var(--sens-e2ee)"></i>End-to-end encrypted</span>
+    <span class="key for-security"><i class="swatch" style="--sw: var(--surface-unknown)"></i>Not assessed</span>
+    <span class="key for-performance"><i class="swatch" style="--sw: var(--lat-realtime)"></i>Realtime</span>
+    <span class="key for-performance"><i class="swatch" style="--sw: var(--lat-interactive)"></i>Interactive</span>
+    <span class="key for-performance"><i class="swatch" style="--sw: var(--lat-batch)"></i>Batch</span>
+    <span class="key for-performance"><i class="swatch" style="--sw: var(--lat-unknown)"></i>Not assessed</span>
+    </div>
+
+    <p id="hint" class="hint"></p>
+  </div>
+
+  <aside id="panel" class="panel" aria-live="polite"></aside>
+</main>
+
+<footer hidden>
+  <p>Generated 2026-07-29 from kypost-server@0b5db98, kypost-android@8f37efc, kypost-for-Mac@59c8ab2, kypost-Linux@abccddb</p>
+</footer>
+
+<script id="kydata-graph" type="application/json">{"meta":{"project":"KyPost","tagline":"A self-hosted email ecosystem: one server you run yourself, paired with native clients on every desktop and phone.","generated":"2026-07-29","repoBase":"https://github.com/Yoshiofthewire","homeUrl":"https://www.kypost.org/","commits":{"kypost-server":"0b5db98","kypost-android":"8f37efc","kypost-for-Mac":"59c8ab2","kypost-Linux":"abccddb"}},"nodes":[{"id":"server","label":"KyPost Server","level":0,"parent":null,"kind":"service","language":"Go + React","summary":"The only piece that holds mail credentials. Runs as a single container with supervisord managing the API, the polling daemon, and a local Ollama instance. Every client pairs to it and talks to nothing else.","repo":"kypost-server","paths":["backend/cmd/main.go","backend/internal/app/app.go"],"security":{"handlesPii":true,"encryption":"TLS in transit, encrypted secrets at rest","authRequired":true,"attackSurface":"public","notes":"The only internet-facing component. Terminates all client traffic and holds upstream IMAP/SMTP credentials."},"performance":{"hotPath":true,"latencyClass":"interactive","notes":"Per-user inbox poll loop runs continuously alongside request serving."}},{"id":"android","label":"Android Client","level":0,"parent":null,"kind":"client","language":"Kotlin","summary":"Relay-only Android client. Holds no IMAP or SMTP credentials — it pairs once by QR code or deep link and thereafter speaks only to your server.","repo":"kypost-android","paths":["app/src/main/java/com/urlxl/mail"],"security":{"handlesPii":true,"encryption":"E2EE (PGP) for mail, encrypted SharedPreferences for pairing state","authRequired":true,"attackSurface":"paired","notes":"Certificate pinning on all server calls. App lock, capture protection, and location protection at the OS level."},"performance":{"hotPath":false,"latencyClass":"interactive"}},{"id":"mac","label":"macOS + iOS Client","level":0,"parent":null,"kind":"client","language":"Swift / SwiftUI","summary":"One SwiftUI codebase targeting both macOS and iOS, layered into Domain, Data, and Presentation. Relay-only, like every other client.","repo":"kypost-for-Mac","paths":["KyPost/App","KyPost/Domain"],"security":{"handlesPii":true,"encryption":"E2EE (PGP) for mail, Keychain for pairing secrets","authRequired":true,"attackSurface":"paired"},"performance":{"hotPath":false,"latencyClass":"interactive"}},{"id":"linux","label":"Linux Client","level":0,"parent":null,"kind":"client","language":"C++ / Qt6 / QML","summary":"Qt6 and Kirigami client that builds for both desktop Linux and Plasma Mobile from one tree, splitting reusable logic into core/ and UI into app/.","repo":"kypost-Linux","paths":["core","app"],"security":{"handlesPii":true,"encryption":"E2EE (PGP) for mail","authRequired":true,"attackSurface":"paired"},"performance":{"hotPath":false,"latencyClass":"interactive","notes":"Heavy work moved off the GUI thread so the interface stays responsive during sync."}},{"id":"ext.mailhost","label":"Upstream IMAP / SMTP","level":0,"parent":null,"kind":"external","summary":"Your existing mail provider. The server is the only thing that ever connects to it.","security":{"handlesPii":true,"encryption":"TLS","authRequired":true,"attackSurface":"none","notes":"Credentials live on the server alone and are never distributed to clients."}},{"id":"ext.fcm","label":"Firebase Cloud Messaging","level":0,"parent":null,"kind":"external","summary":"Google's push transport, used by the Android client where it is available.","security":{"handlesPii":false,"encryption":"TLS","attackSurface":"none","notes":"Push payloads carry only notification metadata, never message bodies."}},{"id":"ext.unifiedpush","label":"UnifiedPush Distributor","level":0,"parent":null,"kind":"external","summary":"Self-hostable push transport, the de-Googled alternative on Android.","security":{"handlesPii":false,"encryption":"TLS","attackSurface":"none"}},{"id":"ext.apns","label":"Apple Push Notification service","level":0,"parent":null,"kind":"external","summary":"Apple's push transport for the macOS and iOS client.","security":{"handlesPii":false,"encryption":"TLS","attackSurface":"none"}},{"id":"ext.keyserver","label":"PGP Keyservers / WKD","level":0,"parent":null,"kind":"external","summary":"Public key discovery. The server looks keys up here and can publish your own via Web Key Directory.","security":{"handlesPii":false,"encryption":"TLS","attackSurface":"none","notes":"Only public keys ever leave. Private keys never touch this path."}},{"id":"server.api","label":"HTTP API","level":1,"parent":"server","kind":"module","language":"Go","summary":"The request surface every client speaks to. Handles routing, RBAC scoping, CSRF, security headers, and SSRF guarding on outbound fetches.","repo":"kypost-server","paths":["backend/internal/api/server.go","backend/internal/api/security_headers.go"],"security":{"handlesPii":true,"encryption":"TLS in transit","authRequired":true,"attackSurface":"public","notes":"Primary attack surface. SSRF guard and proxy-trust handling sit here."},"performance":{"hotPath":true,"latencyClass":"interactive"}},{"id":"server.auth","label":"Auth & MFA","level":1,"parent":"server","kind":"module","language":"Go","summary":"Login, sessions, and multi-factor: TOTP, recovery codes, and push approval with number matching. Login lockout and timing-safe comparison guard the entry point.","repo":"kypost-server","paths":["backend/internal/mfa","backend/internal/totp","backend/internal/api/login_lockout.go"],"security":{"handlesPii":true,"encryption":"hashed credentials at rest","authRequired":false,"attackSurface":"public","notes":"Unauthenticated by definition — this is the gate. Lockout is atomic to resist races."},"performance":{"hotPath":true,"latencyClass":"interactive"}},{"id":"server.captcha","label":"Proof-of-Work Captcha","level":1,"parent":"server","kind":"module","language":"Go","summary":"Self-hosted proof-of-work challenge that escalates per IP, so brute-force costs the attacker real compute. Turnstile and Friendly Captcha are pluggable alternatives.","repo":"kypost-server","paths":["backend/internal/captcha","backend/internal/api/pow_escalation.go"],"security":{"handlesPii":false,"authRequired":false,"attackSurface":"public","notes":"Deliberately reachable pre-auth. Difficulty rises with failed attempts from an address."},"performance":{"hotPath":false,"latencyClass":"interactive","notes":"Verification is cheap for the server and expensive for the client, by design."}},{"id":"server.mail","label":"Mail Engine","level":1,"parent":"server","kind":"module","language":"Go","summary":"Reads inboxes over IMAP, sends over SMTP, and caches messages locally. The only holder of upstream mail credentials in the entire system.","repo":"kypost-server","paths":["backend/internal/adapters","backend/internal/mailcache","backend/internal/mailmsg"],"security":{"handlesPii":true,"encryption":"TLS to upstream, encrypted cache at rest","authRequired":true,"attackSurface":"internal","notes":"Holds the credentials that clients deliberately never receive."},"performance":{"hotPath":true,"latencyClass":"batch","notes":"Polling daemon fetches on an interval per user."}},{"id":"server.classifier","label":"AI Classifier","level":1,"parent":"server","kind":"module","language":"Go + Ollama","summary":"Sorts incoming mail into keyword tabs using a local Ollama model. Nothing is sent to a third-party AI service — the model runs in your container.","repo":"kypost-server","paths":["backend/internal/processor","backend/internal/ollamaupdate"],"security":{"handlesPii":true,"encryption":"in-process only","authRequired":true,"attackSurface":"internal","notes":"Reads message content, but locally. No mail leaves the host for classification."},"performance":{"hotPath":true,"latencyClass":"batch","notes":"The heaviest CPU consumer. Runs behind the polling loop, not in the request path."}},{"id":"server.pgp","label":"PGP Engine","level":1,"parent":"server","kind":"module","language":"Go","summary":"Key management, Autocrypt headers, keyserver and WKD discovery, and QR key exchange. Supports client-protected keys the server itself cannot read.","repo":"kypost-server","paths":["backend/internal/pgpmail","backend/internal/pgpdiscovery","backend/internal/wkdpublish"],"security":{"handlesPii":true,"encryption":"E2EE — client-protected keys wrapped in-browser with PBKDF2-HMAC-SHA256","authRequired":true,"attackSurface":"internal","notes":"In client-protected mode the server stores only wrapped keys and cannot decrypt user mail."},"performance":{"hotPath":false,"latencyClass":"interactive"}},{"id":"server.contacts","label":"Contacts & CardDAV","level":1,"parent":"server","kind":"module","language":"Go","summary":"Contact storage, groups, photos, and a full CardDAV server so any standard client can sync against it.","repo":"kypost-server","paths":["backend/internal/contacts","backend/internal/groups","backend/internal/api/dav_server.go"],"security":{"handlesPii":true,"encryption":"TLS in transit","authRequired":true,"attackSurface":"public","notes":"CardDAV is a second authenticated entry point with its own auth path."},"performance":{"hotPath":false,"latencyClass":"interactive"}},{"id":"server.rules","label":"Filter Rules","level":1,"parent":"server","kind":"module","language":"Go","summary":"Sieve-style filter rules with a server-side editor, applied as mail arrives.","repo":"kypost-server","paths":["backend/internal/rules","backend/internal/api/rules_handlers.go"],"security":{"handlesPii":true,"authRequired":true,"attackSurface":"internal"},"performance":{"hotPath":true,"latencyClass":"batch"}},{"id":"server.push","label":"Push & Pairing","level":1,"parent":"server","kind":"module","language":"Go","summary":"Issues single-use QR pairing tokens, registers devices, and fans notifications out to FCM, UnifiedPush, and APNs. Also drives push-based MFA approval.","repo":"kypost-server","paths":["backend/internal/api/native_pairing_nonce.go","backend/internal/api/server_notifications.go"],"security":{"handlesPii":false,"encryption":"TLS, single-use nonces","authRequired":true,"attackSurface":"public","notes":"Pairing tokens are single-use and purpose-bound. Push payloads carry metadata only."},"performance":{"hotPath":true,"latencyClass":"realtime"}},{"id":"server.store","label":"State & Database","level":1,"parent":"server","kind":"datastore","language":"Go","summary":"Persistent state and schema migrations for users, mail cache, contacts, keys, and device registrations.","repo":"kypost-server","paths":["backend/internal/state","backend/internal/app/migrate.go"],"security":{"handlesPii":true,"encryption":"at rest","authRequired":true,"attackSurface":"none","notes":"Not reachable from outside the container."},"performance":{"hotPath":true,"latencyClass":"interactive"}},{"id":"server.webui","label":"Web UI","level":1,"parent":"server","kind":"module","language":"React + TypeScript","summary":"The browser client, served by the same container. Carries the canonical 15-theme palette that every native client mirrors.","repo":"kypost-server","paths":["frontend/src","frontend/src/theme.ts"],"security":{"handlesPii":true,"encryption":"E2EE — wraps client-protected PGP keys in-browser before upload","authRequired":true,"attackSurface":"public","notes":"Where client-protected key wrapping actually happens, under CSP."},"performance":{"hotPath":false,"latencyClass":"interactive"}},{"id":"android.push","label":"Push & Pairing","level":1,"parent":"android","kind":"module","language":"Kotlin","summary":"QR and deep-link pairing, FCM and UnifiedPush registration, MFA approval prompts, and a polling worker for when push is unavailable.","repo":"kypost-android","paths":["app/src/main/java/com/urlxl/mail/push"],"security":{"handlesPii":false,"encryption":"encrypted SharedPreferences for pairing state","authRequired":true,"attackSurface":"paired","notes":"Certificate pinning enforced on every server call."},"performance":{"hotPath":true,"latencyClass":"realtime"}},{"id":"android.mail","label":"Mail","level":1,"parent":"android","kind":"module","language":"Kotlin","summary":"Inbox, compose, and message handling — all through the server relay, never through IMAP or SMTP directly.","repo":"kypost-android","paths":["app/src/main/java/com/urlxl/mail/mail"],"security":{"handlesPii":true,"authRequired":true,"attackSurface":"paired"},"performance":{"hotPath":true,"latencyClass":"interactive"}},{"id":"android.pgp","label":"PGP","level":1,"parent":"android","kind":"module","language":"Kotlin","summary":"On-device encryption and decryption, plus QR-based key exchange with other clients.","repo":"kypost-android","paths":["app/src/main/java/com/urlxl/mail/pgp"],"security":{"handlesPii":true,"encryption":"E2EE (PGP), plaintext held in memory only","authRequired":true,"attackSurface":"paired","notes":"Decrypted content is kept in memory and deliberately not persisted."},"performance":{"hotPath":false,"latencyClass":"interactive"}},{"id":"android.contacts","label":"Contacts","level":1,"parent":"android","kind":"module","language":"Kotlin","summary":"Contact list, autocomplete, and sync against the server's CardDAV store.","repo":"kypost-android","paths":["app/src/main/java/com/urlxl/mail/contacts"],"security":{"handlesPii":true,"authRequired":true,"attackSurface":"paired"},"performance":{"hotPath":false,"latencyClass":"interactive"}},{"id":"android.security","label":"Device Security","level":1,"parent":"android","kind":"module","language":"Kotlin","summary":"App lock, screen capture protection, and location protection — hardening that assumes the phone itself may be hostile.","repo":"kypost-android","paths":["app/src/main/java/com/urlxl/mail/security"],"security":{"handlesPii":false,"authRequired":true,"attackSurface":"none","notes":"Defends against local attackers with physical access rather than network ones."},"performance":{"hotPath":false,"latencyClass":"interactive"}},{"id":"android.ui","label":"UI & Themes","level":1,"parent":"android","kind":"module","language":"Kotlin","summary":"Activities for inbox, compose, and settings, plus the shared 15-theme palette mirrored from the server.","repo":"kypost-android","paths":["app/src/main/java/com/urlxl/mail/AppTheme.kt","app/src/main/java/com/urlxl/mail/InboxActivity.kt"],"performance":{"hotPath":false,"latencyClass":"interactive"}},{"id":"mac.app","label":"App Shell","level":1,"parent":"mac","kind":"module","language":"Swift","summary":"Lifecycle, dependency graph, APNs dispatch, and the polling scheduler that covers for push when it is unavailable.","repo":"kypost-for-Mac","paths":["KyPost/App"],"security":{"handlesPii":false,"authRequired":true,"attackSurface":"paired"},"performance":{"hotPath":true,"latencyClass":"realtime"}},{"id":"mac.domain","label":"Domain","level":1,"parent":"mac","kind":"module","language":"Swift","summary":"Models, use cases, repository protocols, and security primitives — the platform-independent core of the client.","repo":"kypost-for-Mac","paths":["KyPost/Domain"],"security":{"handlesPii":true,"encryption":"E2EE (PGP)","authRequired":true,"attackSurface":"none"},"performance":{"hotPath":false,"latencyClass":"interactive"}},{"id":"mac.data","label":"Data","level":1,"parent":"mac","kind":"module","language":"Swift","summary":"Networking against the server relay, local database, and storage for mail and contacts.","repo":"kypost-for-Mac","paths":["KyPost/Data"],"security":{"handlesPii":true,"encryption":"Keychain for secrets, TLS in transit","authRequired":true,"attackSurface":"paired"},"performance":{"hotPath":true,"latencyClass":"interactive"}},{"id":"mac.presentation","label":"Presentation","level":1,"parent":"mac","kind":"module","language":"SwiftUI","summary":"Screens and components shared across macOS and iOS, with macOS-specific variations kept isolated.","repo":"kypost-for-Mac","paths":["KyPost/Presentation","KyPost/Style"],"performance":{"hotPath":false,"latencyClass":"interactive"}},{"id":"linux.core","label":"Core","level":1,"parent":"linux","kind":"module","language":"C++","summary":"Domain models, stores, local database, and vCard handling — UI-free logic shared between the desktop and mobile builds.","repo":"kypost-Linux","paths":["core/domain","core/models","core/stores","core/db"],"security":{"handlesPii":true,"authRequired":true,"attackSurface":"none"},"performance":{"hotPath":true,"latencyClass":"interactive"}},{"id":"linux.net","label":"Networking","level":1,"parent":"linux","kind":"module","language":"C++","summary":"The HTTP client for all server calls, with pinning and fingerprint verification.","repo":"kypost-Linux","paths":["core/net"],"security":{"handlesPii":true,"encryption":"TLS with certificate pinning","authRequired":true,"attackSurface":"paired"},"performance":{"hotPath":true,"latencyClass":"interactive","notes":"Runs off the GUI thread so sync never blocks the interface."}},{"id":"linux.security","label":"Security","level":1,"parent":"linux","kind":"module","language":"C++","summary":"Secret storage, app lock, and certificate fingerprint verification.","repo":"kypost-Linux","paths":["core/security","app/security"],"security":{"handlesPii":false,"authRequired":true,"attackSurface":"none"},"performance":{"hotPath":false,"latencyClass":"interactive"}},{"id":"linux.pairing","label":"Pairing","level":1,"parent":"linux","kind":"module","language":"C++","summary":"QR code and deep-link pairing flow that binds the client to a server.","repo":"kypost-Linux","paths":["app/pairing"],"security":{"handlesPii":false,"encryption":"single-use pairing tokens","authRequired":false,"attackSurface":"paired"},"performance":{"hotPath":false,"latencyClass":"interactive"}},{"id":"linux.push","label":"Push & Sync","level":1,"parent":"linux","kind":"module","language":"C++","summary":"Notification handling and the polling coordinator that keeps the inbox current on desktop.","repo":"kypost-Linux","paths":["app/push"],"security":{"handlesPii":false,"authRequired":true,"attackSurface":"paired"},"performance":{"hotPath":true,"latencyClass":"realtime"}},{"id":"linux.pgp","label":"PGP","level":1,"parent":"linux","kind":"module","language":"C++","summary":"Local encryption and decryption plus QR key exchange, matching the other clients.","repo":"kypost-Linux","paths":["app/pgp"],"security":{"handlesPii":true,"encryption":"E2EE (PGP)","authRequired":true,"attackSurface":"none"},"performance":{"hotPath":false,"latencyClass":"interactive"}},{"id":"linux.ui","label":"Kirigami UI","level":1,"parent":"linux","kind":"module","language":"QML","summary":"Kirigami interface that adapts from desktop windows to Plasma Mobile from a single QML tree.","repo":"kypost-Linux","paths":["app/qml","app/theme"],"performance":{"hotPath":false,"latencyClass":"interactive"}}],"edges":[{"from":"android","to":"server","kind":"api-call","protocol":"HTTPS","label":"pairs once, then relays everything","data":"credentials-free pairing token, then mail and contact requests","sensitivity":"secret","bidirectional":true},{"from":"mac","to":"server","kind":"api-call","protocol":"HTTPS","label":"pairs once, then relays everything","data":"credentials-free pairing token, then mail and contact requests","sensitivity":"secret","bidirectional":true},{"from":"linux","to":"server","kind":"api-call","protocol":"HTTPS","label":"pairs once, then relays everything","data":"credentials-free pairing token, then mail and contact requests","sensitivity":"secret","bidirectional":true},{"from":"server.mail","to":"ext.mailhost","kind":"data-flow","protocol":"IMAP / SMTP over TLS","label":"the only credential holder","data":"mailbox credentials, message fetch and send","sensitivity":"secret","bidirectional":true},{"from":"server.pgp","to":"ext.keyserver","kind":"api-call","protocol":"HKPS / WKD over HTTPS","label":"key discovery and publishing","data":"public keys only","sensitivity":"public","bidirectional":true},{"from":"server.push","to":"ext.fcm","kind":"push","protocol":"HTTPS","label":"fans out notifications","data":"message id, sender, subject, keywords — never message bodies","sensitivity":"pii"},{"from":"server.push","to":"ext.unifiedpush","kind":"push","protocol":"HTTPS","label":"de-Googled push path","data":"notification metadata only","sensitivity":"pii"},{"from":"server.push","to":"ext.apns","kind":"push","protocol":"HTTPS","label":"fans out notifications","data":"notification metadata only","sensitivity":"pii"},{"from":"ext.fcm","to":"android.push","kind":"push","protocol":"FCM","label":"wakes the client","data":"notification metadata","sensitivity":"pii"},{"from":"ext.unifiedpush","to":"android.push","kind":"push","protocol":"UnifiedPush","label":"wakes the client","data":"notification metadata","sensitivity":"pii"},{"from":"ext.unifiedpush","to":"linux.push","kind":"push","protocol":"UnifiedPush","label":"wakes the client","data":"notification metadata","sensitivity":"pii"},{"from":"ext.apns","to":"mac.app","kind":"push","protocol":"APNs","label":"wakes the client","data":"notification metadata","sensitivity":"pii"},{"from":"server.api","to":"server.auth","kind":"depends","label":"gates every request","data":"session and MFA state","sensitivity":"secret"},{"from":"server.auth","to":"server.captcha","kind":"depends","label":"escalates on failed logins","data":"challenge difficulty per IP","sensitivity":"public"},{"from":"server.api","to":"server.mail","kind":"api-call","label":"inbox and send","data":"messages and attachments","sensitivity":"pii"},{"from":"server.api","to":"server.contacts","kind":"api-call","label":"contacts and CardDAV","data":"contact records and photos","sensitivity":"pii"},{"from":"server.api","to":"server.pgp","kind":"api-call","label":"key operations","data":"wrapped private keys, public keys","sensitivity":"e2ee"},{"from":"server.api","to":"server.push","kind":"api-call","label":"device registration","data":"push tokens and device hashes","sensitivity":"secret"},{"from":"server.mail","to":"server.classifier","kind":"data-flow","label":"sorts arriving mail","data":"message subject and body, locally","sensitivity":"pii"},{"from":"server.mail","to":"server.rules","kind":"data-flow","label":"applies filters on arrival","data":"message headers and body","sensitivity":"pii"},{"from":"server.mail","to":"server.push","kind":"data-flow","label":"new mail triggers a notification","data":"message metadata","sensitivity":"pii"},{"from":"server.mail","to":"server.store","kind":"data-flow","label":"caches messages","data":"message cache","sensitivity":"pii","bidirectional":true},{"from":"server.contacts","to":"server.store","kind":"data-flow","label":"persists contacts","data":"contact records","sensitivity":"pii","bidirectional":true},{"from":"server.pgp","to":"server.store","kind":"data-flow","label":"stores wrapped keys","data":"wrapped private keys the server cannot open","sensitivity":"e2ee","bidirectional":true},{"from":"server.auth","to":"server.store","kind":"data-flow","label":"users and sessions","data":"credential hashes, MFA secrets","sensitivity":"secret","bidirectional":true},{"from":"server.webui","to":"server.api","kind":"api-call","protocol":"HTTPS","label":"browser client","data":"same API the native clients use","sensitivity":"pii","bidirectional":true},{"from":"server.webui","to":"server.pgp","kind":"data-flow","label":"wraps keys in-browser before upload","data":"PGP private key wrapped with PBKDF2-HMAC-SHA256","sensitivity":"e2ee"},{"from":"server.push","to":"server.auth","kind":"data-flow","label":"push-approval MFA","data":"number-match challenge","sensitivity":"secret","bidirectional":true},{"from":"android.push","to":"android.mail","kind":"data-flow","label":"triggers a sync","data":"message ids to fetch","sensitivity":"pii"},{"from":"android.mail","to":"android.pgp","kind":"depends","label":"decrypts on device","data":"ciphertext in, plaintext held in memory","sensitivity":"e2ee"},{"from":"android.mail","to":"android.contacts","kind":"depends","label":"recipient autocomplete","data":"contact lookups","sensitivity":"pii"},{"from":"android.ui","to":"android.mail","kind":"depends","label":"renders the inbox","data":"message list and bodies","sensitivity":"pii"},{"from":"android.ui","to":"android.security","kind":"depends","label":"app lock and capture protection","data":"lock state","sensitivity":"public"},{"from":"android.push","to":"server.push","kind":"api-call","protocol":"HTTPS","label":"registers and polls","data":"push token, device hash, pull requests","sensitivity":"secret","bidirectional":true},{"from":"android.pgp","to":"server.pgp","kind":"sync","protocol":"HTTPS + QR","label":"key exchange","data":"public keys and QR fingerprints","sensitivity":"public","bidirectional":true},{"from":"android.contacts","to":"server.contacts","kind":"sync","protocol":"CardDAV over HTTPS","label":"contact sync","data":"vCards","sensitivity":"pii","bidirectional":true},{"from":"mac.app","to":"mac.data","kind":"depends","label":"drives sync","data":"fetch requests","sensitivity":"pii"},{"from":"mac.presentation","to":"mac.domain","kind":"depends","label":"renders use cases","data":"view models","sensitivity":"pii"},{"from":"mac.data","to":"mac.domain","kind":"depends","label":"implements repositories","data":"domain models","sensitivity":"pii"},{"from":"mac.data","to":"server.api","kind":"api-call","protocol":"HTTPS","label":"relay calls","data":"mail, contacts, keys","sensitivity":"pii","bidirectional":true},{"from":"mac.app","to":"server.push","kind":"api-call","protocol":"HTTPS","label":"registers for APNs","data":"device token","sensitivity":"secret","bidirectional":true},{"from":"linux.ui","to":"linux.core","kind":"depends","label":"binds to stores","data":"models and view state","sensitivity":"pii"},{"from":"linux.core","to":"linux.net","kind":"depends","label":"all server traffic","data":"API requests","sensitivity":"pii"},{"from":"linux.net","to":"linux.security","kind":"depends","label":"pins and verifies certificates","data":"certificate fingerprints","sensitivity":"secret"},{"from":"linux.pairing","to":"linux.net","kind":"depends","label":"redeems the pairing token","data":"single-use token","sensitivity":"secret"},{"from":"linux.push","to":"linux.core","kind":"data-flow","label":"triggers a sync","data":"message ids","sensitivity":"pii"},{"from":"linux.core","to":"linux.pgp","kind":"depends","label":"decrypts on device","data":"ciphertext in, plaintext out","sensitivity":"e2ee"},{"from":"linux.net","to":"server.api","kind":"api-call","protocol":"HTTPS","label":"relay calls","data":"mail, contacts, keys","sensitivity":"pii","bidirectional":true},{"from":"linux.pairing","to":"server.push","kind":"api-call","protocol":"HTTPS","label":"registers its push endpoint","data":"UnifiedPush endpoint, subscription id","sensitivity":"secret","bidirectional":true},{"from":"android.ui","to":"server.webui","kind":"depends","label":"mirrors the canonical palette","data":"theme token values","sensitivity":"public"},{"from":"linux.ui","to":"server.webui","kind":"depends","label":"mirrors the canonical palette","data":"theme token values","sensitivity":"public"}]}</script>
+<script id="kydata-seeds" type="application/json">{"server":{"x":618.4,"y":413.8},"android":{"x":433.2,"y":462.2},"mac":{"x":662.2,"y":149.3},"linux":{"x":766.9,"y":586.7},"ext.mailhost":{"x":367.5,"y":338.9},"ext.fcm":{"x":667.4,"y":273.2},"ext.unifiedpush":{"x":553.1,"y":628.6},"ext.apns":{"x":469.9,"y":200.8},"ext.keyserver":{"x":861.3,"y":366.6},"server.api":{"x":618.4,"y":235.8},"server.auth":{"x":714.6,"y":264.1},"server.captcha":{"x":780.3,"y":339.9},"server.mail":{"x":794.6,"y":439.1},"server.classifier":{"x":752.9,"y":530.4},"server.pgp":{"x":668.5,"y":584.6},"server.contacts":{"x":568.3,"y":584.6},"server.rules":{"x":483.9,"y":530.4},"server.push":{"x":442.2,"y":439.1},"server.store":{"x":456.5,"y":339.9},"server.webui":{"x":522.2,"y":264.1},"android.push":{"x":433.2,"y":324.2},"android.mail":{"x":552.7,"y":393.2},"android.pgp":{"x":552.7,"y":531.2},"android.contacts":{"x":433.2,"y":600.2},"android.security":{"x":313.7,"y":531.2},"android.ui":{"x":313.7,"y":393.2},"mac.app":{"x":662.2,"y":27.3},"mac.domain":{"x":784.2,"y":149.3},"mac.data":{"x":662.2,"y":271.3},"mac.presentation":{"x":540.2,"y":149.3},"linux.core":{"x":766.9,"y":440.7},"linux.net":{"x":881,"y":495.7},"linux.security":{"x":909.2,"y":619.2},"linux.pairing":{"x":830.2,"y":718.2},"linux.push":{"x":703.6,"y":718.2},"linux.pgp":{"x":624.6,"y":619.2},"linux.ui":{"x":652.8,"y":495.7}}</script>
+<script>
+(()=>{function bt(t,e){var n,o=1;t==null&&(t=0),e==null&&(e=0);function r(){var i,a=n.length,c,l=0,s=0;for(i=0;i<a;++i)c=n[i],l+=c.x,s+=c.y;for(l=(l/a-t)*o,s=(s/a-e)*o,i=0;i<a;++i)c=n[i],c.x-=l,c.y-=s}return r.initialize=function(i){n=i},r.x=function(i){return arguments.length?(t=+i,r):t},r.y=function(i){return arguments.length?(e=+i,r):e},r.strength=function(i){return arguments.length?(o=+i,r):o},r}function Zt(t){let e=+this._x.call(null,t),n=+this._y.call(null,t);return te(this.cover(e,n),e,n,t)}function te(t,e,n,o){if(isNaN(e)||isNaN(n))return t;var r,i=t._root,a={data:o},c=t._x0,l=t._y0,s=t._x1,f=t._y1,p,d,m,y,g,h,u,x;if(!i)return t._root=a,t;for(;i.length;)if((g=e>=(p=(c+s)/2))?c=p:s=p,(h=n>=(d=(l+f)/2))?l=d:f=d,r=i,!(i=i[u=h<<1|g]))return r[u]=a,t;if(m=+t._x.call(null,i.data),y=+t._y.call(null,i.data),e===m&&n===y)return a.next=i,r?r[u]=a:t._root=a,t;do r=r?r[u]=new Array(4):t._root=new Array(4),(g=e>=(p=(c+s)/2))?c=p:s=p,(h=n>=(d=(l+f)/2))?l=d:f=d;while((u=h<<1|g)===(x=(y>=d)<<1|m>=p));return r[x]=i,r[u]=a,t}function ee(t){var e,n,o=t.length,r,i,a=new Array(o),c=new Array(o),l=1/0,s=1/0,f=-1/0,p=-1/0;for(n=0;n<o;++n)isNaN(r=+this._x.call(null,e=t[n]))||isNaN(i=+this._y.call(null,e))||(a[n]=r,c[n]=i,r<l&&(l=r),r>f&&(f=r),i<s&&(s=i),i>p&&(p=i));if(l>f||s>p)return this;for(this.cover(l,s).cover(f,p),n=0;n<o;++n)te(this,a[n],c[n],t[n]);return this}function ne(t,e){if(isNaN(t=+t)||isNaN(e=+e))return this;var n=this._x0,o=this._y0,r=this._x1,i=this._y1;if(isNaN(n))r=(n=Math.floor(t))+1,i=(o=Math.floor(e))+1;else{for(var a=r-n||1,c=this._root,l,s;n>t||t>=r||o>e||e>=i;)switch(s=(e<o)<<1|t<n,l=new Array(4),l[s]=c,c=l,a*=2,s){case 0:r=n+a,i=o+a;break;case 1:n=r-a,i=o+a;break;case 2:r=n+a,o=i-a;break;case 3:n=r-a,o=i-a;break}this._root&&this._root.length&&(this._root=c)}return this._x0=n,this._y0=o,this._x1=r,this._y1=i,this}function oe(){var t=[];return this.visit(function(e){if(!e.length)do t.push(e.data);while(e=e.next)}),t}function re(t){return arguments.length?this.cover(+t[0][0],+t[0][1]).cover(+t[1][0],+t[1][1]):isNaN(this._x0)?void 0:[[this._x0,this._y0],[this._x1,this._y1]]}function N(t,e,n,o,r){this.node=t,this.x0=e,this.y0=n,this.x1=o,this.y1=r}function ie(t,e,n){var o,r=this._x0,i=this._y0,a,c,l,s,f=this._x1,p=this._y1,d=[],m=this._root,y,g;for(m&&d.push(new N(m,r,i,f,p)),n==null?n=1/0:(r=t-n,i=e-n,f=t+n,p=e+n,n*=n);y=d.pop();)if(!(!(m=y.node)||(a=y.x0)>f||(c=y.y0)>p||(l=y.x1)<r||(s=y.y1)<i))if(m.length){var h=(a+l)/2,u=(c+s)/2;d.push(new N(m[3],h,u,l,s),new N(m[2],a,u,h,s),new N(m[1],h,c,l,u),new N(m[0],a,c,h,u)),(g=(e>=u)<<1|t>=h)&&(y=d[d.length-1],d[d.length-1]=d[d.length-1-g],d[d.length-1-g]=y)}else{var x=t-+this._x.call(null,m.data),M=e-+this._y.call(null,m.data),v=x*x+M*M;if(v<n){var w=Math.sqrt(n=v);r=t-w,i=e-w,f=t+w,p=e+w,o=m.data}}return o}function se(t){if(isNaN(f=+this._x.call(null,t))||isNaN(p=+this._y.call(null,t)))return this;var e,n=this._root,o,r,i,a=this._x0,c=this._y0,l=this._x1,s=this._y1,f,p,d,m,y,g,h,u;if(!n)return this;if(n.length)for(;;){if((y=f>=(d=(a+l)/2))?a=d:l=d,(g=p>=(m=(c+s)/2))?c=m:s=m,e=n,!(n=n[h=g<<1|y]))return this;if(!n.length)break;(e[h+1&3]||e[h+2&3]||e[h+3&3])&&(o=e,u=h)}for(;n.data!==t;)if(r=n,!(n=n.next))return this;return(i=n.next)&&delete n.next,r?(i?r.next=i:delete r.next,this):e?(i?e[h]=i:delete e[h],(n=e[0]||e[1]||e[2]||e[3])&&n===(e[3]||e[2]||e[1]||e[0])&&!n.length&&(o?o[u]=n:this._root=n),this):(this._root=i,this)}function ae(t){for(var e=0,n=t.length;e<n;++e)this.remove(t[e]);return this}function ce(){return this._root}function le(){var t=0;return this.visit(function(e){if(!e.length)do++t;while(e=e.next)}),t}function fe(t){var e=[],n,o=this._root,r,i,a,c,l;for(o&&e.push(new N(o,this._x0,this._y0,this._x1,this._y1));n=e.pop();)if(!t(o=n.node,i=n.x0,a=n.y0,c=n.x1,l=n.y1)&&o.length){var s=(i+c)/2,f=(a+l)/2;(r=o[3])&&e.push(new N(r,s,f,c,l)),(r=o[2])&&e.push(new N(r,i,f,s,l)),(r=o[1])&&e.push(new N(r,s,a,c,f)),(r=o[0])&&e.push(new N(r,i,a,s,f))}return this}function ue(t){var e=[],n=[],o;for(this._root&&e.push(new N(this._root,this._x0,this._y0,this._x1,this._y1));o=e.pop();){var r=o.node;if(r.length){var i,a=o.x0,c=o.y0,l=o.x1,s=o.y1,f=(a+l)/2,p=(c+s)/2;(i=r[0])&&e.push(new N(i,a,c,f,p)),(i=r[1])&&e.push(new N(i,f,c,l,p)),(i=r[2])&&e.push(new N(i,a,p,f,s)),(i=r[3])&&e.push(new N(i,f,p,l,s))}n.push(o)}for(;o=n.pop();)t(o.node,o.x0,o.y0,o.x1,o.y1);return this}function he(t){return t[0]}function de(t){return arguments.length?(this._x=t,this):this._x}function pe(t){return t[1]}function ge(t){return arguments.length?(this._y=t,this):this._y}function Q(t,e,n){var o=new Mt(e??he,n??pe,NaN,NaN,NaN,NaN);return t==null?o:o.addAll(t)}function Mt(t,e,n,o,r,i){this._x=t,this._y=e,this._x0=n,this._y0=o,this._x1=r,this._y1=i,this._root=void 0}function me(t){for(var e={data:t.data},n=e;t=t.next;)n=n.next={data:t.data};return e}var z=Q.prototype=Mt.prototype;z.copy=function(){var t=new Mt(this._x,this._y,this._x0,this._y0,this._x1,this._y1),e=this._root,n,o;if(!e)return t;if(!e.length)return t._root=me(e),t;for(n=[{source:e,target:t._root=new Array(4)}];e=n.pop();)for(var r=0;r<4;++r)(o=e.source[r])&&(o.length?n.push({source:o,target:e.target[r]=new Array(4)}):e.target[r]=me(o));return t};z.add=Zt;z.addAll=ee;z.cover=ne;z.data=oe;z.extent=re;z.find=ie;z.remove=se;z.removeAll=ae;z.root=ce;z.size=le;z.visit=fe;z.visitAfter=ue;z.x=de;z.y=ge;function S(t){return function(){return t}}function D(t){return(t()-.5)*1e-6}function nn(t){return t.x+t.vx}function on(t){return t.y+t.vy}function _t(t){var e,n,o,r=1,i=1;typeof t!="function"&&(t=S(t==null?1:+t));function a(){for(var s,f=e.length,p,d,m,y,g,h,u=0;u<i;++u)for(p=Q(e,nn,on).visitAfter(c),s=0;s<f;++s)d=e[s],g=n[d.index],h=g*g,m=d.x+d.vx,y=d.y+d.vy,p.visit(x);function x(M,v,w,k,A){var _=M.data,I=M.r,$=g+I;if(_){if(_.index>d.index){var R=m-_.x-_.vx,H=y-_.y-_.vy,T=R*R+H*H;T<$*$&&(R===0&&(R=D(o),T+=R*R),H===0&&(H=D(o),T+=H*H),T=($-(T=Math.sqrt(T)))/T*r,d.vx+=(R*=T)*($=(I*=I)/(h+I)),d.vy+=(H*=T)*$,_.vx-=R*($=1-$),_.vy-=H*$)}return}return v>m+$||k<m-$||w>y+$||A<y-$}}function c(s){if(s.data)return s.r=n[s.data.index];for(var f=s.r=0;f<4;++f)s[f]&&s[f].r>s.r&&(s.r=s[f].r)}function l(){if(e){var s,f=e.length,p;for(n=new Array(f),s=0;s<f;++s)p=e[s],n[p.index]=+t(p,s,e)}}return a.initialize=function(s,f){e=s,o=f,l()},a.iterations=function(s){return arguments.length?(i=+s,a):i},a.strength=function(s){return arguments.length?(r=+s,a):r},a.radius=function(s){return arguments.length?(t=typeof s=="function"?s:S(+s),l(),a):t},a}function rn(t){return t.index}function xe(t,e){var n=t.get(e);if(!n)throw new Error("node not found: "+e);return n}function At(t){var e=rn,n=p,o,r=S(30),i,a,c,l,s,f=1;t==null&&(t=[]);function p(h){return 1/Math.min(c[h.source.index],c[h.target.index])}function d(h){for(var u=0,x=t.length;u<f;++u)for(var M=0,v,w,k,A,_,I,$;M<x;++M)v=t[M],w=v.source,k=v.target,A=k.x+k.vx-w.x-w.vx||D(s),_=k.y+k.vy-w.y-w.vy||D(s),I=Math.sqrt(A*A+_*_),I=(I-i[M])/I*h*o[M],A*=I,_*=I,k.vx-=A*($=l[M]),k.vy-=_*$,w.vx+=A*($=1-$),w.vy+=_*$}function m(){if(a){var h,u=a.length,x=t.length,M=new Map(a.map((w,k)=>[e(w,k,a),w])),v;for(h=0,c=new Array(u);h<x;++h)v=t[h],v.index=h,typeof v.source!="object"&&(v.source=xe(M,v.source)),typeof v.target!="object"&&(v.target=xe(M,v.target)),c[v.source.index]=(c[v.source.index]||0)+1,c[v.target.index]=(c[v.target.index]||0)+1;for(h=0,l=new Array(x);h<x;++h)v=t[h],l[h]=c[v.source.index]/(c[v.source.index]+c[v.target.index]);o=new Array(x),y(),i=new Array(x),g()}}function y(){if(a)for(var h=0,u=t.length;h<u;++h)o[h]=+n(t[h],h,t)}function g(){if(a)for(var h=0,u=t.length;h<u;++h)i[h]=+r(t[h],h,t)}return d.initialize=function(h,u){a=h,s=u,m()},d.links=function(h){return arguments.length?(t=h,m(),d):t},d.id=function(h){return arguments.length?(e=h,d):e},d.iterations=function(h){return arguments.length?(f=+h,d):f},d.strength=function(h){return arguments.length?(n=typeof h=="function"?h:S(+h),y(),d):n},d.distance=function(h){return arguments.length?(r=typeof h=="function"?h:S(+h),g(),d):r},d}var sn={value:()=>{}};function ve(){for(var t=0,e=arguments.length,n={},o;t<e;++t){if(!(o=arguments[t]+"")||o in n||/[\s.]/.test(o))throw new Error("illegal type: "+o);n[o]=[]}return new ft(n)}function ft(t){this._=t}function an(t,e){return t.trim().split(/^|\s+/).map(function(n){var o="",r=n.indexOf(".");if(r>=0&&(o=n.slice(r+1),n=n.slice(0,r)),n&&!e.hasOwnProperty(n))throw new Error("unknown type: "+n);return{type:n,name:o}})}ft.prototype=ve.prototype={constructor:ft,on:function(t,e){var n=this._,o=an(t+"",n),r,i=-1,a=o.length;if(arguments.length<2){for(;++i<a;)if((r=(t=o[i]).type)&&(r=cn(n[r],t.name)))return r;return}if(e!=null&&typeof e!="function")throw new Error("invalid callback: "+e);for(;++i<a;)if(r=(t=o[i]).type)n[r]=ye(n[r],t.name,e);else if(e==null)for(r in n)n[r]=ye(n[r],t.name,null);return this},copy:function(){var t={},e=this._;for(var n in e)t[n]=e[n].slice();return new ft(t)},call:function(t,e){if((r=arguments.length-2)>0)for(var n=new Array(r),o=0,r,i;o<r;++o)n[o]=arguments[o+2];if(!this._.hasOwnProperty(t))throw new Error("unknown type: "+t);for(i=this._[t],o=0,r=i.length;o<r;++o)i[o].value.apply(e,n)},apply:function(t,e,n){if(!this._.hasOwnProperty(t))throw new Error("unknown type: "+t);for(var o=this._[t],r=0,i=o.length;r<i;++r)o[r].value.apply(e,n)}};function cn(t,e){for(var n=0,o=t.length,r;n<o;++n)if((r=t[n]).name===e)return r.value}function ye(t,e,n){for(var o=0,r=t.length;o<r;++o)if(t[o].name===e){t[o]=sn,t=t.slice(0,o).concat(t.slice(o+1));break}return n!=null&&t.push({name:e,value:n}),t}var kt=ve;var tt=0,st=0,it=0,be=1e3,ut,at,ht=0,J=0,dt=0,ct=typeof performance=="object"&&performance.now?performance:Date,Me=typeof window=="object"&&window.requestAnimationFrame?window.requestAnimationFrame.bind(window):function(t){setTimeout(t,17)};function St(){return J||(Me(ln),J=ct.now()+dt)}function ln(){J=0}function $t(){this._call=this._time=this._next=null}$t.prototype=pt.prototype={constructor:$t,restart:function(t,e,n){if(typeof t!="function")throw new TypeError("callback is not a function");n=(n==null?St():+n)+(e==null?0:+e),!this._next&&at!==this&&(at?at._next=this:ut=this,at=this),this._call=t,this._time=n,It()},stop:function(){this._call&&(this._call=null,this._time=1/0,It())}};function pt(t,e,n){var o=new $t;return o.restart(t,e,n),o}function _e(){St(),++tt;for(var t=ut,e;t;)(e=J-t._time)>=0&&t._call.call(void 0,e),t=t._next;--tt}function we(){J=(ht=ct.now())+dt,tt=st=0;try{_e()}finally{tt=0,un(),J=0}}function fn(){var t=ct.now(),e=t-ht;e>be&&(dt-=e,ht=t)}function un(){for(var t,e=ut,n,o=1/0;e;)e._call?(o>e._time&&(o=e._time),t=e,e=e._next):(n=e._next,e._next=null,e=t?t._next=n:ut=n);at=t,It(o)}function It(t){if(!tt){st&&(st=clearTimeout(st));var e=t-J;e>24?(t<1/0&&(st=setTimeout(we,t-ct.now()-dt)),it&&(it=clearInterval(it))):(it||(ht=ct.now(),it=setInterval(fn,be)),tt=1,Me(we))}}function Ae(){let t=1;return()=>(t=(1664525*t+1013904223)%4294967296)/4294967296}function ke(t){return t.x}function $e(t){return t.y}var hn=10,dn=Math.PI*(3-Math.sqrt(5));function Et(t){var e,n=1,o=.001,r=1-Math.pow(o,1/300),i=0,a=.6,c=new Map,l=pt(p),s=kt("tick","end"),f=Ae();t==null&&(t=[]);function p(){d(),s.call("tick",e),n<o&&(l.stop(),s.call("end",e))}function d(g){var h,u=t.length,x;g===void 0&&(g=1);for(var M=0;M<g;++M)for(n+=(i-n)*r,c.forEach(function(v){v(n)}),h=0;h<u;++h)x=t[h],x.fx==null?x.x+=x.vx*=a:(x.x=x.fx,x.vx=0),x.fy==null?x.y+=x.vy*=a:(x.y=x.fy,x.vy=0);return e}function m(){for(var g=0,h=t.length,u;g<h;++g){if(u=t[g],u.index=g,u.fx!=null&&(u.x=u.fx),u.fy!=null&&(u.y=u.fy),isNaN(u.x)||isNaN(u.y)){var x=hn*Math.sqrt(.5+g),M=g*dn;u.x=x*Math.cos(M),u.y=x*Math.sin(M)}(isNaN(u.vx)||isNaN(u.vy))&&(u.vx=u.vy=0)}}function y(g){return g.initialize&&g.initialize(t,f),g}return m(),e={tick:d,restart:function(){return l.restart(p),e},stop:function(){return l.stop(),e},nodes:function(g){return arguments.length?(t=g,m(),c.forEach(y),e):t},alpha:function(g){return arguments.length?(n=+g,e):n},alphaMin:function(g){return arguments.length?(o=+g,e):o},alphaDecay:function(g){return arguments.length?(r=+g,e):+r},alphaTarget:function(g){return arguments.length?(i=+g,e):i},velocityDecay:function(g){return arguments.length?(a=1-g,e):1-a},randomSource:function(g){return arguments.length?(f=g,c.forEach(y),e):f},force:function(g,h){return arguments.length>1?(h==null?c.delete(g):c.set(g,y(h)),e):c.get(g)},find:function(g,h,u){var x=0,M=t.length,v,w,k,A,_;for(u==null?u=1/0:u*=u,x=0;x<M;++x)A=t[x],v=g-A.x,w=h-A.y,k=v*v+w*w,k<u&&(_=A,u=k);return _},on:function(g,h){return arguments.length>1?(s.on(g,h),e):s.on(g)}}}function Pt(){var t,e,n,o,r=S(-30),i,a=1,c=1/0,l=.81;function s(m){var y,g=t.length,h=Q(t,ke,$e).visitAfter(p);for(o=m,y=0;y<g;++y)e=t[y],h.visit(d)}function f(){if(t){var m,y=t.length,g;for(i=new Array(y),m=0;m<y;++m)g=t[m],i[g.index]=+r(g,m,t)}}function p(m){var y=0,g,h,u=0,x,M,v;if(m.length){for(x=M=v=0;v<4;++v)(g=m[v])&&(h=Math.abs(g.value))&&(y+=g.value,u+=h,x+=h*g.x,M+=h*g.y);m.x=x/u,m.y=M/u}else{g=m,g.x=g.data.x,g.y=g.data.y;do y+=i[g.data.index];while(g=g.next)}m.value=y}function d(m,y,g,h){if(!m.value)return!0;var u=m.x-e.x,x=m.y-e.y,M=h-y,v=u*u+x*x;if(M*M/l<v)return v<c&&(u===0&&(u=D(n),v+=u*u),x===0&&(x=D(n),v+=x*x),v<a&&(v=Math.sqrt(a*v)),e.vx+=u*m.value*o/v,e.vy+=x*m.value*o/v),!0;if(m.length||v>=c)return;(m.data!==e||m.next)&&(u===0&&(u=D(n),v+=u*u),x===0&&(x=D(n),v+=x*x),v<a&&(v=Math.sqrt(a*v)));do m.data!==e&&(M=i[m.data.index]*o/v,e.vx+=u*M,e.vy+=x*M);while(m=m.next)}return s.initialize=function(m,y){t=m,n=y,f()},s.strength=function(m){return arguments.length?(r=typeof m=="function"?m:S(+m),f(),s):r},s.distanceMin=function(m){return arguments.length?(a=m*m,s):Math.sqrt(a)},s.distanceMax=function(m){return arguments.length?(c=m*m,s):Math.sqrt(c)},s.theta=function(m){return arguments.length?(l=m*m,s):Math.sqrt(l)},s}function Nt(t){var e=S(.1),n,o,r;typeof t!="function"&&(t=S(t==null?0:+t));function i(c){for(var l=0,s=n.length,f;l<s;++l)f=n[l],f.vx+=(r[l]-f.x)*o[l]*c}function a(){if(n){var c,l=n.length;for(o=new Array(l),r=new Array(l),c=0;c<l;++c)o[c]=isNaN(r[c]=+t(n[c],c,n))?0:+e(n[c],c,n)}}return i.initialize=function(c){n=c,a()},i.strength=function(c){return arguments.length?(e=typeof c=="function"?c:S(+c),a(),i):e},i.x=function(c){return arguments.length?(t=typeof c=="function"?c:S(+c),a(),i):t},i}function Lt(t){var e=S(.1),n,o,r;typeof t!="function"&&(t=S(t==null?0:+t));function i(c){for(var l=0,s=n.length,f;l<s;++l)f=n[l],f.vy+=(r[l]-f.y)*o[l]*c}function a(){if(n){var c,l=n.length;for(o=new Array(l),r=new Array(l),c=0;c<l;++c)o[c]=isNaN(r[c]=+t(n[c],c,n))?0:+e(n[c],c,n)}}return i.initialize=function(c){n=c,a()},i.strength=function(c){return arguments.length?(e=typeof c=="function"?c:S(+c),a(),i):e},i.y=function(c){return arguments.length?(t=typeof c=="function"?c:S(+c),a(),i):t},i}function Ct(t){let e=new Map,n=new Map;for(let o of t.nodes)e.set(o.id,o),n.set(o.id,[]);for(let o of t.nodes)o.parent!=null&&n.get(o.parent)?.push(o.id);return{byId:e,children:n}}function jt(t,e){return(t.children.get(e)??[]).length>0}function pn(t,e,n){let o=[];for(let r of t.nodes){let i=!0,a=r.parent;for(;a!=null;){if(!n.has(a)){i=!1;break}a=e.byId.get(a)?.parent??null}i&&o.push(r.id)}return o}function Ie(t,e,n){let o=n;for(;o!=null&&!e.has(o);)o=t.byId.get(o)?.parent??null;return o}function zt(t,e,n){let o=pn(t,e,n),r=new Set(o),i=o.map(l=>e.byId.get(l)),a=new Map;for(let l of t.edges){let s=Ie(e,r,l.from),f=Ie(e,r,l.to);if(s==null||f==null||s===f)continue;let p=s<f?`${s} ${f}`:`${f} ${s}`,d=a.get(p);d||(d={id:p,forward:s,other:f,both:!1,kinds:new Set,sensitivities:new Set,hotPath:!1,sources:[],lifted:!1},a.set(p,d)),d.kinds.add(l.kind),l.sensitivity&&d.sensitivities.add(l.sensitivity),(l.bidirectional||s!==d.forward)&&(d.both=!0),(l.from!==s||l.to!==f)&&(d.lifted=!0),d.sources.push(l);let m=e.byId.get(l.from),y=e.byId.get(l.to);m?.performance?.hotPath&&y?.performance?.hotPath&&(d.hotPath=!0)}let c=[...a.values()].map(l=>({...l,source:l.forward,target:l.other,kind:gn(l.kinds),sensitivity:mn(l.sensitivities),label:l.sources.length===1?l.sources[0].label:`${l.sources.length} connections`}));return{nodes:i,links:c,visible:r}}var Se=["depends","embeds","sync","push","data-flow","api-call"];function gn(t){let e="depends";for(let n of t)Se.indexOf(n)>Se.indexOf(e)&&(e=n);return e}var Ee=["public","pii","e2ee","secret"];function mn(t){let e;for(let n of t)(e===void 0||Ee.indexOf(n)>Ee.indexOf(e))&&(e=n);return e}function Tt(t,e){let n=new Set(t),o=new Map(t.map(f=>[f,new Set]));for(let f of e)!n.has(f.from)||!n.has(f.to)||(o.get(f.from).add(f.to),o.get(f.to).add(f.from));let r=new Set(t),i=[],a=[...r].sort((f,p)=>o.get(p).size-o.get(f).size||f.localeCompare(p))[0];for(;a;){i.push(a),r.delete(a);let f=null,p=-1/0;for(let d of r){let m=o.get(a).has(d)?10:0,y=[...o.get(d)].filter(h=>i.includes(h)).length,g=m+y;(g>p||g===p&&f&&d<f)&&(p=g,f=d)}a=f}let c=[];for(let[f,p]of o)for(let d of p)f<d&&c.push([f,d]);let l=Pe(i,c),s=!0;for(;s&&l>0;){s=!1;for(let f=0;f<i.length-1;f++)for(let p=f+1;p<i.length;p++){[i[f],i[p]]=[i[p],i[f]];let d=Pe(i,c);d<l?(l=d,s=!0):[i[f],i[p]]=[i[p],i[f]]}}return i}function Pe(t,e){return xn(t,e)*100+yn(t,e)}function xn(t,e){let n=new Map(t.map((i,a)=>[i,a])),o=t.length,r=0;for(let[i,a]of e){let c=Math.abs(n.get(i)-n.get(a));r+=Math.min(c,o-c)}return r}function yn(t,e){let n=new Map(t.map((a,c)=>[a,c])),o=e.map(([a,c])=>[n.get(a),n.get(c)]),r=(a,c,l)=>c<l?a>c&&a<l:a>c||a<l,i=0;for(let a=0;a<o.length;a++){let[c,l]=o[a];for(let s=a+1;s<o.length;s++){let[f,p]=o[s];c===f||c===p||l===f||l===p||r(f,c,l)!==r(p,c,l)&&i++}}return i}function Ne(t,e){let n=t.length;if(n===1)return[...t];let o=(c,l)=>(e[c]+e[l])/2,r=0;for(let c=0;c<n;c++)r+=o(c,(c+1)%n);if(r>=Math.PI*2){let c=Math.PI*2/n,l=Bt(t.map((s,f)=>s-f*c));return t.map((s,f)=>l+f*c)}let i=[...t],a=()=>{for(let l=0;l<n-1;l++){let s=o(l,l+1)-(i[l+1]-i[l]);s>0&&(i[l]-=s/2,i[l+1]+=s/2)}let c=o(n-1,0)-(i[0]+Math.PI*2-i[n-1]);c>0&&(i[n-1]-=c/2,i[0]+=c/2)};for(let c=0;c<80;c++){a();for(let l=0;l<n;l++)i[l]+=(t[l]-i[l])*.08}for(let c=0;c<24;c++)a();return i}function Bt(t){let e=0,n=0;for(let o of t)e+=Math.cos(o),n+=Math.sin(o);return Math.atan2(n,e)}function Le(t,e,n={}){let o=n.labelWidth??(u=>u.label.length*8+46),r=n.minRadius??150;if(t.length<4)return null;let i=new Map(t.map(u=>[u.id,0]));for(let u of e)i.set(u.source,(i.get(u.source)??0)+1),i.set(u.target,(i.get(u.target)??0)+1);let a=[...t].sort((u,x)=>i.get(x.id)-i.get(u.id)||(u.id<x.id?-1:1))[0],c=new Set;for(let u of e)u.source===a.id&&c.add(u.target),u.target===a.id&&c.add(u.source);if(c.size<t.length-1)return null;let l=t.filter(u=>u.id!==a.id),s=e.filter(u=>u.source!==a.id&&u.target!==a.id).map(u=>({from:u.source,to:u.target})),f=Tt(l.map(u=>u.id),s),p=new Map(l.map(u=>[u.id,u])),d=f.map(u=>o(p.get(u))),m=d.reduce((u,x)=>u+x,0),y=Math.max(r,m/(Math.PI*2)),g=new Map,h=0;return f.forEach((u,x)=>{g.set(u,-Math.PI/2+(h+d[x]/2)/m*Math.PI*2),h+=d[x]}),{hubId:a.id,ringIds:f,radius:y,angles:g}}function vn(t,e,n,o,r,i,a){let c=a*.14;return{cx:(t+n)/2-i*c,cy:(e+o)/2+r*c}}function Ot({links:t,radius:e,strength:n=.55,clearance:o=18}){let r=[],i=[.15,.27,.39,.5,.61,.73,.85];function a(c){for(let l of t){let s=l.source,f=l.target,p=f.x-s.x,d=f.y-s.y,m=Math.hypot(p,d);if(m<1)continue;let y=p/m,g=d/m,h=e(s)+3,u=e(f)+3,x=s.x+y*h,M=s.y+g*h,v=f.x-y*u,w=f.y-g*u,{cx:k,cy:A}=vn(x,M,v,w,y,g,m);for(let _ of r){if(_===s||_===f)continue;let I=1/0,$=0,R=0;for(let G of i){let Z=1-G,Qt=Z*Z*x+2*Z*G*k+G*G*v,Jt=Z*Z*M+2*Z*G*A+G*G*w,Ut=Math.hypot(_.x-Qt,_.y-Jt);Ut<I&&(I=Ut,$=Qt,R=Jt)}let H=o+e(_);if(I>=H)continue;let T=_.x-$,lt=_.y-R,X=I;X<.01&&(T=-g,lt=y,X=1);let U=(H-X)*n*c;_.vx+=T/X*U,_.vy+=lt/X*U,s.vx-=T/X*U*.2,s.vy-=lt/X*U*.2,f.vx-=T/X*U*.2,f.vy-=lt/X*U*.2}}}return a.initialize=c=>{r=c},a}var V=1200,W=760;function Rt(t){return t===0?34:t===1?16:12}var O=JSON.parse(document.getElementById("kydata-graph").textContent),Be=JSON.parse(document.getElementById("kydata-seeds").textContent),P=Ct(O),Oe=["architecture","flow","security","performance"],Dt=window.matchMedia("(prefers-reduced-motion: reduce)").matches,b={expanded:new Set,view:"architecture",selected:null,hovered:null,query:""},gt=new Map,Re=[],B={hubId:null,ring:new Set};function wn(){let t=new Set;if(!b.expanded.size)return t;for(let e of O.nodes){let n=e.id;for(;n!=null;){if(b.expanded.has(n)){t.add(e.id);break}n=P.byId.get(n)?.parent??null}}return t}function bn(t){let e=new Set,n=t;for(;n!=null;)e.add(n),n=P.byId.get(n)?.parent??null;return e}function F(t){return t.emphasis==="periphery"?Rt(t.level)*.72:Rt(t.level)}var q=null,K=()=>{},Y=document.getElementById("graph"),Yt=E("g",{class:"hulls"}),He=E("g",{class:"links"}),De=E("g",{class:"arrows"}),qe=E("g",{class:"edge-labels"}),Fe=E("g",{class:"nodes"}),wt=E("g",{class:"viewport"});wt.append(Yt,He,De,qe,Fe);Y.append(wt);var j={w:V,h:W};function Xe(){let t=Y.getBoundingClientRect();!t.width||!t.height||(j.w=t.width,j.h=t.height,Y.setAttribute("viewBox",`0 0 ${j.w} ${j.h}`))}var C={w:V,h:W};function Ye(){let t=V*W,e=Math.max(j.w/j.h,.2);C.h=Math.sqrt(t/e),C.w=e*C.h}Xe();Ye();var Ht=j.w/j.h;new ResizeObserver(()=>{Xe();let t=j.w/j.h;Math.abs(t-Ht)/Ht>.15?(Ht=t,Ye(),rt()):Ge(Re)}).observe(Y);var Ve=document.getElementById("panel"),qt=document.getElementById("search"),Mn=document.getElementById("hint");function _n(t){let e=gt.get(t.id);if(e)Object.assign(e,t,{x:e.x,y:e.y,vx:e.vx,vy:e.vy});else{let n=Be[t.id]??{x:V/2,y:W/2};e={...t,x:n.x/V*C.w,y:n.y/W*C.h},gt.set(t.id,e)}return e}function rt(){let{nodes:t,links:e}=zt(O,P,b.expanded),n=t.map(_n);Re=n;let o=new Map(n.map(s=>[s.id,s])),r=wn(),i=r.size?e.filter(s=>r.has(s.source)||r.has(s.target)):e,a=[...b.expanded].find(s=>P.byId.get(s)?.level===0);if(a){let s=new Set;for(let f of i){let p=P.byId.get(f.source)?.parent===a,d=P.byId.get(f.target)?.parent===a;p&&!d&&s.add(f.target),d&&!p&&s.add(f.source)}i=i.filter(f=>{let p=f.source===a?f.target:f.target===a?f.source:null;return p==null||!s.has(p)})}let c=new Set;for(let s of i)r.has(s.source)&&c.add(s.target),r.has(s.target)&&c.add(s.source);for(let s of n)s.emphasis=r.size?r.has(s.id)?"focus":c.has(s.id)?"adjacent":"periphery":"normal";if(!b.expanded.size)for(let s of n){let f=Be[s.id];f&&(s.x=f.x/V*C.w,s.y=f.y/W*C.h,s.vx=0,s.vy=0)}for(let s of n){let f=b.expanded.has(s.id)&&s.level===0;f&&(s.x=C.w/2,s.y=C.h/2),s.fx=f?s.x:null,s.fy=f?s.y:null}kn(n,o,i);let l=i.map(s=>({...s,source:o.get(s.source),target:o.get(s.target)}));q?.stop(),q=Et(n).force("link",At(l).id(s=>s.id).distance(s=>s.source.emphasis==="focus"!=(s.target.emphasis==="focus")?230:s.source.level===0&&s.target.level===0?190:110).strength(s=>s.source.emphasis==="focus"!=(s.target.emphasis==="focus")?.12:.35)).force("charge",Pt().strength(s=>s.emphasis==="periphery"?-700:s.level===0?-1500:-900)).force("collide",_t().radius(s=>F(s)+(s.emphasis==="periphery"?22:30))).force("center",bt(C.w/2,C.h/2)).force("x",Nt(C.w/2).strength(.04)).force("y",Lt(C.h/2).strength(.06)).force("enclosure",An(o,1.3)).force("clearance",Ot({links:l,radius:F,strength:.6,clearance:20})),Sn(n,l),Dt?(q.stop(),q.tick(300),Ft(n,l)):(q.alpha(.7).restart(),q.on("tick",()=>Ft(n,l))),K=()=>Bn(n,l),K()}function An(t,e){let n=[];function o(r){for(let i of b.expanded){let a=t.get(i);if(!a)continue;let c=Vt(i);for(let l of n){if(We(l.id,i))continue;let s=l.x-a.x,f=l.y-a.y,p=Math.hypot(s,f)||1,d=c+F(l);if(p<d){let m=(d-p)*e*r;l.vx+=s/p*m,l.vy+=f/p*m}}}}return o.initialize=r=>{n=r},o}function Vt(t){return Ke(t)+46}function We(t,e){let n=t;for(;n!=null;){if(n===e)return!0;n=P.byId.get(n)?.parent??null}return!1}function Ke(t){let e=(P.children.get(t)??[]).length;return Math.max(130,26+e*21)}function kn(t,e,n){for(let r of t)r.ringPin=null;if(B.hubId=null,B.ring=new Set,!b.expanded.size){$n(t,e,n);return}let o=[...b.expanded].map(r=>e.get(r)).filter(Boolean).sort((r,i)=>r.level-i.level);for(let r of o){let i=(P.children.get(r.id)??[]).filter(l=>e.has(l));if(!i.length)continue;let a=Tt(i,O.edges),c=Ke(r.id);r.level===0&&(B.hubId=r.id,B.ring=new Set(a)),a.forEach((l,s)=>{let f=-Math.PI/2+s/a.length*Math.PI*2,p=e.get(l);p.ringPin={x:r.x+Math.cos(f)*c,y:r.y+Math.sin(f)*c}})}In(t,e,n);for(let r of t)r.ringPin&&(r.x=r.ringPin.x,r.y=r.ringPin.y,r.fx=r.ringPin.x,r.fy=r.ringPin.y)}function $n(t,e,n){let o=Le(t,n,{minRadius:150});if(!o)return;let r=e.get(o.hubId);if(r){r.x=C.w/2,r.y=C.h/2,r.ringPin={x:r.x,y:r.y};for(let i of o.ringIds){let a=e.get(i),c=o.angles.get(i);a.ringPin={x:r.x+Math.cos(c)*o.radius,y:r.y+Math.sin(c)*o.radius}}B.hubId=o.hubId,B.ring=new Set(o.ringIds);for(let i of t)i.ringPin&&(i.x=i.ringPin.x,i.y=i.ringPin.y,i.fx=i.ringPin.x,i.fy=i.ringPin.y)}}function In(t,e,n){let o=[...b.expanded].map(l=>e.get(l)).filter(l=>l&&l.level===0);if(o.length!==1)return;let r=o[0],i=Vt(r.id)+95,a=[];for(let l of t){if(We(l.id,r.id))continue;let s=[];for(let f of n){let p=f.source===l.id?f.target:f.target===l.id?f.source:null;if(p==null)continue;let d=e.get(p);d?.ringPin&&s.push(Math.atan2(d.ringPin.y-r.y,d.ringPin.x-r.x))}s.length&&a.push({node:l,angle:Bt(s)})}if(!a.length)return;a.sort((l,s)=>l.angle-s.angle);let c=Ne(a.map(l=>l.angle),a.map(l=>(l.node.label.length*8+40)/i));a.forEach((l,s)=>{l.node.ringPin={x:r.x+Math.cos(c[s])*i,y:r.y+Math.sin(c[s])*i}})}var nt=new Map,mt=new Map;function Sn(t,e){ot(mt,e,He,n=>{let o=E("g");return o.append(E("path",{class:"link-line"})),o}),ot(nt,t,Fe,n=>{let o=E("g",{class:"node",tabindex:"0",role:"button"});return o.append(E("circle",{class:"node-halo"}),E("circle",{class:"node-ring"}),E("circle",{class:"node-dot"}),E("text",{class:"node-label"}),E("text",{class:"node-meta"}),E("text",{class:"node-toggle"})),On(o,n),o});for(let n of e)mt.get(n.id).setAttribute("class",["link",`kind-${n.kind}`,n.sensitivity?`sens-${n.sensitivity}`:"sens-unknown",n.hotPath?"hot":"",n.both?"both":"",n.source.emphasis==="focus"&&n.target.emphasis==="focus"?"inside":""].filter(Boolean).join(" "));for(let n of t){let o=nt.get(n.id),r=jt(P,n.id);o.setAttribute("class",["node",`level-${n.level}`,`kind-${n.kind}`,`surface-${n.security?.attackSurface??"unknown"}`,`lat-${n.performance?.latencyClass??"unknown"}`,n.performance?.hotPath?"hot":"",r?"expandable":"",b.expanded.has(n.id)?"open":"",`em-${n.emphasis??"normal"}`].filter(Boolean).join(" "));let i=F(n);o.querySelector(".node-dot").setAttribute("r",i),o.querySelector(".node-ring").setAttribute("r",i+5),o.querySelector(".node-halo").setAttribute("r",i+11);let a=o.querySelector(".node-label");a.textContent=n.label,a.setAttribute("y",i+17);let c=o.querySelector(".node-meta");c.textContent=n.level===0&&n.emphasis!=="periphery"?En(n):"",c.setAttribute("y",i+31);let l=o.querySelector(".node-toggle");l.textContent=r?b.expanded.has(n.id)?"\u2212":"+":"",l.setAttribute("y",1),o.setAttribute("aria-label",Yn(n,r)),o.setAttribute("aria-expanded",r?String(b.expanded.has(n.id)):"")}Mn.textContent=b.expanded.size?"Click an open node to close it. Opening another switches to it.":"Click any node to open it up."}function En(t){return[t.language,t.kind==="external"?"external":t.kind].filter(Boolean).join(" \xB7 ")}function ot(t,e,n,o){let r=new Set(e.map(i=>i.id));for(let[i,a]of t)r.has(i)||(a.remove(),t.delete(i));for(let i of e)if(!t.has(i.id)){let a=o(i);a.dataset.id=i.id,t.set(i.id,a),n.append(a)}}function Pn(t,e,n,o,r,i,a,c,l,s){let f=(o+i)/2,p=(r+a)/2,d=B.hubId;if(d!=null&&(e.id===d||n.id===d))return{cx:f,cy:p};let y=(B.ring.has(e.id)||B.ring.has(n.id))&&d!=null?gt.get(d):null;if(y){let h=f-y.x,u=p-y.y,x=Math.hypot(h,u);x<.01&&(h=-l,u=c,x=1);let M=F(y)+26,v=!(B.ring.has(e.id)&&B.ring.has(n.id)),w=2*Math.max(0,M-x)+s*(v?.22:.1),k=[...B.ring].filter(A=>A!==e.id&&A!==n.id).map(A=>gt.get(A)).filter(A=>A&&A.x!=null);for(let A=0;A<8;A++){let _=f+h/x*w,I=p+u/x*w;if(Nn(o,r,_,I,i,a,k))return{cx:_,cy:I};w+=24}return{cx:f+h/x*w,cy:p+u/x*w}}let g=s*.14;return{cx:f-l*g,cy:p+c*g}}function Nn(t,e,n,o,r,i,a){for(let c=1;c<12;c++){let l=c/12,s=1-l,f=s*s*t+2*s*l*n+l*l*r,p=s*s*e+2*s*l*o+l*l*i;for(let d of a)if(Math.hypot(d.x-f,d.y-p)<F(d)+9)return!1}return!0}function Ft(t,e){for(let r of t)r.x=vt(r.x,60,C.w-60),r.y=vt(r.y,50,C.h-50),nt.get(r.id)?.setAttribute("transform",`translate(${r.x} ${r.y})`);let n=[],o=[];for(let r of e){let{source:i,target:a}=r,c=mt.get(r.id);if(!c)continue;let l=a.x-i.x,s=a.y-i.y,f=Math.hypot(l,s)||1,p=l/f,d=s/f,m=F(i)+3,y=F(a)+3,g=i.x+p*m,h=i.y+d*m,u=a.x-p*y,x=a.y-d*y,{cx:M,cy:v}=Pn(r,i,a,g,h,u,x,p,d,f);c.querySelector(".link-line").setAttribute("d",`M${g} ${h}Q${M} ${v} ${u} ${x}`);let w=u-M,k=x-v,A=Math.hypot(w,k)||1;if(n.push({id:`${r.id}>`,cls:c.getAttribute("class"),x:u,y:x,ux:w/A,uy:k/A}),r.both){let _=g-M,I=h-v,$=Math.hypot(_,I)||1;n.push({id:`${r.id}<`,cls:c.getAttribute("class"),x:g,y:h,ux:_/$,uy:I/$})}o.push({id:r.id,text:r.label,x:.25*g+.5*M+.25*u,y:.25*h+.5*v+.25*x})}zn(n),Tn(o),Cn(t),Ge(t),Ln(t)}var Ce={focus:0,normal:1,adjacent:2,periphery:3};function Ln(t){let e=[...t].sort((o,r)=>{let i=Number(b.expanded.has(r.id))-Number(b.expanded.has(o.id));if(i)return i;let a=Ce[o.emphasis??"normal"]-Ce[r.emphasis??"normal"];return a||o.level-r.level}),n=[];for(let o of e){let r=nt.get(o.id);if(!r)continue;let i=o.level===0?13.5:11,a=o.label.length*i*.29|0,c=o.y+F(o)+7,l=i+3+(o.level===0&&o.emphasis!=="periphery"?14:0),s={x1:o.x-a,x2:o.x+a,y1:c,y2:c+l},f=!n.some(p=>s.x1<p.x2&&s.x2>p.x1&&s.y1<p.y2&&s.y2>p.y1);f&&n.push(s),r.classList.toggle("label-hidden",!f)}}var je=new Map;function Cn(t){let e=new Map(t.map(o=>[o.id,o])),n=[];for(let o of b.expanded){let r=e.get(o);r&&(P.children.get(o)??[]).length&&n.push({id:o,x:r.x,y:r.y,r:Vt(o)})}ot(je,n,Yt,()=>E("circle",{class:"hull"}));for(let o of n){let r=je.get(o.id);r.setAttribute("cx",o.x),r.setAttribute("cy",o.y),r.setAttribute("r",o.r)}jn(t,e)}var ze=new Map;function jn(t,e){let n=[];for(let o of b.expanded){let r=e.get(o);if(r)for(let i of P.children.get(o)??[]){let a=e.get(i);a&&n.push({id:`${o}|${i}`,x1:r.x,y1:r.y,x2:a.x,y2:a.y})}}ot(ze,n,Yt,()=>E("line",{class:"spoke"}));for(let o of n){let r=ze.get(o.id);r.setAttribute("x1",o.x1),r.setAttribute("y1",o.y1),r.setAttribute("x2",o.x2),r.setAttribute("y2",o.y2)}}function Ge(t){if(!t.length)return;let e=t.filter(w=>w.emphasis!=="periphery"),n=e.length?e:t,o=1/0,r=1/0,i=-1/0,a=-1/0;for(let w of n){let k=F(w);o=Math.min(o,w.x-k),i=Math.max(i,w.x+k),r=Math.min(r,w.y-k),a=Math.max(a,w.y+k+(w.level===0?36:20))}let c=Math.min(90,Math.max(16,Math.min(j.w,j.h)*.08)),l=Math.max(i-o,1),s=Math.max(a-r,1),f=c+(j.w>900?46:0),p=j.w-c*2,d=j.h-c-f,m=Math.min(p/l,d/s,1.2),y=c+(p-l*m)/2-o*m,g=c+(d-s*m)/2-r*m;if(wt.setAttribute("transform",`translate(${y} ${g}) scale(${m})`),e.length===t.length)return;let h=30,u=(h-y)/m,x=(h-g)/m,M=(j.w-h-y)/m,v=(j.h-h-g)/m;for(let w of t){if(w.emphasis!=="periphery")continue;let k=F(w)+14,A=Math.max(k,w.label.length*3.1);w.x=vt(w.x,u+A,M-A),w.y=vt(w.y,x+k,v-k-14),nt.get(w.id)?.setAttribute("transform",`translate(${w.x} ${w.y})`)}}var xt=new Map;function zn(t){ot(xt,t,De,()=>E("path",{class:"arrow"}));for(let e of t){let n=xt.get(e.id),o=7,r=-e.uy,i=e.ux,a=e.x-e.ux*o,c=e.y-e.uy*o;n.setAttribute("d",`M${e.x} ${e.y}L${a+r*o*.5} ${c+i*o*.5}L${a-r*o*.5} ${c-i*o*.5}Z`),n.setAttribute("class",e.cls.replace("link","arrow"))}}var Xt=new Map;function Tn(t){ot(Xt,t,qe,()=>E("text",{class:"edge-label"}));for(let e of t){let n=Xt.get(e.id);n.textContent=e.text??"",n.setAttribute("x",e.x),n.setAttribute("y",e.y-5)}}function Bn(t,e){let n=b.hovered??b.selected,o=t.some(a=>a.id===n)?n:null,r=new Set;if(o){r.add(o);for(let a of e)a.source.id===o&&r.add(a.target.id),a.target.id===o&&r.add(a.source.id)}let i=b.query.trim().toLowerCase();Y.classList.toggle("focused",!!o),Y.classList.toggle("searching",i.length>0);for(let a of t){let c=nt.get(a.id);c.classList.toggle("related",r.has(a.id)),c.classList.toggle("focus",a.id===o),c.classList.toggle("match",i.length>0&&Qe(a,i))}for(let a of e){let c=mt.get(a.id),l=o?a.source.id===o||a.target.id===o:!1;c.classList.toggle("related",l),xt.get(`${a.id}>`)?.classList.toggle("related",l),xt.get(`${a.id}<`)?.classList.toggle("related",l),Xt.get(a.id)?.classList.toggle("related",l)}}function Qe(t,e){return t.label.toLowerCase().includes(e)||t.id.toLowerCase().includes(e)||(t.language??"").toLowerCase().includes(e)||(t.summary??"").toLowerCase().includes(e)||(t.paths??[]).some(n=>n.toLowerCase().includes(e))}function On(t,e){t.addEventListener("pointerenter",()=>{b.hovered=e.id,yt(e.id),K()}),t.addEventListener("pointerleave",()=>{b.hovered=null,K()}),t.addEventListener("focus",()=>{b.hovered=e.id,yt(e.id),K()}),t.addEventListener("blur",()=>{b.hovered=null,K()}),t.addEventListener("click",n=>{n.stopPropagation(),Te(e.id)}),t.addEventListener("keydown",n=>{(n.key==="Enter"||n.key===" ")&&(n.preventDefault(),Te(e.id))}),Rn(t,e)}function Te(t){if(!jt(P,t)){b.selected=t,yt(t);return}if(b.expanded.has(t))Je(t);else{let e=bn(t);for(let n of[...b.expanded])e.has(n)||b.expanded.delete(n);b.expanded.add(t)}Gt(),rt(),yt(t)}function Je(t){b.expanded.delete(t);for(let e of P.children.get(t)??[])Je(e)}function Rn(t,e){let n=!1,o=!1;t.addEventListener("pointerdown",i=>{n=!0,o=!1,t.setPointerCapture(i.pointerId),Dt||q?.alphaTarget(.15).restart()}),t.addEventListener("pointermove",i=>{if(!n)return;o=!0;let a=Dn(i);e.fx=a.x,e.fy=a.y,Dt&&(q?.tick(1),Ft(q.nodes(),q.force("link").links()))});let r=()=>{n&&(n=!1,e.fx=e.ringPin?e.ringPin.x:null,e.fy=e.ringPin?e.ringPin.y:null,q?.alphaTarget(0),o&&t.addEventListener("click",Hn,{capture:!0,once:!0}))};t.addEventListener("pointerup",r),t.addEventListener("pointercancel",r)}function Hn(t){t.stopPropagation()}function Dn(t){let e=wt.getScreenCTM();if(!e)return{x:V/2,y:W/2};let n=Y.createSVGPoint();n.x=t.clientX,n.y=t.clientY;let o=n.matrixTransform(e.inverse());return{x:o.x,y:o.y}}Y.addEventListener("click",()=>{b.selected=null,Wt(),K()});function yt(t){let e=P.byId.get(t);if(!e)return;let n=[],o=e;for(;o;)n.unshift(o.label),o=o.parent?P.byId.get(o.parent):null;let r=O.edges.filter(i=>i.from===t||i.to===t).map(i=>{let a=i.from===t?i.to:i.from,c=P.byId.get(a);return`<li><span class="conn-arrow">${i.from===t?"\u2192":"\u2190"}</span> <b>${L(c?.label??a)}</b>
+        <span class="conn-kind">${L(i.kind)}</span>
+        ${i.data?`<span class="conn-data">${L(i.data)}</span>`:""}</li>`}).join("");Ve.innerHTML=`
+    <div class="panel-head">
+      <p class="crumb">${n.slice(0,-1).map(L).join(" \u203A ")}</p>
+      <h2>${L(e.label)}</h2>
+      ${e.language?`<p class="lang">${L(e.language)}</p>`:""}
+    </div>
+    ${e.summary?`<p class="summary">${L(e.summary)}</p>`:""}
+    ${qn(e)}
+    ${Fn(e)}
+    ${Xn(e)}
+    ${r?`<section><h3>Connections</h3><ul class="conns">${r}</ul></section>`:""}
+  `,document.body.classList.add("panel-open")}function qn(t){if(!t.paths?.length)return"";let e=O.meta.repoBase;return`<section><h3>Source</h3><ul class="paths">${t.paths.map(o=>{let r=L(o);if(!e||!t.repo)return`<li><code>${r}</code></li>`;let i=`${e}/${t.repo}/tree/HEAD/${o}`;return`<li><a href="${L(i)}" target="_blank" rel="noopener"><code>${r}</code></a></li>`}).join("")}</ul></section>`}function Fn(t){let e=t.security;return e?`<section><h3>Security</h3><dl>${[e.attackSurface?et("Reachable from",e.attackSurface,`surface-${e.attackSurface}`):"",e.encryption?et("Encryption",e.encryption):"",e.handlesPii!==void 0?et("Personal data",e.handlesPii?"yes":"no"):"",e.authRequired!==void 0?et("Auth required",e.authRequired?"yes":"no"):""].join("")}</dl>
+    ${e.notes?`<p class="notes">${L(e.notes)}</p>`:""}</section>`:'<section class="unassessed"><h3>Security</h3><p>Not yet assessed.</p></section>'}function Xn(t){let e=t.performance;return e?`<section><h3>Performance</h3><dl>${[e.latencyClass?et("Latency",e.latencyClass,`lat-${e.latencyClass}`):"",e.hotPath!==void 0?et("Hot path",e.hotPath?"yes":"no"):""].join("")}</dl>
+    ${e.notes?`<p class="notes">${L(e.notes)}</p>`:""}</section>`:'<section class="unassessed"><h3>Performance</h3><p>Not yet assessed.</p></section>'}function et(t,e,n=""){return`<dt>${L(t)}</dt><dd class="${n}">${L(String(e))}</dd>`}function Wt(){let t=Object.entries(O.meta.commits??{});Ve.innerHTML=`
+    <div class="panel-head">
+      <p class="crumb">${L(O.meta.project)}</p>
+      <h2>Architecture map</h2>
+    </div>
+    ${O.meta.tagline?`<p class="summary">${L(O.meta.tagline)}</p>`:""}
+    <section>
+      <h3>How to read this</h3>
+      <ul class="howto">
+        <li>Click a node ringed in dashes to open it up.</li>
+        <li>Hollow nodes are systems you don't run.</li>
+        <li>Hover anything to dim the rest and read the detail.</li>
+        <li>The view tabs recolour the same graph by data flow, security, or load.</li>
+      </ul>
+    </section>
+    ${t.length?`<section><h3>Generated</h3><p class="notes">${L(O.meta.generated)} from
+           ${t.map(([e,n])=>`${L(e)} <code>${L(n)}</code>`).join(", ")}</p></section>`:""}
+  `,document.body.classList.remove("panel-open")}for(let t of document.querySelectorAll("[data-view]"))t.addEventListener("click",()=>Kt(t.dataset.view));function Kt(t){if(Oe.includes(t)){b.view=t,Y.setAttribute("data-view",t),document.body.setAttribute("data-view",t);for(let e of document.querySelectorAll("[data-view]"))e.setAttribute("aria-selected",String(e.dataset.view===t));Gt()}}qt.addEventListener("input",()=>{b.query=qt.value;let t=b.query.trim().toLowerCase();if(t.length>1){let e=!1;for(let n of O.nodes){if(!Qe(n,t))continue;let o=n.parent;for(;o!=null;)b.expanded.has(o)||(b.expanded.add(o),e=!0),o=P.byId.get(o)?.parent??null}if(e){rt();return}}K()});var Ue=document.getElementById("theme-toggle");function Ze(){return document.documentElement.getAttribute("data-theme")??(window.matchMedia("(prefers-color-scheme: light)").matches?"light":"dark")}function tn(){Ue.textContent=Ze()==="light"?"Patina Ky":"Polished Ky"}Ue.addEventListener("click",()=>{let t=Ze()==="light"?"dark":"light";document.documentElement.setAttribute("data-theme",t),tn();try{localStorage.setItem("kydata-theme",t)}catch{}});document.getElementById("reset").addEventListener("click",()=>{b.expanded.clear(),b.query="",qt.value="",Wt(),Gt(),rt()});function Gt(){let t=[];b.expanded.size&&t.push(`open=${[...b.expanded].join(",")}`),b.view!=="architecture"&&t.push(`view=${b.view}`);let e=t.join("&");history.replaceState(null,"",e?`#${e}`:location.pathname)}function en(){let t=new URLSearchParams(location.hash.slice(1));b.expanded.clear();let e=t.get("open");if(e)for(let n of e.split(","))P.byId.has(n)&&b.expanded.add(n);b.view=Oe.includes(t.get("view"))?t.get("view"):"architecture"}window.addEventListener("hashchange",()=>{en(),Kt(b.view),rt()});function E(t,e={}){let n=document.createElementNS("http://www.w3.org/2000/svg",t);for(let[o,r]of Object.entries(e))n.setAttribute(o,r);return n}function L(t){return String(t).replace(/[&<>"']/g,e=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"})[e])}function vt(t,e,n){return Math.min(n,Math.max(e,t))}function Yn(t,e){let n=[t.label];return t.language&&n.push(t.language),e&&n.push(b.expanded.has(t.id)?"expanded":"collapsed, activate to expand"),n.join(", ")}try{let t=localStorage.getItem("kydata-theme");(t==="light"||t==="dark")&&document.documentElement.setAttribute("data-theme",t)}catch{}tn();en();Kt(b.view);Wt();rt();})();
+
+</script>
+</body>
+</html>

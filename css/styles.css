@@ -303,6 +303,26 @@ section {
   margin-top: 3rem;
 }
 
+/* Sends people from the summary above into the full map. */
+.section-actions {
+  margin-top: 2.5rem;
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+  flex-wrap: wrap;
+}
+
+.section-actions .btn {
+  flex: none;
+}
+
+.section-note {
+  margin: 0;
+  flex: 1 1 22rem;
+  color: var(--ink);
+  font-size: 0.95rem;
+}
+
 .hub-node {
   background: var(--panel);
   border: 1px solid var(--line);
