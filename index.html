@@ -248,52 +248,52 @@
 
       <div class="security-grid">
         <div class="security-card">
-          <h3>App Lock</h3>
-          <p>An unlock gates the app before your inbox ever opens — a PIN with escalating delays and wipe-on-repeat on Android and Linux, Face ID, Touch ID or your passcode on Apple platforms.</p>
+          <h3>App lock</h3>
+          <p>A PIN with escalating delays and wipe-on-repeat protects Android and Linux; Face ID, Touch ID, or a passcode protects Apple devices.</p>
         </div>
         <div class="security-card">
-          <h3>Hostile Location Protection</h3>
-          <p>A one-tap mode that keeps zero on-device cache of mail, contacts, or attachments — built for border crossings and other moments where your device itself is the risk.</p>
+          <h3>Hostile location mode</h3>
+          <p>One tap disables on-device caching of mail, contacts, and attachments for border crossings or other high-risk situations.</p>
         </div>
         <div class="security-card">
-          <h3>Pinned server certificate</h3>
-          <p>Your server's certificate is pinned the moment you pair and the check fails closed after that, so a network that turns hostile later can't quietly swap in a fake one.</p>
+          <h3>Certificate pinning</h3>
+          <p>Pairing pins your server's certificate. Later certificate changes fail closed instead of silently trusting a hostile network.</p>
         </div>
         <div class="security-card">
-          <h3>Credentials behind the lock</h3>
-          <p>Your relay credential can be sealed behind your PIN, so background mail checks and MFA approvals wait until you actually unlock the app rather than running on their own.</p>
+          <h3>Locked credentials</h3>
+          <p>Seal relay credentials behind your PIN so background mail checks and MFA approvals wait until you unlock the app.</p>
         </div>
         <div class="security-card">
-          <h3>Phishing that wears our face</h3>
-          <p>Every client registers the kypost:// link scheme, so a link in an email could once raise a real pairing prompt pointing at an attacker's server. Mail impersonating KyPost is now flagged on the server, and the clients refuse the scheme outright.</p>
+          <h3>KyPost impersonation</h3>
+          <p>The server flags mail impersonating KyPost, and clients reject kypost:// links before they can open a fraudulent pairing prompt.</p>
         </div>
         <div class="security-card">
-          <h3>Sandboxed message rendering</h3>
-          <p>Sender HTML renders with JavaScript off, remote content blocked, and navigation out of the message denied — and a blocked link is labeled as blocked instead of silently doing nothing.</p>
+          <h3>Sandboxed messages</h3>
+          <p>Sender HTML runs without JavaScript, remote content, or navigation. Blocked links are clearly labeled.</p>
         </div>
         <div class="security-card">
-          <h3>No backups, no extraction</h3>
-          <p>Device backup and data-extraction are disabled at the OS level, so nothing here ends up in a cloud backup or a forensic pull.</p>
+          <h3>Backups and extraction blocked</h3>
+          <p>OS-level controls keep KyPost data out of device backups, cloud backups, and forensic pulls.</p>
         </div>
         <div class="security-card">
           <h3>Screen-capture protection</h3>
-          <p>Mail, PGP, and security screens are excluded from recordings and screen sharing — as far as each OS actually allows, which is documented rather than overstated.</p>
+          <p>Mail, PGP, and security screens are excluded from recordings and screen sharing within each OS's limits.</p>
         </div>
         <div class="security-card">
-          <h3>Password guessing gets expensive</h3>
-          <p>Three wrong passwords lock the account for fifteen minutes. You can also require a proof-of-work check, so every attempt has to spend CPU first — running on your own server, with no third party in the loop.</p>
+          <h3>Costly password guessing</h3>
+          <p>Three wrong passwords lock the account for 15 minutes. Optional self-hosted proof-of-work makes every attempt consume CPU.</p>
         </div>
         <div class="security-card">
-          <h3>MFA you can't approve by reflex</h3>
-          <p>A push approval asks you to pick the number your browser is showing, rather than just tap Approve — a reflexive tap is exactly what an MFA-fatigue attack is fishing for.</p>
+          <h3>Number-matched MFA</h3>
+          <p>Push MFA uses number matching instead of one-tap approval, reducing the risk of MFA-fatigue attacks.</p>
         </div>
         <div class="security-card">
-          <h3>Nothing updates itself</h3>
-          <p>Your server watches for new releases and emails you once when one lands, with the two commands that install it. It never updates itself — nothing changes underneath you until you decide it should.</p>
+          <h3>Manual updates</h3>
+          <p>The server emails you when a release lands but never installs it. Updates happen only when you run the provided commands.</p>
         </div>
         <div class="security-card">
-          <h3>Reviewed by an AI adversary</h3>
-          <p>Every repo is put through repeated whole-project hostile reviews, and the findings are fixed in public — each with a test checked to fail against the bug it closes, so it can't quietly come back.</p>
+          <h3>Adversarial reviews</h3>
+          <p>Every repository receives repeated whole-project reviews by an AI adversary. Public fixes include regression tests that fail if the bug returns.</p>
         </div>
       </div>
 
