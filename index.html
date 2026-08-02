@@ -5,10 +5,26 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>KyPost — A self-hosted email ecosystem</title>
 <meta name="description" content="KyPost is a self-hosted email ecosystem: a server you run yourself, paired with native apps for Android, iOS, macOS, and Linux — with local AI sorting, end-to-end PGP your server can't read, and shared themes.">
+<meta name="theme-color" content="#0d0f14">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<meta name="permissions-policy" content="camera=(), geolocation=(), microphone=()">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'self'; form-action 'self'; object-src 'none'; script-src 'self'; style-src 'self'; img-src 'self'; font-src 'self'">
+<link rel="canonical" href="https://www.kypost.org/">
+<meta property="og:title" content="KyPost — A self-hosted email ecosystem">
+<meta property="og:description" content="A self-hosted server paired with native email clients for Android, iOS, macOS, and Linux.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://www.kypost.org/">
+<meta property="og:image" content="https://www.kypost.org/assets/ky.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="KyPost — A self-hosted email ecosystem">
+<meta name="twitter:description" content="A self-hosted server paired with native email clients for Android, iOS, macOS, and Linux.">
+<meta name="twitter:image" content="https://www.kypost.org/assets/ky.png">
 <link rel="icon" type="image/png" href="assets/ky50p.png">
 <link rel="stylesheet" href="css/styles.css">
 </head>
 <body>
+
+<a class="skip-link" href="#main-content">Skip to content</a>
 
 <header class="site-nav">
   <div class="wrap">
@@ -16,7 +32,9 @@
       <img src="assets/ky50p.png" alt="KyPost logo">
       KyPost
     </a>
-    <ul class="nav-links">
+    <nav aria-label="Primary navigation">
+    <ul id="primary-navigation" class="nav-links">
+      <li><a href="#getting-started">Get started</a></li>
       <li><a href="#ecosystem">Ecosystem</a></li>
       <li><a href="architecture/">Architecture</a></li>
       <li><a href="#platforms">Platforms</a></li>
@@ -25,14 +43,15 @@
       <li><a href="#customize">Customize</a></li>
       <li><a href="#projects">Projects</a></li>
     </ul>
+    </nav>
     <div class="nav-actions">
       <a class="btn btn-primary" href="https://github.com/Yoshiofthewire" target="_blank" rel="noopener">GitHub</a>
-      <button class="nav-toggle" aria-label="Toggle navigation">☰</button>
+      <button class="nav-toggle" type="button" aria-label="Open navigation" aria-controls="primary-navigation" aria-expanded="false">☰</button>
     </div>
   </div>
 </header>
 
-<main>
+<main id="main-content">
 
   <section class="hero">
     <div class="rain-texture"></div>
@@ -42,12 +61,47 @@
         <h1>One inbox.<br>Every device.<br><span>Zero third parties.</span></h1>
         <p class="lede">KyPost is a self-hosted email ecosystem: a server you run yourself, paired with native apps for Android, iOS, macOS, and Linux — built around local AI sorting, end-to-end PGP your own server can't read, and themes that follow you everywhere.</p>
         <div class="hero-actions">
-          <a class="btn btn-primary" href="https://github.com/Yoshiofthewire" target="_blank" rel="noopener">View on GitHub</a>
+          <a class="btn btn-primary" href="#getting-started">Get started</a>
           <a class="btn" href="#ecosystem">See how it connects</a>
         </div>
       </div>
       <div class="hero-art">
         <img src="assets/ky.png" alt="KyPost octopus mascot holding an envelope">
+      </div>
+    </div>
+  </section>
+
+  <section id="getting-started">
+    <div class="wrap">
+      <span class="eyebrow">Start here</span>
+      <h2>Run KyPost in a few steps</h2>
+      <p class="lede">Install the server first, then pair the native clients you use. Everything stays connected through your own KyPost Server.</p>
+
+      <div class="getting-started-grid">
+        <article class="getting-started-card">
+          <div class="getting-started-step">01</div>
+          <h3>Install the server</h3>
+          <p>Run KyPost Server with Docker on hardware you control, then connect it to your existing IMAP and SMTP mailbox.</p>
+          <a class="btn btn-primary" href="https://github.com/Yoshiofthewire/KyPost-Server" target="_blank" rel="noopener">Server documentation</a>
+        </article>
+
+        <article class="getting-started-card">
+          <div class="getting-started-step">02</div>
+          <h3>Pair your devices</h3>
+          <p>Open the client for your platform and scan the QR code from the server. Mail credentials stay on the server.</p>
+          <div class="getting-started-links">
+            <a href="https://github.com/Yoshiofthewire/KyPost-for-Android" target="_blank" rel="noopener">Android</a>
+            <a href="https://github.com/Yoshiofthewire/KyPost-for-Mac" target="_blank" rel="noopener">macOS &amp; iOS</a>
+            <a href="https://github.com/Yoshiofthewire/KyPost-for-Linux" target="_blank" rel="noopener">Linux</a>
+          </div>
+        </article>
+
+        <article class="getting-started-card">
+          <div class="getting-started-step">03</div>
+          <h3>Harden your setup</h3>
+          <p>After pairing, configure client-held PGP keys, MFA, push preferences, contacts, and server-side filtering.</p>
+          <a class="btn" href="https://github.com/Yoshiofthewire/KyPost-Server" target="_blank" rel="noopener">Server repository</a>
+        </article>
       </div>
     </div>
   </section>

@@ -2,12 +2,25 @@
   const navToggle = document.querySelector(".nav-toggle");
   const navLinks = document.querySelector(".nav-links");
 
+  const setNavOpen = (open) => {
+    navLinks?.classList.toggle("open", open);
+    navToggle?.setAttribute("aria-expanded", String(open));
+    navToggle?.setAttribute("aria-label", open ? "Close navigation" : "Open navigation");
+  };
+
   navToggle?.addEventListener("click", () => {
-    navLinks.classList.toggle("open");
+    setNavOpen(!navLinks?.classList.contains("open"));
   });
 
   navLinks?.querySelectorAll("a").forEach((link) => {
-    link.addEventListener("click", () => navLinks.classList.remove("open"));
+    link.addEventListener("click", () => setNavOpen(false));
+  });
+
+  document.addEventListener("keydown", (event) => {
+    if (event.key === "Escape" && navLinks?.classList.contains("open")) {
+      setNavOpen(false);
+      navToggle?.focus();
+    }
   });
 
   const sections = [...document.querySelectorAll("main section[id]")];

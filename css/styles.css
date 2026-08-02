@@ -64,6 +64,24 @@ body {
   overflow-x: hidden;
 }
 
+.skip-link {
+  position: absolute;
+  left: 1rem;
+  top: -4rem;
+  z-index: 100;
+  padding: 0.6rem 0.9rem;
+  border-radius: 8px;
+  background: var(--accent);
+  color: #04120d;
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.skip-link:focus {
+  top: 1rem;
+}
+
 img {
   max-width: 100%;
   display: block;
@@ -104,7 +122,7 @@ section > .wrap > p.lede {
 }
 
 section {
-  padding: 5rem 0;
+  padding: 4rem 0;
   border-bottom: 1px solid var(--line);
 }
 
@@ -223,11 +241,18 @@ section {
   font-size: 1.1rem;
 }
 
+.nav-toggle:focus-visible,
+.nav-links a:focus-visible,
+.btn:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+}
+
 /* ---------- Hero ---------- */
 
 .hero {
   position: relative;
-  padding: 6rem 0 5rem;
+  padding: 5rem 0 4rem;
   overflow: hidden;
 }
 
@@ -300,12 +325,12 @@ section {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: 1.5rem;
-  margin-top: 3rem;
+  margin-top: 2.25rem;
 }
 
 /* Sends people from the summary above into the full map. */
 .section-actions {
-  margin-top: 2.5rem;
+  margin-top: 2rem;
   display: flex;
   align-items: center;
   gap: 1.25rem;
@@ -321,6 +346,56 @@ section {
   flex: 1 1 22rem;
   color: var(--ink);
   font-size: 0.95rem;
+}
+
+/* ---------- Getting started ---------- */
+
+.getting-started-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.5rem;
+  margin-top: 2.25rem;
+}
+
+.getting-started-card {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  padding: 1.4rem;
+}
+
+.getting-started-step {
+  font-family: var(--font-mono);
+  color: var(--accent);
+  font-size: 0.8rem;
+  margin-bottom: 0.75rem;
+}
+
+.getting-started-card h3 {
+  margin: 0 0 0.6rem;
+  font-size: 1.15rem;
+}
+
+.getting-started-card p {
+  margin: 0 0 1.25rem;
+  color: var(--ink);
+  font-size: 0.92rem;
+}
+
+.getting-started-card .btn {
+  margin-top: auto;
+}
+
+.getting-started-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem 1rem;
+  margin-top: auto;
+  font-family: var(--font-mono);
+  font-size: 0.82rem;
 }
 
 .hub-node {
@@ -386,7 +461,7 @@ section {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: 1.25rem;
-  margin-top: 3rem;
+  margin-top: 2.25rem;
 }
 
 .platform-card {
@@ -430,7 +505,7 @@ section {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: 1.25rem;
-  margin-top: 3rem;
+  margin-top: 2.25rem;
 }
 
 .security-card {
@@ -466,7 +541,7 @@ section {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 1.5rem;
-  margin-top: 3rem;
+  margin-top: 2.25rem;
   align-items: start;
 }
 
@@ -474,7 +549,7 @@ section {
   background: var(--panel);
   border: 1px solid var(--line);
   border-radius: 16px;
-  padding: 1.75rem;
+  padding: 1.4rem;
   height: 100%;
 }
 
@@ -502,13 +577,13 @@ section {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 1.5rem;
-  margin: 3rem 0 4rem;
+  margin: 2.25rem 0 3rem;
 }
 
 .pillar {
   border: 1px solid var(--line);
   border-radius: 14px;
-  padding: 1.5rem;
+  padding: 1.3rem;
   background: var(--panel);
 }
 
@@ -525,7 +600,7 @@ section {
 
 .theme-demo-scroller {
   position: relative;
-  height: 600vh;
+  height: 360vh;
 }
 
 .theme-demo-sticky {
@@ -624,14 +699,14 @@ section {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 1.5rem;
-  margin-top: 3rem;
+  margin-top: 2.25rem;
 }
 
 .project-card {
   background: var(--panel);
   border: 1px solid var(--line);
   border-radius: 16px;
-  padding: 1.75rem;
+  padding: 1.4rem;
 }
 
 .project-card-head {
@@ -702,7 +777,7 @@ section {
 /* ---------- Footer ---------- */
 
 footer {
-  padding: 3rem 0;
+  padding: 2.25rem 0;
 }
 
 footer .wrap {
@@ -731,7 +806,8 @@ footer .wrap {
   .platform-grid,
   .privacy-grid,
   .security-grid,
-  .pillars {
+  .pillars,
+  .getting-started-grid {
     grid-template-columns: repeat(2, 1fr);
   }
 
@@ -766,7 +842,8 @@ footer .wrap {
   .platform-grid,
   .privacy-grid,
   .security-grid,
-  .pillars {
+  .pillars,
+  .getting-started-grid {
     grid-template-columns: 1fr;
   }
 
@@ -783,7 +860,7 @@ footer .wrap {
   }
 
   section {
-    padding: 3.5rem 0;
+    padding: 2.75rem 0;
   }
 }
 
