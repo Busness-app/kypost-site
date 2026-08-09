@@ -1,0 +1,515 @@
+<!DOCTYPE HTML>
+<html lang="en" class="patina-ky sidebar-visible" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Security - KyPost Documentation</title>
+
+
+        <!-- Custom HTML head -->
+
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="favicon-de23e50b.svg">
+        <link rel="shortcut icon" href="favicon-8114d1fc.png">
+        <link rel="stylesheet" href="css/variables-8adf115d.css">
+        <link rel="stylesheet" href="css/general-e96d0476.css">
+        <link rel="stylesheet" href="css/chrome-d279d366.css">
+        <link rel="stylesheet" href="css/print-9e4910d8.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="fonts/fonts-9644e21d.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" id="mdbook-highlight-css" href="highlight-493f70e1.css">
+        <link rel="stylesheet" id="mdbook-tomorrow-night-css" href="tomorrow-night-4c0ae647.css">
+        <link rel="stylesheet" id="mdbook-ayu-highlight-css" href="ayu-highlight-3fdfc3ac.css">
+
+        <!-- Custom theme stylesheets -->
+        <link rel="stylesheet" href="theme/patina-ky-7e8694c1.css">
+
+
+        <!-- Provide site root and default themes to javascript -->
+        <script>
+            const path_to_root = "";
+            const default_light_theme = "patina-ky";
+            const default_dark_theme = "patina-ky";
+            window.path_to_searchindex_js = "searchindex-36183f93.js";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="toc-d1d12269.js"></script>
+    </head>
+    <body>
+    <div id="mdbook-help-container">
+        <div id="mdbook-help-popup">
+            <h2 class="mdbook-help-title">Keyboard shortcuts</h2>
+            <div>
+                <p>Press <kbd>←</kbd> or <kbd>→</kbd> to navigate between chapters</p>
+                <p>Press <kbd>S</kbd> or <kbd>/</kbd> to search in the book</p>
+                <p>Press <kbd>?</kbd> to show this help</p>
+                <p>Press <kbd>Esc</kbd> to hide this help</p>
+            </div>
+        </div>
+    </div>
+    <div id="mdbook-body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                let theme = localStorage.getItem('mdbook-theme');
+                let sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            const default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? default_dark_theme : default_light_theme;
+            let theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('patina-ky')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="mdbook-sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            let sidebar = null;
+            const sidebar_toggle = document.getElementById("mdbook-sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+                sidebar_toggle.checked = false;
+            }
+            if (sidebar === 'visible') {
+                sidebar_toggle.checked = true;
+            } else {
+                html.classList.remove('sidebar-visible');
+            }
+        </script>
+
+        <nav id="mdbook-sidebar" class="sidebar" aria-label="Table of contents">
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="toc.html"></iframe>
+            </noscript>
+            <div id="mdbook-sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <div id="mdbook-page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="mdbook-menu-bar-hover-placeholder"></div>
+                <div id="mdbook-menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="mdbook-sidebar-toggle" class="icon-button" for="mdbook-sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="mdbook-sidebar">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M0 96C0 78.3 14.3 64 32 64H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32C14.3 128 0 113.7 0 96zM0 256c0-17.7 14.3-32 32-32H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32c-17.7 0-32-14.3-32-32zM448 416c0 17.7-14.3 32-32 32H32c-17.7 0-32-14.3-32-32s14.3-32 32-32H416c17.7 0 32 14.3 32 32z"/></svg></span>
+                        </label>
+                        <button id="mdbook-theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="mdbook-theme-list">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M371.3 367.1c27.3-3.9 51.9-19.4 67.2-42.9L600.2 74.1c12.6-19.5 9.4-45.3-7.6-61.2S549.7-4.4 531.1 9.6L294.4 187.2c-24 18-38.2 46.1-38.4 76.1L371.3 367.1zm-19.6 25.4l-116-104.4C175.9 290.3 128 339.6 128 400c0 3.9 .2 7.8 .6 11.6c1.8 17.5-10.2 36.4-27.8 36.4H96c-17.7 0-32 14.3-32 32s14.3 32 32 32H240c61.9 0 112-50.1 112-112c0-2.5-.1-5-.2-7.5z"/></svg></span>
+                        </button>
+                        <ul id="mdbook-theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-default_theme">Auto</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-ayu">Ayu</button></li>
+                        </ul>
+                        <button id="mdbook-search-toggle" class="icon-button" type="button" title="Search (`/`)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="/ s" aria-controls="mdbook-searchbar">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M416 208c0 45.9-14.9 88.3-40 122.7L502.6 457.4c12.5 12.5 12.5 32.8 0 45.3s-32.8 12.5-45.3 0L330.7 376c-34.4 25.2-76.8 40-122.7 40C93.1 416 0 322.9 0 208S93.1 0 208 0S416 93.1 416 208zM208 352c79.5 0 144-64.5 144-144s-64.5-144-144-144S64 128.5 64 208s64.5 144 144 144z"/></svg></span>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">KyPost Documentation</h1>
+
+                    <div class="right-buttons">
+                        <a href="print.html" title="Print this book" aria-label="Print this book">
+                            <span class=fa-svg id="print-button"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M128 0C92.7 0 64 28.7 64 64v96h64V64H354.7L384 93.3V160h64V93.3c0-17-6.7-33.3-18.7-45.3L400 18.7C388 6.7 371.7 0 354.7 0H128zM384 352v32 64H128V384 368 352H384zm64 32h32c17.7 0 32-14.3 32-32V256c0-35.3-28.7-64-64-64H64c-35.3 0-64 28.7-64 64v96c0 17.7 14.3 32 32 32H64v64c0 35.3 28.7 64 64 64H384c35.3 0 64-28.7 64-64V384zm-16-88c-13.3 0-24-10.7-24-24s10.7-24 24-24s24 10.7 24 24s-10.7 24-24 24z"/></svg></span>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="mdbook-search-wrapper" class="hidden">
+                    <form id="mdbook-searchbar-outer" class="searchbar-outer">
+                        <div class="search-wrapper">
+                            <input type="search" id="mdbook-searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="mdbook-searchresults-outer" aria-describedby="searchresults-header">
+                            <div class="spinner-wrapper">
+                                <span class=fa-svg id="fa-spin"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M304 48c0-26.5-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48s48-21.5 48-48zm0 416c0-26.5-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48s48-21.5 48-48zM48 304c26.5 0 48-21.5 48-48s-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48zm464-48c0-26.5-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48s48-21.5 48-48zM142.9 437c18.7-18.7 18.7-49.1 0-67.9s-49.1-18.7-67.9 0s-18.7 49.1 0 67.9s49.1 18.7 67.9 0zm0-294.2c18.7-18.7 18.7-49.1 0-67.9S93.7 56.2 75 75s-18.7 49.1 0 67.9s49.1 18.7 67.9 0zM369.1 437c18.7 18.7 49.1 18.7 67.9 0s18.7-49.1 0-67.9s-49.1-18.7-67.9 0s-18.7 49.1 0 67.9z"/></svg></span>
+                            </div>
+                        </div>
+                    </form>
+                    <div id="mdbook-searchresults-outer" class="searchresults-outer hidden">
+                        <div id="mdbook-searchresults-header" class="searchresults-header"></div>
+                        <ul id="mdbook-searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('mdbook-sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('mdbook-sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#mdbook-sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="mdbook-content" class="content">
+                    <main>
+                        <h1 id="security-policy"><a class="header" href="#security-policy">Security Policy</a></h1>
+<p>KyPost is a self-hosted IMAP web client with end-to-end encryption support. This document describes security practices, known limitations, responsible disclosure, and deployment security considerations.</p>
+<h2 id="reporting-security-vulnerabilities"><a class="header" href="#reporting-security-vulnerabilities">Reporting Security Vulnerabilities</a></h2>
+<p>If you discover a security vulnerability in KyPost, please report it responsibly via GitHub Security Advisories rather than opening a public issue.</p>
+<h3 id="how-to-report"><a class="header" href="#how-to-report">How to Report</a></h3>
+<ol>
+<li>Go to the <a href="https://github.com/Yoshiofthewire/kypost-server/security/advisories">Security Advisories</a> page</li>
+<li>Click “Report a vulnerability”</li>
+<li>Provide a detailed description, affected versions, and reproduction steps if applicable</li>
+<li>Do not disclose the vulnerability publicly until a patch is available</li>
+</ol>
+<h3 id="disclosure-timeline"><a class="header" href="#disclosure-timeline">Disclosure Timeline</a></h3>
+<p>The timeline for public disclosure depends on severity:</p>
+<ul>
+<li><strong>Critical</strong> (e.g., unauthenticated data access, authentication bypass, remote code execution): 30 days</li>
+<li><strong>High</strong> (e.g., privilege escalation, cryptographic weakness): 60 days</li>
+<li><strong>Moderate</strong> (e.g., denial of service, information disclosure): 90 days</li>
+</ul>
+<p>We will:</p>
+<ul>
+<li>Acknowledge receipt of your report within 2 business days</li>
+<li>Provide a timeline and severity assessment</li>
+<li>Develop and test a patch</li>
+<li>Coordinate a release that includes the fix before the deadline</li>
+<li>Credit you in the patch release notes (unless you prefer anonymity)</li>
+</ul>
+<p>This timeline assumes good-faith coordination. Patches are publicly available before any advisory is published.</p>
+<h3 id="security-advisory-credits"><a class="header" href="#security-advisory-credits">Security Advisory Credits</a></h3>
+<p>We acknowledge security researchers and community members who help us improve. If you’d like credit in our release notes, please let us know your preferred name or handle when reporting.</p>
+<h2 id="known-limitations--trust-boundaries"><a class="header" href="#known-limitations--trust-boundaries">Known Limitations &amp; Trust Boundaries</a></h2>
+<p>KyPost is honest about what it does and does not protect. Read these carefully before deploying or relying on specific features.</p>
+<h3 id="pgp-key-custody"><a class="header" href="#pgp-key-custody">PGP Key Custody</a></h3>
+<p><strong>Client-Protected (End-to-End):</strong> Your browser generates or wraps the key under a password-derived key. The server cannot open it. Costs: you must unlock it each browser session, and admin operations cannot access your encrypted mail. Security can create an encrypted offline recovery backup in the browser; restoring it requires both the downloaded file and its separately displayed random secret. Neither the plaintext key nor the secret is sent to or stored by the server.</p>
+<h3 id="automatic-label-classification"><a class="header" href="#automatic-label-classification">Automatic Label Classification</a></h3>
+<p>Labels (keywords) assigned by the classifier are <strong>a sorting hint, not a security boundary.</strong> The classifier reads sender-controlled email, so a sender can write instructions into their message and influence which label it receives. Testing shows roughly 50-87% resistance to prompt injection depending on configuration, but every model tested let some through.</p>
+<p>What an attacker can achieve: steer the label on <strong>their own message</strong> into a different folder (e.g., <code>Primary</code> instead of <code>Promotions</code>). The keyword allowlist is enforced in Go after the model answers, so output outside that list is discarded. A message cannot be deleted, moved, marked read, or cause any other message to be affected.</p>
+<p><strong>Do not build security controls on labels.</strong> Never create a filter rule that grants trust based on a label, and never auto-archive anything by label alone. This is not a fixable limitation—it is a known property of using local LLMs to classify sender-controlled text. All decisions are recorded on the Decisions page so you can audit what actually happened.</p>
+<p><strong>Encrypted mail is not classified, and is never labelled as encrypted.</strong> A PGP-encrypted message has no readable body, so it skips the classifier and is tagged with your account’s default label instead. It is deliberately <em>not</em> given an <code>Encrypted</code> keyword. IMAP keywords are stored on the mail server in the clear, so such a keyword would hand whoever runs that server a precise index of which of your messages are worth attacking—the exact adversary client-protected custody exists to defend against—while looking to you like a security feature. It would break the rule above in both directions at once: not trustworthy enough to rely on, and harmful merely by existing. The padlock you see in the reader is derived from the message itself each time it is displayed and is never written anywhere.</p>
+<p><strong>Encrypted mail also stays out of mobile push payloads.</strong> Native push travels to the relay Worker and on to FCM/APNs in cleartext at every hop. For an encrypted message the sender and subject are withheld from that payload regardless of your Content Preview setting, because a third-party PGP/MIME message that does not use protected headers carries its real subject in the clear. Web push is unaffected—those payloads are encrypted to your browser’s own subscription keys (RFC 8291), so Content Preview remains your choice there.</p>
+<p>See <a href="README.html#classification-flow">Classification flow</a> for details.</p>
+<h3 id="email-html-rendering"><a class="header" href="#email-html-rendering">Email HTML Rendering</a></h3>
+<p>KyPost renders email HTML in a sandboxed iframe with DOMPurify sanitization. The sandbox blocks most attacks (no script execution in the frame itself), but:</p>
+<ul>
+<li><strong>Remote content loads on opt-in.</strong> Images, stylesheets, and other remote resources are not loaded by default. Users can opt in per message.</li>
+<li><strong>Links open in new windows</strong> (via <code>&lt;base target="_blank"&gt;</code>). The link destination is not constrained by KyPost; it goes wherever the sender directed.</li>
+<li><strong>Sender HTML survival.</strong> DOMPurify removes most dangerous elements, but sanitization is a defense layer, not a boundary. Treat all email HTML as potentially hostile, and do not trust email to be what it claims.</li>
+</ul>
+<h3 id="session-security"><a class="header" href="#session-security">Session Security</a></h3>
+<p>See <a href="README.html#session-behavior">Session Behavior</a> for full details. Key points:</p>
+<ul>
+<li>Sessions expire after 24 hours without activity (sliding window).</li>
+<li>Sessions have a hard cap: 7 days from issue, regardless of activity. Stolen cookies cannot be kept alive indefinitely.</li>
+<li>Sessions are swept every hour; expiry does not wait for the cookie to be presented again.</li>
+</ul>
+<h3 id="carddav--external-services"><a class="header" href="#carddav--external-services">CardDAV &amp; External Services</a></h3>
+<ul>
+<li>CardDAV clients (phones, desktop apps) authenticate with a per-user app-specific password separate from your login password.</li>
+<li>CardDAV clients that sync from external servers should use HTTPS-only connections.</li>
+<li>KyPost does not validate external CardDAV server certificates beyond the OS default. Use a trusted network or a known server.</li>
+</ul>
+<h3 id="mobile-pairing"><a class="header" href="#mobile-pairing">Mobile Pairing</a></h3>
+<ul>
+<li>Pairing tokens are valid for 90 seconds and signed with a per-instance secret.</li>
+<li>All pairing payloads (QR codes, pickup links, key exchange URLs) carry bearer credentials in the query string.</li>
+<li>Set <code>SERVER_BASE_URL</code> to an HTTPS URL so credentials travel over TLS.</li>
+<li>Pairing secrets must remain on the server only. Multi-replica deployments share one secret via <code>PAIRING_SECRET</code>.</li>
+</ul>
+<h2 id="deployment-security"><a class="header" href="#deployment-security">Deployment Security</a></h2>
+<p>Your deployment choices determine the actual security of KyPost. This section covers the configuration decisions that matter most.</p>
+<h3 id="tls--network-binding"><a class="header" href="#tls--network-binding">TLS &amp; Network Binding</a></h3>
+<p><strong>This is the most important decision you make.</strong> KyPost serves plain HTTP by default. Session cookies are marked <code>Secure</code> only when the request provably arrived over TLS.</p>
+<p><strong>Before exposing KyPost to a network, get TLS in front of it.</strong> On bare <code>http://</code>, cookies are sent in the clear on every request.</p>
+<p>Three ways to get TLS:</p>
+<p><strong>1. Terminate TLS in KyPost (recommended if you control the host)</strong></p>
+<ul>
+<li>Set <code>TLS_CERT_FILE</code> and <code>TLS_KEY_FILE</code> to mounted certificate paths.</li>
+<li>KyPost will reload certificates without a restart (important: restarting logs everyone out).</li>
+<li>Setting only one path is a startup error; it will not fall back to cleartext.</li>
+<li>This is the only option where “did this arrive over TLS?” is answered by the connection itself, not by a header. <code>TRUSTED_PROXY_CIDRS</code> does not apply.</li>
+<li>Certificates are never baked into the image.</li>
+<li>See <code>.env.example</code> and the commented volume in <code>docker-compose.yml</code>.</li>
+</ul>
+<p><strong>2. Cloudflare Tunnel</strong></p>
+<ul>
+<li>cloudflared gives the browser a real HTTPS origin (needed for proof-of-work CAPTCHA).</li>
+<li>No TLS configuration of your own.</li>
+<li>Set <code>TRUSTED_PROXY_CIDRS</code> to the proxy’s address.</li>
+</ul>
+<p><strong>3. Reverse proxy you operate</strong> (nginx, Caddy, etc.)</p>
+<ul>
+<li>Set <code>TRUSTED_PROXY_CIDRS</code> to the proxy’s address.</li>
+<li>Proxy must use HTTPS when reaching KyPost if the hop carries session cookies across a real network.</li>
+</ul>
+<h3 id="kypost_bind-which-interface-to-publish"><a class="header" href="#kypost_bind-which-interface-to-publish">KYPOST_BIND: Which Interface to Publish</a></h3>
+<p><code>KYPOST_BIND</code> controls which interface publishes port 5866. It has no default—compose refuses to start without it.</p>
+<ul>
+<li><strong><code>127.0.0.1</code></strong>: loopback only. Use when your reverse proxy runs on this same host.</li>
+<li><strong>Your LAN IP</strong> (e.g., <code>192.168.1.10</code>): publish to the LAN. Use when a proxy on another machine reaches this host.</li>
+<li><strong><code>0.0.0.0</code></strong>: publish everywhere. Use only when you deliberately want KyPost reachable on all interfaces. <strong>This is usually wrong unless you also set <code>ALLOW_INSECURE_HTTP=true</code> and understand the consequences.</strong></li>
+</ul>
+<p><strong>Check where your proxy actually reaches this container from</strong> before choosing. Loopback publishing severs a proxy that arrives by the host’s LAN address, which is the typical shape for cloudflared or an nginx on another machine.</p>
+<p><strong>Better practice:</strong> Run the proxy as a container on <code>kypost-net</code> (the network the compose file defines) and point it at <code>http://KyPost-Server:5866</code>. That network has DNS, nothing needs publishing, and the path ignores source NAT entirely—the server sees the real client IP. See <a href="docs/Reverse_Proxy_Networking.html">Reverse_Proxy_Networking.md</a> for setup and Docker error recovery.</p>
+<h3 id="trusted_proxy_cidrs-client-ip-trust"><a class="header" href="#trusted_proxy_cidrs-client-ip-trust">TRUSTED_PROXY_CIDRS: Client IP Trust</a></h3>
+<p>When a reverse proxy sits in front of KyPost, the server sees the proxy’s address as the client IP. This address is used as the key for:</p>
+<ul>
+<li>Login rate limiting (3 strikes, 15-minute lockout)</li>
+<li>Per-IP account lockout (looser, across all accounts)</li>
+<li>Instance-wide login rate limit</li>
+<li>MFA push approval notifications (the push names the address)</li>
+</ul>
+<p><strong>If <code>TRUSTED_PROXY_CIDRS</code> is empty, forwarded headers are discarded entirely.</strong> Every caller is keyed as the proxy, so all users share one lockout bucket and push notifications show the gateway address instead of the user signing in.</p>
+<p><strong>If <code>TRUSTED_PROXY_CIDRS</code> is set, KyPost trusts <code>X-Forwarded-Proto</code>, <code>X-Forwarded-Host</code>, and <code>X-Forwarded-For</code> from that CIDR.</strong> This marks cookies <code>Secure</code> and keys lockouts off the real caller. Cloudflare Tunnel also reads <code>CF-Connecting-IP</code> in preference to <code>X-Forwarded-For</code> (the edge appends your IP to XFF, but cloudflared may append its own hop after it).</p>
+<p><strong>Name the proxy’s address specifically, not a wide range.</strong> Any peer inside the range you name can forge their own client IP and bypass every rate limit and lockout. Example:</p>
+<ul>
+<li>Proxy on same host: <code>TRUSTED_PROXY_CIDRS=127.0.0.1/32</code></li>
+<li>Proxy pinned on <code>kypost-net</code>: <code>TRUSTED_PROXY_CIDRS=10.89.0.10/32</code> (replace with your proxy’s actual Docker network IP)</li>
+<li>Cloudflare Tunnel: <code>TRUSTED_PROXY_CIDRS=0.0.0.0/0</code> is unavoidable; Tunnel is the proxy and only Cloudflare can reach it</li>
+</ul>
+<p>This replaces the old <code>TRUST_PROXY_HEADERS=true</code>, which trusted forwarded headers on <em>every</em> connection from any peer and was only ever safe when nothing but the proxy could reach the port.</p>
+<h3 id="verification-confirm-your-setup"><a class="header" href="#verification-confirm-your-setup">Verification: Confirm Your Setup</a></h3>
+<p><strong>Verify rather than assume.</strong> Sign in and fetch <code>GET /api/status</code>. Check two fields:</p>
+<ul>
+<li><code>clientIp</code>: must be your own public address (or <code>127.0.0.1</code> if TLS-terminating in KyPost)</li>
+<li><code>proxyHeadersTrusted</code>: must be <code>true</code> (if using a reverse proxy) or <code>false</code> (if TLS-terminating in KyPost)</li>
+</ul>
+<p>If <code>clientIp</code> is a loopback or bridge address (e.g., <code>172.17.0.1</code>), every user shares one lockout bucket and the session cookie is not being marked <code>Secure</code>.</p>
+<h3 id="secret-handling"><a class="header" href="#secret-handling">Secret Handling</a></h3>
+<ul>
+<li><strong>Bootstrap password:</strong> On first start, KyPost writes the generated admin password to <code>first-run-password.txt</code> (mode <code>600</code>) in the config volume. Read it and delete it immediately. Logs are unrotated by default and readable by anything with Docker socket access—the password is never logged. This holds for both bootstrap paths: the container’s <code>--mode bootstrap-admin</code> step and a server started directly against an empty config directory. If the file cannot be written, startup fails rather than falling back to printing the password.</li>
+<li><strong>IMAP credentials:</strong> Stored encrypted at <code>/kypost/private/imap-config.key</code> (master key) and per-user encrypted payloads. The key does not rotate; compromise of the key compromises all encrypted credentials.</li>
+<li><strong>TOTP secrets:</strong> Master key at <code>/kypost/private/totp-secret.key</code>. Same rotation caveat.</li>
+<li><strong>Pairing secret:</strong> <code>/kypost/private/pairing.key</code> (generated on first start). Must be identical across replicas if you run multiple.</li>
+<li><strong>PGP server keys:</strong> Master key at <code>/kypost/private/pgp-server-key</code> (only if using server-protected PGP mode).</li>
+</ul>
+<p>All of these live in <code>/kypost/private</code>. <strong>Back up this volume separately and store it securely.</strong> Compromise of this directory compromises all user data.</p>
+<h3 id="first-run--bootstrap"><a class="header" href="#first-run--bootstrap">First Run &amp; Bootstrap</a></h3>
+<ul>
+<li>Bootstrap credentials are written to a file on first run, not logged. Running the binary directly (systemd, CI, a bare host) takes the same path as the container: the password goes to <code>first-run-password.txt</code>, and only its <em>path</em> is printed.</li>
+<li>You can pass <code>BOOTSTRAP_ADMIN_PASS</code> on the first run to avoid the file write (you already have the password).</li>
+<li>You can also pass <code>BOOTSTRAP_ADMIN_USER</code> to name the initial admin (default: <code>admin</code>).</li>
+<li>The bootstrap account starts on the password-change screen and cannot access anything else until you change it.</li>
+<li><strong>Change the password immediately after first login.</strong></li>
+</ul>
+<h2 id="authentication--authorization"><a class="header" href="#authentication--authorization">Authentication &amp; Authorization</a></h2>
+<h3 id="login-flow"><a class="header" href="#login-flow">Login Flow</a></h3>
+<ul>
+<li>Username + password, with per-account salt and work factor.</li>
+<li>Password never reaches the server. The browser derives an authentication half (what gets sent) and a key-wrapping half (for PGP key encryption, stays in the browser).</li>
+<li>CAPTCHA challenge on login (optional, configurable: <code>pow</code>, <code>turnstile</code>, <code>friendly</code>, or <code>none</code>).</li>
+<li>Proof-of-work CAPTCHA (<code>pow</code>) uses <code>crypto.subtle</code> and requires HTTPS (except localhost). Difficulty adapts per address; escalation is counted per IP and decays after 15 minutes or on successful login.</li>
+<li>3-strikes account lockout (15 minutes).</li>
+<li>Per-IP lockout (looser, across all accounts).</li>
+<li>Instance-wide login rate limit.</li>
+</ul>
+<h3 id="multi-factor-authentication"><a class="header" href="#multi-factor-authentication">Multi-Factor Authentication</a></h3>
+<ul>
+<li><strong>TOTP:</strong> Time-based one-time passwords from an authenticator app.</li>
+<li><strong>Recovery codes:</strong> One-time codes for account recovery if you lose your authenticator.</li>
+<li><strong>Push approval:</strong> A pairing device receives a push notification and approves or denies the sign-in. Set up on Security’s Devices tab.</li>
+</ul>
+<p>Recovery codes are the only way to regain access if you lose your authenticator and have no paired push device. <strong>Export and store them securely.</strong></p>
+<h3 id="roles--authorization"><a class="header" href="#roles--authorization">Roles &amp; Authorization</a></h3>
+<ul>
+<li><strong>Admin:</strong> Create users, reset passwords, deactivate accounts, view system logs, edit global settings, start health repair.</li>
+<li><strong>User:</strong> Connect their own IMAP/SMTP, read mail, manage their own rules and filters, set notification preferences, tune their own prompt.</li>
+</ul>
+<p>Authorization is checked on every request. Deactivation or role changes take effect on the user’s next request, not at the next login.</p>
+<h3 id="session-revocation"><a class="header" href="#session-revocation">Session Revocation</a></h3>
+<ul>
+<li>Logout invalidates the server-side session and clears the cookie.</li>
+<li>Deactivation or demotion takes effect on the user’s next authenticated request.</li>
+<li>KyPost will not let you deactivate or demote the last active admin.</li>
+</ul>
+<h2 id="data-protection"><a class="header" href="#data-protection">Data Protection</a></h2>
+<h3 id="encryption-at-rest"><a class="header" href="#encryption-at-rest">Encryption at Rest</a></h3>
+<p>User data is stored in <code>/kypost/config/users/&lt;userID&gt;/</code> and <code>/kypost/state/users/&lt;userID&gt;/</code>. What is encrypted:</p>
+<ul>
+<li><strong>IMAP credentials:</strong> AES encryption with a master key (<code>imap-config.key</code>).</li>
+<li><strong>TOTP secrets:</strong> AES encryption with a master key (<code>totp-secret.key</code>).</li>
+<li><strong>PGP keys (server-protected mode):</strong> Encryption with a master key (<code>pgp-server-key</code>).</li>
+<li><strong>PGP keys (client-protected mode):</strong> Wrapped in the browser under a password-derived key; the server stores only the wrapped blob.</li>
+<li><strong>Client recovery backups:</strong> The downloaded backup contains a second browser-created AES-GCM envelope. Its recovery secret is shown once and is not stored by KyPost.</li>
+</ul>
+<p>Unencrypted:</p>
+<ul>
+<li><strong>User account metadata:</strong> Username, role, hashed auth secret, account status.</li>
+<li><strong>Mailbox state:</strong> IMAP checkpoint, processed message IDs, decision history (which labels were assigned to which messages).</li>
+<li><strong>Configuration:</strong> Tuning prompts, notification preferences, rules, contacts.</li>
+</ul>
+<p><strong>If the <code>/kypost/private</code> volume is compromised, all encrypted data is compromised.</strong> This includes all IMAP credentials, TOTP secrets, and server-protected PGP keys.</p>
+<h3 id="encryption-in-transit"><a class="header" href="#encryption-in-transit">Encryption in Transit</a></h3>
+<ul>
+<li><strong>Sessions:</strong> Cookies marked <code>Secure</code> only on HTTPS (when <code>TRUSTED_PROXY_CIDRS</code> is set or TLS terminates in KyPost).</li>
+<li><strong>API calls:</strong> All backend endpoints expect HTTPS (enforced by cookie marking and browser same-origin policy).</li>
+<li><strong>CardDAV:</strong> Sync clients should use HTTPS-only servers.</li>
+<li><strong>Mobile pairing:</strong> QR codes and pickup links carry bearer tokens in the query string. Use HTTPS for <code>SERVER_BASE_URL</code>.</li>
+<li><strong>External services:</strong> Push relay APIs use HTTPS only (<code>PUSH_RELAY_URL</code> and <code>APNS_RELAY_URL</code> must be HTTPS).</li>
+</ul>
+<h3 id="sensitive-data-in-logs"><a class="header" href="#sensitive-data-in-logs">Sensitive Data in Logs</a></h3>
+<ul>
+<li>Passwords are never logged.</li>
+<li>IMAP credentials are never logged in full; auth errors mention only the server and username.</li>
+<li>CAPTCHA solutions are not logged.</li>
+<li>Mail content (subject, body) is not logged except for decision history (which labels were assigned).</li>
+</ul>
+<p>Check <code>/kypost/logs</code> regularly and configure your log aggregator appropriately if you have one.</p>
+<h2 id="security-headers--defense-in-depth"><a class="header" href="#security-headers--defense-in-depth">Security Headers &amp; Defense-in-Depth</a></h2>
+<p>KyPost applies multiple defense layers to protect against common web attacks.</p>
+<h3 id="content-security-policy"><a class="header" href="#content-security-policy">Content Security Policy</a></h3>
+<p>CSP is configured per CAPTCHA provider to block script injection and limit the capabilities an attacker can use if HTML sanitization fails. Directives:</p>
+<ul>
+<li><strong>script-src:</strong> <code>'self'</code> plus provider-specific origins only (e.g., <code>challenges.cloudflare.com</code> for Turnstile, <code>cdn.jsdelivr.net</code> for Friendly Captcha). <strong>Never <code>'unsafe-inline'</code> or <code>'unsafe-eval'</code>.</strong></li>
+<li><strong>style-src:</strong> <code>'self'</code> and <code>'unsafe-inline'</code> (for the Quill editor’s inline styles). No third-party origin.</li>
+<li><strong>font-src:</strong> <code>'self'</code> and <code>data:</code>. The webfonts are served from this origin out of the app bundle, not from Google Fonts — an install with no CAPTCHA configured, or on the self-hosted <code>pow</code> provider, makes no cross-origin request at all.</li>
+<li><strong>img-src/media-src:</strong> Allows remote content (shown after user opt-in per message) and data URIs.</li>
+<li><strong>object-src:</strong> <code>'none'</code> (blocks Flash, PDF plugins, etc.).</li>
+<li><strong>frame-ancestors:</strong> <code>'none'</code> (prevents clickjacking).</li>
+<li><strong>base-uri:</strong> <code>'self'</code> (prevents injection of a malicious <code>&lt;base&gt;</code> tag).</li>
+<li><strong>form-action:</strong> <code>'self'</code> (all forms submit to this origin).</li>
+</ul>
+<h3 id="other-security-headers"><a class="header" href="#other-security-headers">Other Security Headers</a></h3>
+<ul>
+<li><strong>X-Content-Type-Options:</strong> <code>nosniff</code> (prevents MIME sniffing).</li>
+<li><strong>X-Frame-Options:</strong> <code>DENY</code> (prevents framing).</li>
+<li><strong>Referrer-Policy:</strong> <code>strict-origin-when-cross-origin</code> (limits referrer information).</li>
+<li><strong>Permissions-Policy:</strong> Blocks powerful features (camera, microphone, geolocation, payment, etc.) that KyPost never needs.</li>
+<li><strong>Cross-Origin-Opener-Policy:</strong> <code>same-origin</code> (severs <code>window.opener</code> for client-protected PGP keys).</li>
+<li><strong>Strict-Transport-Security:</strong> <code>max-age=31536000; includeSubDomains</code> (on HTTPS only).</li>
+</ul>
+<h3 id="email-html-sanitization"><a class="header" href="#email-html-sanitization">Email HTML Sanitization</a></h3>
+<p>Email HTML is sanitized with DOMPurify before rendering in a sandboxed iframe. The sandbox blocks script execution in the frame itself, but <strong>DOMPurify is a defense layer, not a boundary.</strong> Treat all email HTML as potentially hostile.</p>
+<h3 id="captcha--rate-limiting"><a class="header" href="#captcha--rate-limiting">CAPTCHA &amp; Rate Limiting</a></h3>
+<ul>
+<li><strong>CAPTCHA:</strong> Optional on login. Proof-of-work (<code>pow</code>) is self-hosted and requires HTTPS. Turnstile and Friendly Captcha use third-party verification.</li>
+<li><strong>Account lockout:</strong> 3 failed login attempts = 15-minute lockout per account.</li>
+<li><strong>Per-IP lockout:</strong> Looser, across all accounts.</li>
+<li><strong>Instance-wide limit:</strong> Meters login attempts across the instance.</li>
+<li><strong>Proof-of-work escalation:</strong> Difficulty increases with each recent failed login from the same IP (up to a ceiling), decaying after 15 minutes or on success.</li>
+</ul>
+<p>None of these replace the others; they work together.</p>
+<h2 id="development--security-testing"><a class="header" href="#development--security-testing">Development &amp; Security Testing</a></h2>
+<p>Security-sensitive code should meet these expectations:</p>
+<h3 id="testing"><a class="header" href="#testing">Testing</a></h3>
+<ul>
+<li><strong>Authentication changes:</strong> Tests for bypass scenarios (missing credentials, modified tokens, expired sessions).</li>
+<li><strong>Authorization changes:</strong> Tests for privilege escalation (users accessing admin endpoints, admins accessing user-scoped data).</li>
+<li><strong>Cryptographic operations:</strong> Tests for correct key derivation, encryption, and decryption.</li>
+<li><strong>Input validation:</strong> Tests for injection attacks (SQL if applicable, command injection, XSS via sanitized HTML).</li>
+</ul>
+<p>See <code>backend/internal/api/*_security_fixes_test.go</code> for patterns.</p>
+<h3 id="code-review"><a class="header" href="#code-review">Code Review</a></h3>
+<p>Security-sensitive PRs should include:</p>
+<ul>
+<li>A description of the trust boundary or attack surface.</li>
+<li>Explanation of why the approach is secure (or why a known limitation is acceptable).</li>
+<li>Test coverage for both the happy path and attack scenarios.</li>
+<li>Any assumptions about the deployment (e.g., “assumes TLS termination in KyPost”).</li>
+</ul>
+<h3 id="examples-of-security-sensitive-code"><a class="header" href="#examples-of-security-sensitive-code">Examples of Security-Sensitive Code</a></h3>
+<ul>
+<li>Authentication and session management (<code>backend/internal/api/auth.go</code>)</li>
+<li>Authorization checks (role-based access)</li>
+<li>Cryptographic operations (key derivation, encryption, decryption)</li>
+<li>Input validation and sanitization (HTML email, filter rules, etc.)</li>
+<li>Rate limiting and lockout logic</li>
+<li>Trust boundary validation (client IP from forwarded headers, etc.)</li>
+</ul>
+<h2 id="security-contacts"><a class="header" href="#security-contacts">Security Contacts</a></h2>
+<ul>
+<li><strong>Vulnerability reports:</strong> <a href="https://github.com/Yoshiofthewire/kypost-server/security/advisories">GitHub Security Advisories</a></li>
+<li><strong>Maintainer:</strong> <a href="https://github.com/Yoshiofthewire">Yoshiofthewire</a></li>
+</ul>
+<h2 id="additional-resources"><a class="header" href="#additional-resources">Additional Resources</a></h2>
+<ul>
+<li><a href="README.html#where-your-pgp-private-key-lives">README Security Section</a> — PGP key custody, session behavior, users and roles</li>
+<li><a href="docs/Reverse_Proxy_Networking.html">Reverse Proxy Networking</a> — Setting up a proxy on <code>kypost-net</code></li>
+<li><a href="README.html#quick-start">Quick Start TLS Notes</a> — TLS termination and proxy configuration</li>
+<li>OWASP guidelines on secure development practices</li>
+</ul>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="deployment.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
+                            </a>
+
+                            <a rel="next prefetch" href="license.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="deployment.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
+                    </a>
+
+                    <a rel="next prefetch" href="license.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
+                    </a>
+            </nav>
+
+        </div>
+
+        <template id=fa-eye><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M288 32c-80.8 0-145.5 36.8-192.6 80.6C48.6 156 17.3 208 2.5 243.7c-3.3 7.9-3.3 16.7 0 24.6C17.3 304 48.6 356 95.4 399.4C142.5 443.2 207.2 480 288 480s145.5-36.8 192.6-80.6c46.8-43.5 78.1-95.4 93-131.1c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C433.5 68.8 368.8 32 288 32zM432 256c0 79.5-64.5 144-144 144s-144-64.5-144-144s64.5-144 144-144s144 64.5 144 144zM288 192c0 35.3-28.7 64-64 64c-11.5 0-22.3-3-31.6-8.4c-.2 2.8-.4 5.5-.4 8.4c0 53 43 96 96 96s96-43 96-96s-43-96-96-96c-2.8 0-5.6 .1-8.4 .4c5.3 9.3 8.4 20.1 8.4 31.6z"/></svg></span></template>
+        <template id=fa-eye-slash><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M38.8 5.1C28.4-3.1 13.3-1.2 5.1 9.2S-1.2 34.7 9.2 42.9l592 464c10.4 8.2 25.5 6.3 33.7-4.1s6.3-25.5-4.1-33.7L525.6 386.7c39.6-40.6 66.4-86.1 79.9-118.4c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C465.5 68.8 400.8 32 320 32c-68.2 0-125 26.3-169.3 60.8L38.8 5.1zM223.1 149.5C248.6 126.2 282.7 112 320 112c79.5 0 144 64.5 144 144c0 24.9-6.3 48.3-17.4 68.7L408 294.5c5.2-11.8 8-24.8 8-38.5c0-53-43-96-96-96c-2.8 0-5.6 .1-8.4 .4c5.3 9.3 8.4 20.1 8.4 31.6c0 10.2-2.4 19.8-6.6 28.3l-90.3-70.8zm223.1 298L373 389.9c-16.4 6.5-34.3 10.1-53 10.1c-79.5 0-144-64.5-144-144c0-6.9 .5-13.6 1.4-20.2L83.1 161.5C60.3 191.2 44 220.8 34.5 243.7c-3.3 7.9-3.3 16.7 0 24.6c14.9 35.7 46.2 87.7 93 131.1C174.5 443.2 239.2 480 320 480c47.8 0 89.9-12.9 126.2-32.5z"/></svg></span></template>
+        <template id=fa-copy><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M502.6 70.63l-61.25-61.25C435.4 3.371 427.2 0 418.7 0H255.1c-35.35 0-64 28.66-64 64l.0195 256C192 355.4 220.7 384 256 384h192c35.2 0 64-28.8 64-64V93.25C512 84.77 508.6 76.63 502.6 70.63zM464 320c0 8.836-7.164 16-16 16H255.1c-8.838 0-16-7.164-16-16L239.1 64.13c0-8.836 7.164-16 16-16h128L384 96c0 17.67 14.33 32 32 32h47.1V320zM272 448c0 8.836-7.164 16-16 16H63.1c-8.838 0-16-7.164-16-16L47.98 192.1c0-8.836 7.164-16 16-16H160V128H63.99c-35.35 0-64 28.65-64 64l.0098 256C.002 483.3 28.66 512 64 512h192c35.2 0 64-28.8 64-64v-32h-47.1L272 448z"/></svg></span></template>
+        <template id=fa-play><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M73 39c-14.8-9.1-33.4-9.4-48.5-.9S0 62.6 0 80V432c0 17.4 9.4 33.4 24.5 41.9s33.7 8.1 48.5-.9L361 297c14.3-8.7 23-24.2 23-41s-8.7-32.2-23-41L73 39z"/></svg></span></template>
+        <template id=fa-clock-rotate-left><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M75 75L41 41C25.9 25.9 0 36.6 0 57.9V168c0 13.3 10.7 24 24 24H134.1c21.4 0 32.1-25.9 17-41l-30.8-30.8C155 85.5 203 64 256 64c106 0 192 86 192 192s-86 192-192 192c-40.8 0-78.6-12.7-109.7-34.4c-14.5-10.1-34.4-6.6-44.6 7.9s-6.6 34.4 7.9 44.6C151.2 495 201.7 512 256 512c141.4 0 256-114.6 256-256S397.4 0 256 0C185.3 0 121.3 28.7 75 75zm181 53c-13.3 0-24 10.7-24 24V256c0 6.4 2.5 12.5 7 17l72 72c9.4 9.4 24.6 9.4 33.9 0s9.4-24.6 0-33.9l-65-65V152c0-13.3-10.7-24-24-24z"/></svg></span></template>
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="elasticlunr-ef4e11c1.min.js"></script>
+        <script src="mark-09e88c2c.min.js"></script>
+        <script src="searcher-09f2665d.js"></script>
+
+        <script src="clipboard-1626706a.min.js"></script>
+        <script src="highlight-abc7f01d.js"></script>
+        <script src="book-609e4cb8.js"></script>
+
+        <!-- Custom JS scripts -->
+        <script src="theme/patina-ky-09c876ba.js"></script>
+
+
+
+    </div>
+    </body>
+</html>

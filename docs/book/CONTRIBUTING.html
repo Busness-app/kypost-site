@@ -1,0 +1,593 @@
+<!DOCTYPE HTML>
+<html lang="en" class="patina-ky sidebar-visible" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Contributing - KyPost Documentation</title>
+
+
+        <!-- Custom HTML head -->
+
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="favicon-de23e50b.svg">
+        <link rel="shortcut icon" href="favicon-8114d1fc.png">
+        <link rel="stylesheet" href="css/variables-8adf115d.css">
+        <link rel="stylesheet" href="css/general-e96d0476.css">
+        <link rel="stylesheet" href="css/chrome-d279d366.css">
+        <link rel="stylesheet" href="css/print-9e4910d8.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="fonts/fonts-9644e21d.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" id="mdbook-highlight-css" href="highlight-493f70e1.css">
+        <link rel="stylesheet" id="mdbook-tomorrow-night-css" href="tomorrow-night-4c0ae647.css">
+        <link rel="stylesheet" id="mdbook-ayu-highlight-css" href="ayu-highlight-3fdfc3ac.css">
+
+        <!-- Custom theme stylesheets -->
+        <link rel="stylesheet" href="theme/patina-ky-7e8694c1.css">
+
+
+        <!-- Provide site root and default themes to javascript -->
+        <script>
+            const path_to_root = "";
+            const default_light_theme = "patina-ky";
+            const default_dark_theme = "patina-ky";
+            window.path_to_searchindex_js = "searchindex-36183f93.js";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="toc-d1d12269.js"></script>
+    </head>
+    <body>
+    <div id="mdbook-help-container">
+        <div id="mdbook-help-popup">
+            <h2 class="mdbook-help-title">Keyboard shortcuts</h2>
+            <div>
+                <p>Press <kbd>←</kbd> or <kbd>→</kbd> to navigate between chapters</p>
+                <p>Press <kbd>S</kbd> or <kbd>/</kbd> to search in the book</p>
+                <p>Press <kbd>?</kbd> to show this help</p>
+                <p>Press <kbd>Esc</kbd> to hide this help</p>
+            </div>
+        </div>
+    </div>
+    <div id="mdbook-body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                let theme = localStorage.getItem('mdbook-theme');
+                let sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            const default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? default_dark_theme : default_light_theme;
+            let theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('patina-ky')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="mdbook-sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            let sidebar = null;
+            const sidebar_toggle = document.getElementById("mdbook-sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+                sidebar_toggle.checked = false;
+            }
+            if (sidebar === 'visible') {
+                sidebar_toggle.checked = true;
+            } else {
+                html.classList.remove('sidebar-visible');
+            }
+        </script>
+
+        <nav id="mdbook-sidebar" class="sidebar" aria-label="Table of contents">
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="toc.html"></iframe>
+            </noscript>
+            <div id="mdbook-sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <div id="mdbook-page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="mdbook-menu-bar-hover-placeholder"></div>
+                <div id="mdbook-menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="mdbook-sidebar-toggle" class="icon-button" for="mdbook-sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="mdbook-sidebar">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M0 96C0 78.3 14.3 64 32 64H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32C14.3 128 0 113.7 0 96zM0 256c0-17.7 14.3-32 32-32H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32c-17.7 0-32-14.3-32-32zM448 416c0 17.7-14.3 32-32 32H32c-17.7 0-32-14.3-32-32s14.3-32 32-32H416c17.7 0 32 14.3 32 32z"/></svg></span>
+                        </label>
+                        <button id="mdbook-theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="mdbook-theme-list">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M371.3 367.1c27.3-3.9 51.9-19.4 67.2-42.9L600.2 74.1c12.6-19.5 9.4-45.3-7.6-61.2S549.7-4.4 531.1 9.6L294.4 187.2c-24 18-38.2 46.1-38.4 76.1L371.3 367.1zm-19.6 25.4l-116-104.4C175.9 290.3 128 339.6 128 400c0 3.9 .2 7.8 .6 11.6c1.8 17.5-10.2 36.4-27.8 36.4H96c-17.7 0-32 14.3-32 32s14.3 32 32 32H240c61.9 0 112-50.1 112-112c0-2.5-.1-5-.2-7.5z"/></svg></span>
+                        </button>
+                        <ul id="mdbook-theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-default_theme">Auto</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-ayu">Ayu</button></li>
+                        </ul>
+                        <button id="mdbook-search-toggle" class="icon-button" type="button" title="Search (`/`)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="/ s" aria-controls="mdbook-searchbar">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M416 208c0 45.9-14.9 88.3-40 122.7L502.6 457.4c12.5 12.5 12.5 32.8 0 45.3s-32.8 12.5-45.3 0L330.7 376c-34.4 25.2-76.8 40-122.7 40C93.1 416 0 322.9 0 208S93.1 0 208 0S416 93.1 416 208zM208 352c79.5 0 144-64.5 144-144s-64.5-144-144-144S64 128.5 64 208s64.5 144 144 144z"/></svg></span>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">KyPost Documentation</h1>
+
+                    <div class="right-buttons">
+                        <a href="print.html" title="Print this book" aria-label="Print this book">
+                            <span class=fa-svg id="print-button"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M128 0C92.7 0 64 28.7 64 64v96h64V64H354.7L384 93.3V160h64V93.3c0-17-6.7-33.3-18.7-45.3L400 18.7C388 6.7 371.7 0 354.7 0H128zM384 352v32 64H128V384 368 352H384zm64 32h32c17.7 0 32-14.3 32-32V256c0-35.3-28.7-64-64-64H64c-35.3 0-64 28.7-64 64v96c0 17.7 14.3 32 32 32H64v64c0 35.3 28.7 64 64 64H384c35.3 0 64-28.7 64-64V384zm-16-88c-13.3 0-24-10.7-24-24s10.7-24 24-24s24 10.7 24 24s-10.7 24-24 24z"/></svg></span>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="mdbook-search-wrapper" class="hidden">
+                    <form id="mdbook-searchbar-outer" class="searchbar-outer">
+                        <div class="search-wrapper">
+                            <input type="search" id="mdbook-searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="mdbook-searchresults-outer" aria-describedby="searchresults-header">
+                            <div class="spinner-wrapper">
+                                <span class=fa-svg id="fa-spin"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M304 48c0-26.5-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48s48-21.5 48-48zm0 416c0-26.5-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48s48-21.5 48-48zM48 304c26.5 0 48-21.5 48-48s-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48zm464-48c0-26.5-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48s48-21.5 48-48zM142.9 437c18.7-18.7 18.7-49.1 0-67.9s-49.1-18.7-67.9 0s-18.7 49.1 0 67.9s49.1 18.7 67.9 0zm0-294.2c18.7-18.7 18.7-49.1 0-67.9S93.7 56.2 75 75s-18.7 49.1 0 67.9s49.1 18.7 67.9 0zM369.1 437c18.7 18.7 49.1 18.7 67.9 0s18.7-49.1 0-67.9s-49.1-18.7-67.9 0s-18.7 49.1 0 67.9z"/></svg></span>
+                            </div>
+                        </div>
+                    </form>
+                    <div id="mdbook-searchresults-outer" class="searchresults-outer hidden">
+                        <div id="mdbook-searchresults-header" class="searchresults-header"></div>
+                        <ul id="mdbook-searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('mdbook-sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('mdbook-sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#mdbook-sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="mdbook-content" class="content">
+                    <main>
+                        <h1 id="contributing-to-kypost"><a class="header" href="#contributing-to-kypost">Contributing to KyPost</a></h1>
+<p>Thanks for wanting to work on this. KyPost is a self-hosted mail client, which
+means every contribution lands on a machine holding somebody’s IMAP password,
+their PGP private key, and their mail. This document describes what a
+contribution has to clear before it merges, and why each gate exists.</p>
+<p>Read <a href="CODE_OF_CONDUCT.html">CODE_OF_CONDUCT</a> first. It is short, and it governs
+every space here.</p>
+<h2 id="table-of-contents"><a class="header" href="#table-of-contents">Table of Contents</a></h2>
+<ul>
+<li><a href="#the-user-contract">The user contract</a></li>
+<li><a href="#getting-set-up">Getting set up</a></li>
+<li><a href="#before-you-build-a-feature">Before you build a feature</a></li>
+<li><a href="#ai-attribution-is-mandatory">AI attribution is mandatory</a></li>
+<li><a href="#every-pr-must-pass-ci">Every PR must pass CI</a></li>
+<li><a href="#every-pr-must-pass-hostile-ai-code-review">Every PR must pass hostile AI code review</a></li>
+<li><a href="#adversarial-review-skills">Adversarial review skills</a></li>
+<li><a href="#security-trade-offs-and-when-a-feature-gets-rejected">Security trade-offs, and when a feature gets rejected</a></li>
+<li><a href="#documentation-the-dox-chain">Documentation: the DOX chain</a></li>
+<li><a href="#commits-branches-and-prs">Commits, branches, and PRs</a></li>
+<li><a href="#pr-checklist">PR checklist</a></li>
+<li><a href="#licence">Licence</a></li>
+</ul>
+<h2 id="the-user-contract"><a class="header" href="#the-user-contract">The User Contract</a></h2>
+<p>Everything below follows from one promise KyPost makes to the person running it:</p>
+<blockquote>
+<p><strong>KyPost will be as secure as we can make it by default, and every place
+where security was traded for convenience will be written down, in plain
+language, where the user reads it before they rely on it.</strong></p>
+</blockquote>
+<p>Two halves, both load-bearing. “Secure by default” alone produces software
+people route around silently. “Documented” alone produces a footnote nobody
+reads under a default that quietly loses their mail. The project ships both, and
+a contribution that breaks either half does not merge — see
+<a href="#security-trade-offs-and-when-a-feature-gets-rejected">Security trade-offs</a>.</p>
+<p>Three standing invariants fall out of it, and they are not up for
+re-litigation in a PR:</p>
+<ul>
+<li><strong>KyPost never archives, deletes, or moves a user’s mail on its own.</strong>
+Destructive mail actions happen because a human asked for that specific
+action. No feature, default, heuristic, or classifier outcome may archive
+mail. This is absolute.</li>
+<li><strong>Classifier labels are a sorting hint, not a security boundary.</strong> The model
+reads sender-controlled text and can be steered by it. Never build a trust
+decision, filter action, or access control on a label. See
+<a href="SECURITY.html#automatic-label-classification">SECURITY.md</a>.</li>
+<li><strong>No silent fallbacks on a security-relevant setting.</strong> <code>KYPOST_BIND</code> has no
+default and compose refuses to start without it. Setting only one of
+<code>TLS_CERT_FILE</code>/<code>TLS_KEY_FILE</code> is a startup error, not a downgrade to
+cleartext. Copy that shape; do not add a permissive default to make a first
+run quieter.</li>
+</ul>
+<h2 id="getting-set-up"><a class="header" href="#getting-set-up">Getting Set Up</a></h2>
+<p>Docker is the only requirement to <em>run</em> KyPost:</p>
+<pre><code class="language-bash">cp .env.example .env      # set KYPOST_BIND — it has no default, on purpose
+docker compose up --build -d
+</code></pre>
+<p>To work on the code outside the container you need Go 1.26.5+, Node 26.5.0 (see
+<code>frontend/.nvmrc</code>), and npm 12.0.1. Use those versions rather than whatever your
+distro ships — CI pins to them because a Node major difference has already
+produced a suite that passed on every developer machine and failed all 14 cases
+in CI.</p>
+<pre><code class="language-bash"># backend
+cd backend &amp;&amp; go test ./...
+
+# frontend
+cd frontend &amp;&amp; npm ci &amp;&amp; npm test -- --run
+</code></pre>
+<p><code>README.md</code> covers configuration and runtime layout. <code>SECURITY.md</code> covers trust
+boundaries and known limitations — read it before touching anything on the list
+of <a href="SECURITY.html#examples-of-security-sensitive-code">security-sensitive code</a>.</p>
+<h2 id="before-you-build-a-feature"><a class="header" href="#before-you-build-a-feature">Before You Build a Feature</a></h2>
+<p>Open an issue first for anything larger than a bug fix. A feature that conflicts
+with the user contract is cheaper to discuss in an issue than to reject after
+you have written it, and the maintainer would rather say “not like that, but
+like this” before you spend a weekend on it.</p>
+<p>Bug fixes, documentation, and test coverage need no prior discussion. Send them.</p>
+<p>Fix the root cause, not the reported symptom. If a guard is missing, put it in
+the shared function every caller reaches, not in the one path the bug report
+happened to name.</p>
+<h2 id="ai-attribution-is-mandatory"><a class="header" href="#ai-attribution-is-mandatory">AI Attribution Is Mandatory</a></h2>
+<p>AI-assisted contributions are welcome. <strong>Undisclosed</strong> AI-assisted
+contributions are not.</p>
+<p>This is not a purity test. It is review triage: a reviewer reads
+machine-generated code differently — checking harder for plausible-looking
+functions that don’t exist, error handling that swallows the error, tests that
+assert the implementation back at itself, and confident comments describing
+behaviour the code doesn’t have. Hiding the provenance costs the reviewer that
+context and costs you a worse review.</p>
+<h3 id="what-you-must-do"><a class="header" href="#what-you-must-do">What you must do</a></h3>
+<p><strong>1. Attribute in the commit.</strong> Use a trailer naming the model or tool:</p>
+<pre><code>Co-Authored-By: Claude Opus 5 &lt;noreply@anthropic.com&gt;
+</code></pre>
+<p>Any tool, same rule — Copilot, Cursor, Codex, a local model, whatever. One
+trailer per tool that materially contributed.</p>
+<p><strong>2. Declare the level in the PR description.</strong> State which applies:</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Level</th><th>Meaning</th></tr>
+</thead>
+<tbody>
+<tr><td><strong>None</strong></td><td>You wrote it. Autocomplete of a variable name doesn’t count.</td></tr>
+<tr><td><strong>Assisted</strong></td><td>AI wrote fragments; you designed it, and you edited what it produced.</td></tr>
+<tr><td><strong>Generated</strong></td><td>AI produced most or all of the diff; you reviewed and tested it.</td></tr>
+<tr><td><strong>Agentic</strong></td><td>An agent ran a multi-step loop over the repo with limited step-by-step supervision.</td></tr>
+</tbody>
+</table>
+</div>
+<p><strong>3. Say what you verified yourself.</strong> For anything above <em>None</em>, the PR must
+say what you personally ran and read — “ran the backend suite locally, read
+every line of the diff, hand-tested the draft-expiry path in the UI” — not “the
+agent says tests pass.”</p>
+<p><strong>4. Own it.</strong> The human opening the PR is the author of that code for every
+purpose: licensing, review, correctness, and the bug it causes six months from
+now. “The model wrote it” is not an explanation of a defect and is never a
+defence. If you cannot explain why a line is there, delete the line.</p>
+<h3 id="what-gets-rejected-on-sight"><a class="header" href="#what-gets-rejected-on-sight">What gets rejected on sight</a></h3>
+<ul>
+<li>A PR whose description was clearly generated and does not describe the actual
+diff.</li>
+<li>Invented APIs, invented config keys, or citations to documentation that does
+not exist.</li>
+<li>Tests that were written to pass rather than to fail when the logic breaks.</li>
+<li>Bulk AI-generated churn across the repo — reformatting, “improved” comments,
+speculative refactors — that nobody asked for. See the <code>ponytail</code> philosophy
+in <a href="AGENTS.html">AGENTS.md</a>: deletion over addition, shortest working diff wins.</li>
+<li>A security-sensitive change where the disclosure level is <em>Generated</em> or
+<em>Agentic</em> and no human describes the trust boundary in their own words.</li>
+</ul>
+<h3 id="if-you-are-an-ai-agent-reading-this"><a class="header" href="#if-you-are-an-ai-agent-reading-this">If you are an AI agent reading this</a></h3>
+<p>Every rule above applies to you. Add the trailer, fill in the level, and do not
+write the human’s verification statement for them — leave it for them to fill
+in and tell them you did. <code>AGENTS.md</code> is a binding contract for this repo and
+you are required to follow the DOX chain.</p>
+<h2 id="every-pr-must-pass-ci"><a class="header" href="#every-pr-must-pass-ci">Every PR Must Pass CI</a></h2>
+<p><code>.github/workflows/ci.yml</code> runs on every pull request. All jobs must be green
+before merge. No exceptions, no admin override, no “flaky, re-run and ignore” —
+if a job is genuinely flaky, that is a bug to fix in the job.</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Job</th><th>What it runs</th></tr>
+</thead>
+<tbody>
+<tr><td><code>ci-backend-api</code></td><td><code>gofmt -l</code>, <code>go vet</code>, <code>golangci-lint</code>, <code>govulncheck</code>, <code>go test -race ./internal/api/...</code></td></tr>
+<tr><td><code>ci-backend-other</code></td><td>Same lint gates, <code>go test -race</code> on every other backend package</td></tr>
+<tr><td><code>ci-frontend</code></td><td><code>npm audit --omit=dev --audit-level=low</code> (blocking), <code>tsc --noEmit</code>, <code>vitest</code>, <code>vite build</code></td></tr>
+<tr><td><code>ci-relay</code></td><td>Typecheck both relay Workers, <code>node --test</code> on the relay behaviour suites</td></tr>
+<tr><td><code>ci-docker</code></td><td><code>docker build</code>, container reaches <code>healthy</code>, and the entrypoint still refuses a non-loopback cleartext bind</td></tr>
+</tbody>
+</table>
+</div>
+<p>Notes that trip people up:</p>
+<ul>
+<li><strong>Run the gates locally before pushing.</strong> All of them work on a normal
+machine, including the whole frontend suite. “It only fails in CI” is almost
+always a version difference — check <code>.nvmrc</code> and <code>go.mod</code>.</li>
+<li><strong>The frontend audit gate is <code>--audit-level=low</code> on runtime dependencies.</strong>
+That is deliberate: a “low” XSS advisory in the editor that renders quoted
+hostile email is not low here. Do not raise the threshold to get green.</li>
+<li><strong><code>ci-docker</code> has two halves and both are gates.</strong> One proves the container
+starts; the other proves the bind guard still refuses <code>0.0.0.0</code> without TLS.
+A red build is never fixed by loosening the entrypoint.</li>
+<li><strong>New logic ships with tests.</strong> Unit plus integration for new behaviour, a
+regression test for anything high-impact. Security-sensitive changes need
+attack-path coverage, not just the happy path — see
+<a href="SECURITY.html#testing">SECURITY.md</a> and the
+<code>backend/internal/api/*_security_fixes_test.go</code> files for the pattern.</li>
+</ul>
+<h2 id="every-pr-must-pass-hostile-ai-code-review"><a class="header" href="#every-pr-must-pass-hostile-ai-code-review">Every PR Must Pass Hostile AI Code Review</a></h2>
+<p>Beyond CI, every pull request gets an adversarial review pass. This is a
+required gate, not a suggestion, and it exists because ordinary review has a
+known failure mode: the reviewer shares the author’s mental model and agrees
+with the blind spot. That failure gets worse, not better, when both the author
+and the reviewer are agreeable LLMs.</p>
+<p><strong>What you do as the contributor:</strong> run at least one adversarial review skill
+against your own diff <em>before</em> you open the PR, address the findings, and paste
+the surviving findings — the ones you decided not to fix — into the PR
+description with your reasoning. A PR that says “hostile review found nothing”
+gets read with more suspicion than one that lists three findings and argues two
+of them down.</p>
+<p><strong>What the maintainer does:</strong> runs an independent hostile pass. Findings at
+BLOCK severity stop the merge until they are fixed or the reasoning is written
+down in the thread.</p>
+<p><strong>Answering a hostile finding.</strong> The finding is a claim about the code. Verify
+it before you act on it — hostile reviewers are wrong sometimes, and
+implementing a wrong suggestion politely is worse than pushing back. Three valid
+answers: fix it; show with evidence that it is not real; or accept it as a known
+limitation and document it where a user will see it. “Good catch, will address
+later” is not one of them.</p>
+<h2 id="adversarial-review-skills"><a class="header" href="#adversarial-review-skills">Adversarial Review Skills</a></h2>
+<p>These are Claude Code skills. If you use another agent, the prompts still work
+as instructions — the value is in the persona, not the harness.</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Skill</th><th>Use it for</th></tr>
+</thead>
+<tbody>
+<tr><td><code>hostile-review</code></td><td>The main gate. A senior engineer who hates what you built, output as severity-ranked criticisms with concrete fixes. Works on code, plans, and designs — run it on the design <em>before</em> you write the code.</td></tr>
+<tr><td><code>adversarial-reviewer</code></td><td>Three fixed personas — Saboteur (how this breaks in production), New Hire (can anyone maintain this), Security Auditor (OWASP-informed). Each must find at least one issue, so no persona can rubber-stamp. Verdict is BLOCK / CONCERNS / CLEAN.</td></tr>
+<tr><td><code>security-audit</code></td><td>Required for anything touching auth, sessions, crypto, input parsing, rate limiting, or trust boundaries. Hunts exploitable issues, not theoretical ones.</td></tr>
+<tr><td><code>ponytail-review</code></td><td>Over-engineering only: what to delete, which dependency is unnecessary, which abstraction is speculative. Run it on any diff that grew while you wrote it.</td></tr>
+<tr><td><code>/code-review</code></td><td>The maintainer’s working-diff review. <code>/code-review ultra</code> launches a multi-agent cloud review of the branch or a GitHub PR.</td></tr>
+</tbody>
+</table>
+</div>
+<p>How to pick:</p>
+<ul>
+<li><strong>Any PR:</strong> <code>hostile-review</code> on the diff. Minimum bar.</li>
+<li><strong>Touching security-sensitive code</strong> (<a href="SECURITY.html#examples-of-security-sensitive-code">the list</a>):
+<code>hostile-review</code> <strong>and</strong> <code>security-audit</code>.</li>
+<li><strong>New feature or new dependency:</strong> add <code>adversarial-reviewer</code> and
+<code>ponytail-review</code>. The Saboteur persona and the delete-it pass catch different
+things.</li>
+<li><strong>Design or plan, before implementation:</strong> <code>hostile-review</code> on the plan. Much
+cheaper than finding out after the code exists.</li>
+</ul>
+<p>Two rules on using them:</p>
+<ol>
+<li><strong>Feed the reviewer the real diff and the real context</strong>, including
+<code>AGENTS.md</code> and the relevant <code>SECURITY.md</code> section. A reviewer that cannot
+see the trust boundary cannot tell you that you crossed it.</li>
+<li><strong>Hostility points at code, never at people.</strong> These skills are instructed to
+be harsh about the work. That is in bounds. Pasting output that attacks a
+person is a <a href="CODE_OF_CONDUCT.html#hostile-reviews-are-about-code-never-people">Code of Conduct</a>
+violation, and running the skill does not launder it.</li>
+</ol>
+<h2 id="security-trade-offs-and-when-a-feature-gets-rejected"><a class="header" href="#security-trade-offs-and-when-a-feature-gets-rejected">Security Trade-Offs, and When a Feature Gets Rejected</a></h2>
+<p><strong>A new feature may be rejected outright if it weakens the user contract.</strong> Not
+“merged with a TODO” — rejected. A working, well-tested, wanted feature can
+still be the wrong feature for this project.</p>
+<h3 id="rules-a-feature-must-satisfy"><a class="header" href="#rules-a-feature-must-satisfy">Rules a feature must satisfy</a></h3>
+<ol>
+<li>
+<p><strong>Secure by default.</strong> If there is a safe mode and a convenient mode, the
+safe one is the default and the convenient one is an explicit opt-in the
+user performs knowingly. Never the reverse, never “most people want the easy
+one.”</p>
+</li>
+<li>
+<p><strong>Fail closed.</strong> Missing configuration, a half-set pair of settings, or an
+unreachable dependency produces a refusal with a readable error and a
+remediation step — not a quiet downgrade.</p>
+</li>
+<li>
+<p><strong>The trade-off is named in the PR.</strong> In your own words: what a user gives
+up, who can now see or do what they could not before, and what the worst
+realistic case is. A trade-off you cannot state plainly is one you have not
+finished understanding.</p>
+</li>
+<li>
+<p><strong>The trade-off is signposted where the user reads it</strong>, in three places as
+applicable:</p>
+<ul>
+<li><strong>README.md</strong> — one clear sentence on the feature bullet, so it is visible
+while deciding to use the feature.</li>
+<li><strong>SECURITY.md</strong> — the full explanation under <em>Known Limitations &amp; Trust
+Boundaries</em>, naming the cost explicitly.</li>
+<li><strong>The UI or <code>.env.example</code></strong> — at the point of choice, if the user selects
+it at runtime.</li>
+</ul>
+<p>The model for this is the PGP key-custody wording: Client-Protected vs
+Server-Protected, each with its costs stated flatly, including the sentence
+“this is <strong>not</strong> end-to-end encryption.” Aim for that. Write what the user
+loses, not a reassurance.</p>
+</li>
+<li>
+<p><strong>New attack surface is justified.</strong> A new dependency, a new outbound network
+call, a new stored secret, a new endpoint, or a new file in
+<code>/kypost/private</code> each need a paragraph on why it is necessary and what it
+can reach. Dependencies that parse hostile input (MIME, vCard, OpenPGP, HTML)
+get the highest scrutiny — prefer the standard library, then an
+already-present dependency, then nothing.</p>
+</li>
+<li>
+<p><strong>The blast radius is bounded and stated.</strong> If it goes wrong, say what is
+reachable: one message, one user, or the instance.</p>
+</li>
+</ol>
+<h3 id="rejected-on-principle"><a class="header" href="#rejected-on-principle">Rejected on principle</a></h3>
+<ul>
+<li>Anything that archives, deletes, or moves mail without an explicit human
+action for that message.</li>
+<li>Any trust decision derived from a classifier label.</li>
+<li>Convenience defaults that silently disable a protection — trusting forwarded
+headers from any peer, a default bind address, downgrading to cleartext when
+a certificate is missing, <code>unsafe-inline</code> in the CSP.</li>
+<li>Telemetry, analytics, crash reporting, or any phone-home. Self-hosted means
+the instance talks to the user’s mail server, their model, and the push relay
+they configured. Nothing else.</li>
+<li>Sending mail content, subjects, or credentials to a third-party service that
+the user did not explicitly configure — including AI services.</li>
+<li>Weakening a gate to make CI or a review pass.</li>
+<li>A convenience feature whose security cost cannot be explained to a
+non-expert user in two sentences. If it cannot be explained, it cannot be
+consented to.</li>
+</ul>
+<h3 id="if-your-trade-off-is-legitimate"><a class="header" href="#if-your-trade-off-is-legitimate">If your trade-off is legitimate</a></h3>
+<p>Plenty are. Server-protected PGP keys are a real security downgrade and they
+ship, because background polling and password resets are worth it to some
+people and the cost is stated in three places. That is the standard: not “no
+trade-offs,” but <strong>no unmarked trade-offs, and never as the default.</strong></p>
+<h2 id="documentation-the-dox-chain"><a class="header" href="#documentation-the-dox-chain">Documentation: The DOX Chain</a></h2>
+<p><code>AGENTS.md</code> files are binding contracts for their subtrees. Before editing,
+walk from the repository root to each file you intend to touch and read every
+<code>AGENTS.md</code> on the way. After editing, update the closest owning <code>AGENTS.md</code> if
+your change affected purpose, scope, contracts, workflows, inputs/outputs,
+constraints, or side effects — and refresh any affected Child DOX Index.</p>
+<p>Read the DOX section of the root <a href="AGENTS.html">AGENTS.md</a> in the session you are
+working in. Do not work from memory of it.</p>
+<h2 id="commits-branches-and-prs"><a class="header" href="#commits-branches-and-prs">Commits, Branches, and PRs</a></h2>
+<ul>
+<li>Branch off <code>main</code>. Name it for the work: <code>fix/draft-expiry-bounds</code>,
+<code>feat/carddav-groups</code>.</li>
+<li>Conventional Commits for the subject: <code>fix:</code>, <code>feat:</code>, <code>docs:</code>, <code>refactor:</code>,
+<code>test:</code>, <code>chore:</code>. Subject ≤ 50 characters, imperative mood.</li>
+<li>The body explains <strong>why</strong>, not what — the diff already says what. Skip the
+body when the why is obvious from the subject.</li>
+<li>Include the AI attribution trailer where it applies.</li>
+<li>One logical change per PR. A security fix and a refactor in one diff is two
+PRs, because the refactor will be reviewed less carefully than it should be.</li>
+<li>Link the issue the PR closes.</li>
+</ul>
+<h2 id="pr-checklist"><a class="header" href="#pr-checklist">PR Checklist</a></h2>
+<p>Paste this into your PR description and fill it in.</p>
+<pre><code class="language-markdown">### What and why
+
+
+### AI involvement
+- Level: None / Assisted / Generated / Agentic
+- Tools:
+- What I verified myself:
+
+### Gates
+- [ ] Ran the gates locally (go test -race, tsc, vitest, build)
+- [ ] New logic has tests; security-sensitive changes have attack-path tests
+- [ ] Ran adversarial review; findings addressed or argued below
+- [ ] DOX pass done — nearest AGENTS.md and any parent/child index updated
+
+### Adversarial review findings
+&lt;!-- Skills run, and every finding not fixed, with your reasoning. --&gt;
+
+### Security
+- [ ] No change to defaults that weakens a protection
+- [ ] Fails closed on missing or partial configuration
+- Trade-off introduced (if any), in one sentence:
+- Documented in: README.md / SECURITY.md / UI / .env.example / n-a
+- [ ] Does not archive, delete, or move mail without an explicit user action
+- [ ] No trust decision derived from a classifier label
+- New dependencies / network calls / stored secrets, and why:
+</code></pre>
+<h2 id="licence"><a class="header" href="#licence">Licence</a></h2>
+<p>KyPost is licensed under the GNU Affero General Public License v3.0. By
+contributing, you agree that your contribution is licensed under the same
+terms, and that you have the right to submit it — including the right to submit
+anything an AI tool produced on your behalf.</p>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="CODE_OF_CONDUCT.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
+                            </a>
+
+                            <a rel="next prefetch" href="appendix.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="CODE_OF_CONDUCT.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
+                    </a>
+
+                    <a rel="next prefetch" href="appendix.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
+                    </a>
+            </nav>
+
+        </div>
+
+        <template id=fa-eye><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M288 32c-80.8 0-145.5 36.8-192.6 80.6C48.6 156 17.3 208 2.5 243.7c-3.3 7.9-3.3 16.7 0 24.6C17.3 304 48.6 356 95.4 399.4C142.5 443.2 207.2 480 288 480s145.5-36.8 192.6-80.6c46.8-43.5 78.1-95.4 93-131.1c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C433.5 68.8 368.8 32 288 32zM432 256c0 79.5-64.5 144-144 144s-144-64.5-144-144s64.5-144 144-144s144 64.5 144 144zM288 192c0 35.3-28.7 64-64 64c-11.5 0-22.3-3-31.6-8.4c-.2 2.8-.4 5.5-.4 8.4c0 53 43 96 96 96s96-43 96-96s-43-96-96-96c-2.8 0-5.6 .1-8.4 .4c5.3 9.3 8.4 20.1 8.4 31.6z"/></svg></span></template>
+        <template id=fa-eye-slash><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M38.8 5.1C28.4-3.1 13.3-1.2 5.1 9.2S-1.2 34.7 9.2 42.9l592 464c10.4 8.2 25.5 6.3 33.7-4.1s6.3-25.5-4.1-33.7L525.6 386.7c39.6-40.6 66.4-86.1 79.9-118.4c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C465.5 68.8 400.8 32 320 32c-68.2 0-125 26.3-169.3 60.8L38.8 5.1zM223.1 149.5C248.6 126.2 282.7 112 320 112c79.5 0 144 64.5 144 144c0 24.9-6.3 48.3-17.4 68.7L408 294.5c5.2-11.8 8-24.8 8-38.5c0-53-43-96-96-96c-2.8 0-5.6 .1-8.4 .4c5.3 9.3 8.4 20.1 8.4 31.6c0 10.2-2.4 19.8-6.6 28.3l-90.3-70.8zm223.1 298L373 389.9c-16.4 6.5-34.3 10.1-53 10.1c-79.5 0-144-64.5-144-144c0-6.9 .5-13.6 1.4-20.2L83.1 161.5C60.3 191.2 44 220.8 34.5 243.7c-3.3 7.9-3.3 16.7 0 24.6c14.9 35.7 46.2 87.7 93 131.1C174.5 443.2 239.2 480 320 480c47.8 0 89.9-12.9 126.2-32.5z"/></svg></span></template>
+        <template id=fa-copy><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M502.6 70.63l-61.25-61.25C435.4 3.371 427.2 0 418.7 0H255.1c-35.35 0-64 28.66-64 64l.0195 256C192 355.4 220.7 384 256 384h192c35.2 0 64-28.8 64-64V93.25C512 84.77 508.6 76.63 502.6 70.63zM464 320c0 8.836-7.164 16-16 16H255.1c-8.838 0-16-7.164-16-16L239.1 64.13c0-8.836 7.164-16 16-16h128L384 96c0 17.67 14.33 32 32 32h47.1V320zM272 448c0 8.836-7.164 16-16 16H63.1c-8.838 0-16-7.164-16-16L47.98 192.1c0-8.836 7.164-16 16-16H160V128H63.99c-35.35 0-64 28.65-64 64l.0098 256C.002 483.3 28.66 512 64 512h192c35.2 0 64-28.8 64-64v-32h-47.1L272 448z"/></svg></span></template>
+        <template id=fa-play><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M73 39c-14.8-9.1-33.4-9.4-48.5-.9S0 62.6 0 80V432c0 17.4 9.4 33.4 24.5 41.9s33.7 8.1 48.5-.9L361 297c14.3-8.7 23-24.2 23-41s-8.7-32.2-23-41L73 39z"/></svg></span></template>
+        <template id=fa-clock-rotate-left><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M75 75L41 41C25.9 25.9 0 36.6 0 57.9V168c0 13.3 10.7 24 24 24H134.1c21.4 0 32.1-25.9 17-41l-30.8-30.8C155 85.5 203 64 256 64c106 0 192 86 192 192s-86 192-192 192c-40.8 0-78.6-12.7-109.7-34.4c-14.5-10.1-34.4-6.6-44.6 7.9s-6.6 34.4 7.9 44.6C151.2 495 201.7 512 256 512c141.4 0 256-114.6 256-256S397.4 0 256 0C185.3 0 121.3 28.7 75 75zm181 53c-13.3 0-24 10.7-24 24V256c0 6.4 2.5 12.5 7 17l72 72c9.4 9.4 24.6 9.4 33.9 0s9.4-24.6 0-33.9l-65-65V152c0-13.3-10.7-24-24-24z"/></svg></span></template>
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="elasticlunr-ef4e11c1.min.js"></script>
+        <script src="mark-09e88c2c.min.js"></script>
+        <script src="searcher-09f2665d.js"></script>
+
+        <script src="clipboard-1626706a.min.js"></script>
+        <script src="highlight-abc7f01d.js"></script>
+        <script src="book-609e4cb8.js"></script>
+
+        <!-- Custom JS scripts -->
+        <script src="theme/patina-ky-09c876ba.js"></script>
+
+
+
+    </div>
+    </body>
+</html>

@@ -1,0 +1,349 @@
+/* Patina Ky — KyPost mdBook theme | palette: bg #0d0f14, panel #161a22, ink #64748b, ink-strong #e2e8f0, accent #4deeea, accent-soft #0e4a48, line #1e293b, glow rgba(77,238,234,0.22) */
+:root {
+  --kypost-bg: #0d0f14;
+  --kypost-panel: #161a22;
+  --kypost-ink: #64748b;
+  --kypost-ink-strong: #e2e8f0;
+  --kypost-accent: #4deeea;
+  --kypost-accent-soft: #0e4a48;
+  --kypost-line: #1e293b;
+  --kypost-glow: rgba(77, 238, 234, 0.22);
+}
+
+/* Only Patina Ky gets the dark palette — other themes stay at mdBook defaults */
+.patina-ky {
+  --bg: var(--kypost-bg);
+  --fg: var(--kypost-ink-strong);
+
+  --sidebar-bg: var(--kypost-panel);
+  --sidebar-fg: #94a3b8;
+  --sidebar-non-existant: #334155;
+  --sidebar-active: var(--kypost-accent);
+  --sidebar-spacer: var(--kypost-line);
+
+  --scrollbar: #334155;
+
+  --icons: var(--kypost-ink);
+  --icons-hover: var(--kypost-accent);
+
+  --links: var(--kypost-accent);
+
+  --inline-code-color: #7af0ec;
+
+  --theme-popup-bg: var(--kypost-panel);
+  --theme-popup-border: var(--kypost-line);
+  --theme-hover: #1c2535;
+
+  --quote-bg: var(--kypost-panel);
+  --quote-border: var(--kypost-line);
+
+  --warning-border: var(--kypost-accent);
+
+  --table-border-color: var(--kypost-line);
+  --table-header-bg: #1c2535;
+  --table-alternate-bg: #11151d;
+
+  --searchbar-border-color: var(--kypost-line);
+  --searchbar-bg: var(--kypost-panel);
+  --searchbar-fg: var(--kypost-ink-strong);
+  --searchbar-shadow-color: var(--kypost-glow);
+  --searchresults-header-fg: var(--kypost-ink);
+  --searchresults-border-color: var(--kypost-line);
+  --searchresults-li-bg: var(--kypost-panel);
+  --search-mark-bg: var(--kypost-accent-soft);
+
+  --color-scheme: dark;
+
+  --copy-button-filter: invert(72%) sepia(85%) saturate(420%) hue-rotate(125deg) brightness(102%) contrast(92%);
+  --copy-button-filter-hover: invert(72%) sepia(85%) saturate(420%) hue-rotate(125deg) brightness(110%) contrast(100%);
+
+  --footnote-highlight: var(--kypost-accent-soft);
+  --overlay-bg: rgba(6, 9, 14, 0.62);
+
+  --blockquote-note-color: var(--kypost-accent);
+  --blockquote-tip-color: #34d399;
+  --blockquote-important-color: #a78bfa;
+  --blockquote-warning-color: #f59e0b;
+  --blockquote-caution-color: #f43f5e;
+
+  --sidebar-header-border-color: var(--kypost-line);
+}
+
+/* ── Base (scoped) ── */
+html.patina-ky {
+  scrollbar-color: #334155 transparent;
+  scrollbar-width: thin;
+}
+
+.patina-ky body {
+  background: var(--kypost-bg);
+}
+
+.patina-ky ::selection {
+  background: var(--kypost-accent-soft);
+  color: var(--kypost-ink-strong);
+}
+
+.patina-ky *:focus-visible {
+  outline: 2px solid var(--kypost-accent);
+  outline-offset: 2px;
+  box-shadow: 0 0 0 4px var(--kypost-glow);
+}
+
+/* ── Menu bar ── */
+.patina-ky #menu-bar,
+.patina-ky #menu-bar-hover-placeholder {
+  background: var(--kypost-bg);
+  border-bottom: 1px solid var(--kypost-line);
+}
+
+.patina-ky #menu-bar .icon-button,
+.patina-ky #menu-bar .menu-title {
+  color: var(--kypost-ink);
+}
+
+.patina-ky #menu-bar .icon-button:hover {
+  color: var(--kypost-accent);
+}
+
+/* Search bar */
+.patina-ky #searchbar {
+  background: var(--kypost-panel) !important;
+  border-color: var(--kypost-line) !important;
+  color: var(--kypost-ink-strong) !important;
+  border-radius: 8px;
+}
+
+.patina-ky #searchbar:focus {
+  border-color: var(--kypost-accent) !important;
+  box-shadow: 0 0 0 3px var(--kypost-glow);
+}
+
+.patina-ky #searchresults-header,
+.patina-ky .searchresults-header {
+  color: var(--kypost-ink);
+}
+
+.patina-ky #searchresults-outer,
+.patina-ky .searchresults-outer {
+  border-color: var(--kypost-line);
+}
+
+/* ── Sidebar ── */
+.patina-ky .sidebar {
+  background: var(--kypost-panel);
+  border-right: 1px solid var(--kypost-line);
+}
+
+.patina-ky .sidebar .chapter li a,
+.patina-ky .sidebar .chapter li span {
+  color: #94a3b8;
+}
+
+.patina-ky .sidebar .chapter li a:hover {
+  color: var(--kypost-ink-strong);
+}
+
+.patina-ky .sidebar .chapter li .active,
+.patina-ky .sidebar .chapter li a.active {
+  color: var(--kypost-accent);
+  font-weight: 600;
+}
+
+.patina-ky .sidebar .chapter li.part-title {
+  color: var(--kypost-ink-strong);
+  font-size: 0.78em;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  margin-top: 1.2em;
+  opacity: 0.95;
+}
+
+.patina-ky .sidebar-scrollbox {
+  padding-top: 10px;
+}
+
+.patina-ky .sidebar-resize-indicator {
+  background: transparent;
+}
+
+.patina-ky .sidebar-resize-indicator:hover {
+  background: var(--kypost-line);
+}
+
+/* Theme popup */
+.patina-ky .theme-popup {
+  background: var(--kypost-panel);
+  border-color: var(--kypost-line);
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.patina-ky .theme-popup .theme {
+  border-color: var(--kypost-line);
+}
+
+.patina-ky .theme-popup .theme:hover {
+  background: #1c2535;
+}
+
+/* ── Content ── */
+.patina-ky .content main {
+  color: var(--kypost-ink-strong);
+}
+
+.patina-ky .content p,
+.patina-ky .content li {
+  color: #cbd5e1;
+}
+
+.patina-ky .content p {
+  line-height: 1.68;
+}
+
+.patina-ky .content strong {
+  color: var(--kypost-ink-strong);
+}
+
+.patina-ky .content a {
+  color: var(--kypost-accent);
+  text-decoration-color: rgba(77, 238, 234, 0.35);
+  text-underline-offset: 3px;
+}
+
+.patina-ky .content a:hover {
+  color: #7af0ec;
+  text-decoration: underline;
+}
+
+.patina-ky .content h1,
+.patina-ky .content h2,
+.patina-ky .content h3,
+.patina-ky .content h4 {
+  color: var(--kypost-ink-strong);
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+}
+
+.patina-ky .content h1 {
+  font-size: 2rem;
+  font-weight: 750;
+  padding-bottom: 0.35em;
+  border-bottom: 1px solid var(--kypost-line);
+  margin-bottom: 0.8em;
+}
+
+.patina-ky .content h2 {
+  font-size: 1.35rem;
+  font-weight: 700;
+}
+
+.patina-ky .content h3 {
+  font-size: 1.08rem;
+  font-weight: 650;
+  color: #cbd5e1;
+}
+
+.patina-ky .content hr {
+  border: none;
+  border-top: 1px solid var(--kypost-line);
+  margin: 2em 0;
+}
+
+.patina-ky .content code:not(pre code) {
+  background: #11151d;
+  border: 1px solid var(--kypost-line);
+  border-radius: 6px;
+  padding: 0.12em 0.38em;
+  color: #7af0ec;
+  font-weight: 500;
+}
+
+.patina-ky .content pre {
+  background: #11151d !important;
+  border: 1px solid var(--kypost-line);
+  border-radius: 10px;
+  padding: 14px 16px;
+}
+
+.patina-ky .content pre > code {
+  background: transparent !important;
+  border: none;
+  padding: 0;
+  color: #cbd5e1;
+}
+
+.patina-ky .content pre .buttons button {
+  color: var(--kypost-ink);
+}
+
+.patina-ky .content pre .buttons button:hover {
+  color: var(--kypost-accent);
+}
+
+.patina-ky .content table td,
+.patina-ky .content table th {
+  border-color: var(--kypost-line);
+}
+
+.patina-ky .content table thead {
+  background: #1c2535;
+  color: var(--kypost-ink-strong);
+}
+
+.patina-ky .content table thead th {
+  font-weight: 650;
+  font-size: 0.88em;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  color: #94a3b8;
+}
+
+.patina-ky .content table tbody tr:nth-child(2n) {
+  background: #11151d;
+}
+
+.patina-ky .content table tbody tr:hover {
+  background: #161d2b;
+}
+
+.patina-ky .content blockquote {
+  background: var(--kypost-panel);
+  border: 1px solid var(--kypost-line);
+  border-left: 3px solid var(--kypost-accent);
+  border-radius: 0 8px 8px 0;
+  color: #cbd5e1;
+}
+
+.patina-ky .content blockquote p {
+  color: #cbd5e1;
+}
+
+.patina-ky .blockquote-tag {
+  background: var(--kypost-panel) !important;
+  border: 1px solid var(--kypost-line);
+  border-left-width: 3px !important;
+  border-radius: 0 8px 8px 0;
+}
+
+.patina-ky .content ul,
+.patina-ky .content ol {
+  padding-left: 1.4em;
+}
+
+.patina-ky .content li::marker {
+  color: var(--kypost-ink);
+}
+
+.patina-ky .content kbd {
+  background: #11151d;
+  border-color: var(--kypost-line);
+  box-shadow: inset 0 -1px 0 #1e293b;
+  color: var(--kypost-ink-strong);
+  border-radius: 6px;
+}
+
+@media print {
+  .patina-ky .sidebar, .patina-ky #menu-bar { display: none !important; }
+  html.patina-ky, html.patina-ky body, .patina-ky .page-wrapper, .patina-ky .content { background: #fff !important; color: #000 !important; }
+}
