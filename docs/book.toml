@@ -2,3 +2,9 @@
 title = "KyPost Documentation"
 authors = ["Yoshiofthewire"]
 language = "en"
+
+[output.html]
+additional-css = ["theme/patina-ky.css"]
+additional-js = ["theme/patina-ky.js"]
+default-theme = "patina-ky"
+preferred-dark-theme = "patina-ky"

@@ -21,5 +21,8 @@
 - [Theming](./theming.md)
 - [Development & Testing](./development.md)
 - [Deployment & Operations](./deployment.md)
+- [Security](./SECURITY.md)
 - [Licensing](./license.md)
+- [Code Of Conduct](./CODE_OF_CONDUCT.md)
+- [Contributing](./CONTRIBUTING.md)
 - [Appendix: Coverage Gaps](./appendix.md)
