@@ -791,6 +791,59 @@ footer .wrap {
   color: var(--ink);
 }
 
+.footer-links {
+  display: inline-flex;
+  gap: 1rem;
+}
+
+/* ---------- Privacy policy ---------- */
+
+.policy-hero {
+  padding-bottom: 2rem;
+}
+
+.policy-hero h1 {
+  font-size: clamp(2.4rem, 6vw, 4.5rem);
+  line-height: 1;
+  margin: 0.5rem 0 1rem;
+}
+
+.policy-hero p,
+.policy-content article {
+  max-width: 74ch;
+}
+
+.policy-hero > .wrap > p:not(.lede),
+.policy-content p,
+.policy-content li {
+  color: var(--ink);
+}
+
+.policy-content {
+  padding-top: 2rem;
+}
+
+.policy-content article {
+  margin: 0 auto;
+}
+
+.policy-content h2 {
+  font-size: 1.45rem;
+  margin: 2.4rem 0 0.65rem;
+}
+
+.policy-content h2:first-child {
+  margin-top: 0;
+}
+
+.policy-content ul {
+  padding-left: 1.35rem;
+}
+
+.policy-content li + li {
+  margin-top: 0.55rem;
+}
+
 /* ---------- Responsive ---------- */
 
 @media (max-width: 960px) {

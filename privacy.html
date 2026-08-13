@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Privacy policy — KyPost</title>
+<meta name="description" content="How the KyPost website and self-hosted products handle information.">
+<meta name="theme-color" content="#0d0f14">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'self'; form-action 'self'; object-src 'none'; script-src 'self'; style-src 'self'; img-src 'self'; font-src 'self'">
+<link rel="stylesheet" href="css/styles.css">
+</head>
+<body class="policy-page">
+<a class="skip-link" href="#main-content">Skip to content</a>
+
+<header class="site-nav">
+  <div class="wrap">
+    <a href="index.html" class="brand"><img src="assets/ky50p.png" alt="KyPost logo">KyPost</a>
+    <a class="btn" href="index.html">Back to site</a>
+  </div>
+</header>
+
+<main id="main-content">
+  <section class="policy-hero">
+    <div class="wrap">
+      <span class="eyebrow">Privacy</span>
+      <h1>Privacy policy</h1>
+      <p class="lede">Last updated: August 12, 2026</p>
+      <p>This policy explains what information KyPost collects, where it goes, and what happens to it. KyPost has a static marketing website and a separate set of open-source, self-hosted products. Those are different data environments.</p>
+    </div>
+  </section>
+
+  <section class="policy-content">
+    <div class="wrap">
+      <article>
+        <h2>1. The website</h2>
+        <p>The KyPost marketing site does not use advertising trackers, analytics scripts, cookies, account forms, or third-party embedded content. It does not ask you for personal information.</p>
+        <p>Like most websites, the hosting provider may receive ordinary request data such as your IP address, browser and device information, requested URL, referring page, and date and time. This information may appear in temporary security or server logs. KyPost does not use it to build profiles or sell it. Log retention depends on the hosting provider’s configuration.</p>
+
+        <h2>2. The self-hosted applications</h2>
+        <p>The Ky project includes several self-hosted applications. They run on infrastructure chosen and controlled by the person or organization that operates each installation. That operator—not the project maintainers—is normally responsible for the data processed by that installation and for configuring its retention, backups, access controls, and logs.</p>
+        <p>Each application may process the following information:</p>
+        <ul>
+          <li><strong>KyPost:</strong> account and authentication data, mail messages, headers, attachments, mailbox credentials, contacts, CardDAV records, public keys, wrapped private keys, device registrations, push tokens, notification preferences, filter rules, local classification results, diagnostics, and server logs.</li>
+          <li><strong>KyBookmarks:</strong> account and device data, encrypted bookmark and folder records, encrypted vault and recovery-key wrappers, synchronization metadata, tombstones, conflicts, and content-blind audit events. URLs, titles, notes, folder names, and favicons are intended to remain client-side or inside encrypted payloads. Clients may fetch favicons directly from the website associated with a bookmark.</li>
+          <li><strong>KyNotes:</strong> account, device, membership, and synchronization data; encrypted workbooks, projects, notes, tasks, attachments, collaboration records, and activity details. Full-text search is performed on the client after decryption. If you explicitly publish a site, its Markdown, images, links, and URL slug are public and are no longer encrypted.</li>
+          <li><strong>KyPassword:</strong> account and device data, authentication verifiers, encrypted KeePass vaults, encrypted files, wrapped vault keys, version history, conflict data, recovery material, and audit records. The design does not send the raw master password, plaintext vault key, or decrypted vault contents to the server.</li>
+          <li><strong>KySignOn:</strong> usernames, display names, email addresses where configured, password verifiers, sessions, MFA enrollment and challenge state, encrypted TOTP secrets, push registrations, OAuth/OIDC clients, authorization codes, tokens, requested scopes, and security audit events. This service is designed to share the minimum approved identity claims and tokens with registered applications.</li>
+          <li><strong>KyDNS:</strong> configured DNS records, services, aliases, views, API tokens, DHCP lease or service-discovery data, health-check results, cache entries, blacklist configuration, and forwarded DNS queries. Query logging is off by default, and recording the client IP is a separate opt-in setting. An operator’s choice of upstream resolver determines where forwarded queries go.</li>
+          <li><strong>KyRecovery:</strong> encrypted recovery capsules, recovery instructions and metadata, designated custodians, time-limited approvals, restore or drill state, and content-blind recovery events. KyRecovery is currently a product definition and is not represented as a generally available hosted service.</li>
+        </ul>
+        <p>The Android, iOS, macOS, and Linux KyPost clients can hold local caches of mail, contacts, attachments, keys, pairing data, and notification registrations, subject to the platform and features you enable. They communicate with the KyPost Server selected during pairing; they do not use KyPost-maintainer analytics or advertising telemetry. Some operating-system features, such as system contacts export or push delivery, are only used after you enable or authorize them.</p>
+        <p>The KyPost demo IMAP service is a development and test fixture. It uses seeded test messages by default; if an operator connects real mail or other real data to it, that operator is responsible for the resulting processing and retention.</p>
+        <p>KyPost’s design keeps private keys wrapped before they are uploaded and performs mail classification with the local model configured by the server operator. The maintainers do not receive this data merely because you use the software.</p>
+
+        <h2>3. Where information is sent</h2>
+        <p>Depending on the features enabled by the server operator, information can be sent to:</p>
+        <ul>
+          <li><strong>Your mail provider:</strong> KyPost Server connects to the mailbox configured by the operator using IMAP and SMTP, normally over TLS. That provider receives and processes mail according to its own policy.</li>
+          <li><strong>Mail recipients and other mail systems:</strong> sending a message necessarily shares the message and its delivery metadata with the chosen recipients and their providers.</li>
+          <li><strong>Key services:</strong> Web Key Directory and keyservers may receive public email addresses, public keys, and key lookup or publication requests. Private keys are not sent to these services.</li>
+          <li><strong>Push providers:</strong> Firebase Cloud Messaging, Apple Push Notification service, or a UnifiedPush provider may receive a device token and notification metadata. KyPost maintainers operate Cloudflare Workers that relay push requests to FCM and APNs endpoints. Those workers do not store push data beyond what is needed to operate and maintain the service, troubleshoot failures, and prevent spam or abuse. Push previews are optional; when disabled, notifications are generic.</li>
+          <li><strong>DNS upstreams:</strong> KyDNS may forward DNS queries over DNS-over-TLS, DNS-over-HTTPS, or—only when the operator explicitly configures it—plain DNS to providers such as Cloudflare, Quad9, Google, NextDNS, or another configured resolver. Those providers may see the query and the network information associated with it.</li>
+          <li><strong>Registered applications:</strong> KySignOn may send approved OAuth/OIDC identity claims, authorization codes, and tokens to registered clients such as KyPost, KyBookmarks, KyNotes, KyPassword, or another client the operator authorizes.</li>
+          <li><strong>Public visitors and custodians:</strong> a KyNotes site that you publish is intentionally public. KyRecovery may share encrypted recovery material or approval information with designated custodians according to the operator’s configuration.</li>
+          <li><strong>Services you choose:</strong> the operator may connect the server to other providers, backups, monitoring systems, or integrations. Their policies apply to the information they receive.</li>
+        </ul>
+        <p>KyPost does not send inbox contents to a cloud AI provider as part of its default local-classification design.</p>
+
+        <h2>4. What we do with information</h2>
+        <p>The site data described above is used to deliver the pages, maintain security, and diagnose abuse or failures. Product data is used by the server operator to authenticate users, synchronize mail and contacts, apply rules, classify messages, deliver notifications, publish or find public keys, and provide the features you enable.</p>
+        <p>KyPost does not sell personal information, use product data for advertising, or use it to create profiles for the maintainers. We may receive information when you voluntarily send it to us—for example, in a GitHub issue, pull request, support request, or security report. We use that information to respond, maintain the projects, and investigate or fix problems.</p>
+
+        <h2>5. Retention, security, and your choices</h2>
+        <p>On a self-hosted installation, the server operator controls retention and deletion. You can ask that operator to delete an account or its data, subject to backups, legal obligations, and data held by mail providers, recipients, push providers, or other services. The KyPost project cannot delete data from a server it does not operate. Deleting a local client copy may not delete the server copy, and deleting a server copy may not remove copies already downloaded to another device, included in a backup, sent to a recipient, or published publicly.</p>
+        <p>KyPost uses encryption in transit where supported, client-held key protection, access controls, and platform security features. No software or transmission method is completely secure, so protect your server, devices, passwords, recovery material, and backups.</p>
+        <p>If you contact the maintainers, please do not include message contents, passwords, private keys, access tokens, or other secrets unless a maintainer specifically asks for a safely redacted diagnostic.</p>
+
+        <h2>6. Children, changes, and contact</h2>
+        <p>The website and products are not directed to children under 13. We do not knowingly collect personal information from children through the website.</p>
+        <p>We may update this policy when the website or products change. The “Last updated” date above identifies the current version. Material changes will be published on this page.</p>
+        <p>For questions about this policy or data handled by the KyPost project, contact the maintainers through the <a href="https://github.com/Yoshiofthewire" target="_blank" rel="noopener">KyPost GitHub organization</a>. For data handled by a particular KyPost Server, contact that server’s operator.</p>
+      </article>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <span>© 2026 KyPost — AGPL &amp; GPL 3.0 licensed</span>
+    <span class="footer-links"><a href="index.html">Home</a><a href="https://github.com/Yoshiofthewire" target="_blank" rel="noopener">GitHub</a></span>
+  </div>
+</footer>
+</body>
+</html>
