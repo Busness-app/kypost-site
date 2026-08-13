@@ -36,7 +36,7 @@
             const path_to_root = "";
             const default_light_theme = "patina-ky";
             const default_dark_theme = "patina-ky";
-            window.path_to_searchindex_js = "searchindex-10baaf50.js";
+            window.path_to_searchindex_js = "searchindex-24f425a8.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="toc-d1d12269.js"></script>
@@ -305,7 +305,6 @@
 <li><strong>IMAP credentials:</strong> Stored encrypted at <code>/kypost/private/imap-config.key</code> (master key) and per-user encrypted payloads. The key does not rotate; compromise of the key compromises all encrypted credentials.</li>
 <li><strong>TOTP secrets:</strong> Master key at <code>/kypost/private/totp-secret.key</code>. Same rotation caveat.</li>
 <li><strong>Pairing secret:</strong> <code>/kypost/private/pairing.key</code> (generated on first start). Must be identical across replicas if you run multiple.</li>
-<li><strong>PGP server keys:</strong> Master key at <code>/kypost/private/pgp-server-key</code> (only if using server-protected PGP mode).</li>
 </ul>
 <p>All of these live in <code>/kypost/private</code>. <strong>Back up this volume separately and store it securely.</strong> Compromise of this directory compromises all user data.</p>
 <h3 id="first-run--bootstrap"><a class="header" href="#first-run--bootstrap">First Run &amp; Bootstrap</a></h3>
@@ -352,8 +351,7 @@
 <ul>
 <li><strong>IMAP credentials:</strong> AES encryption with a master key (<code>imap-config.key</code>).</li>
 <li><strong>TOTP secrets:</strong> AES encryption with a master key (<code>totp-secret.key</code>).</li>
-<li><strong>PGP keys (server-protected mode):</strong> Encryption with a master key (<code>pgp-server-key</code>).</li>
-<li><strong>PGP keys (client-protected mode):</strong> Wrapped in the browser under a password-derived key; the server stores only the wrapped blob.</li>
+<li><strong>PGP keys:</strong> Wrapped in the browser under a password-derived key; the server stores only the wrapped blob.</li>
 <li><strong>Client recovery backups:</strong> The downloaded backup contains a second browser-created AES-GCM envelope. Its recovery secret is shown once and is not stored by KyPost.</li>
 </ul>
 <p>Unencrypted:</p>
@@ -362,7 +360,7 @@
 <li><strong>Mailbox state:</strong> IMAP checkpoint, processed message IDs, decision history (which labels were assigned to which messages).</li>
 <li><strong>Configuration:</strong> Tuning prompts, notification preferences, rules, contacts.</li>
 </ul>
-<p><strong>If the <code>/kypost/private</code> volume is compromised, all encrypted data is compromised.</strong> This includes all IMAP credentials, TOTP secrets, and server-protected PGP keys.</p>
+<p><strong>If the <code>/kypost/private</code> volume is compromised, the IMAP credentials and TOTP secrets stored there are compromised.</strong> Browser-protected PGP keys are not decryptable from that volume alone.</p>
 <h3 id="encryption-in-transit"><a class="header" href="#encryption-in-transit">Encryption in Transit</a></h3>
 <ul>
 <li><strong>Sessions:</strong> Cookies marked <code>Secure</code> only on HTTPS (when <code>TRUSTED_PROXY_CIDRS</code> is set or TLS terminates in KyPost).</li>

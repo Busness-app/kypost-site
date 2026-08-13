@@ -275,10 +275,10 @@ still be the wrong feature for this project.
    - **The UI or `.env.example`** — at the point of choice, if the user selects
      it at runtime.
 
-   The model for this is the PGP key-custody wording: Client-Protected vs
-   Server-Protected, each with its costs stated flatly, including the sentence
-   "this is **not** end-to-end encryption." Aim for that. Write what the user
-   loses, not a reassurance.
+   The model for this is the PGP key-custody wording: Browser-Protected, with
+   its costs stated flatly, including the sentence "this is **not** end-to-end
+   encryption" where it applies. Aim for that. Write what the user loses, not
+   a reassurance.
 5. **New attack surface is justified.** A new dependency, a new outbound network
    call, a new stored secret, a new endpoint, or a new file in
    `/kypost/private` each need a paragraph on why it is necessary and what it
@@ -308,10 +308,8 @@ still be the wrong feature for this project.
 
 ### If your trade-off is legitimate
 
-Plenty are. Server-protected PGP keys are a real security downgrade and they
-ship, because background polling and password resets are worth it to some
-people and the cost is stated in three places. That is the standard: not "no
-trade-offs," but **no unmarked trade-offs, and never as the default.**
+Plenty are. That is the standard: not "no trade-offs," but **no unmarked
+trade-offs, and never as the default.**
 
 ## Documentation: The DOX Chain
 

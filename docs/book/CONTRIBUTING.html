@@ -36,7 +36,7 @@
             const path_to_root = "";
             const default_light_theme = "patina-ky";
             const default_dark_theme = "patina-ky";
-            window.path_to_searchindex_js = "searchindex-10baaf50.js";
+            window.path_to_searchindex_js = "searchindex-24f425a8.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="toc-d1d12269.js"></script>
@@ -437,10 +437,10 @@ Boundaries</em>, naming the cost explicitly.</li>
 <li><strong>The UI or <code>.env.example</code></strong> — at the point of choice, if the user selects
 it at runtime.</li>
 </ul>
-<p>The model for this is the PGP key-custody wording: Client-Protected vs
-Server-Protected, each with its costs stated flatly, including the sentence
-“this is <strong>not</strong> end-to-end encryption.” Aim for that. Write what the user
-loses, not a reassurance.</p>
+<p>The model for this is the PGP key-custody wording: Browser-Protected, with
+its costs stated flatly, including the sentence “this is <strong>not</strong> end-to-end
+encryption” where it applies. Aim for that. Write what the user loses, not
+a reassurance.</p>
 </li>
 <li>
 <p><strong>New attack surface is justified.</strong> A new dependency, a new outbound network
@@ -474,10 +474,8 @@ non-expert user in two sentences. If it cannot be explained, it cannot be
 consented to.</li>
 </ul>
 <h3 id="if-your-trade-off-is-legitimate"><a class="header" href="#if-your-trade-off-is-legitimate">If your trade-off is legitimate</a></h3>
-<p>Plenty are. Server-protected PGP keys are a real security downgrade and they
-ship, because background polling and password resets are worth it to some
-people and the cost is stated in three places. That is the standard: not “no
-trade-offs,” but <strong>no unmarked trade-offs, and never as the default.</strong></p>
+<p>Plenty are. That is the standard: not “no trade-offs,” but <strong>no unmarked
+trade-offs, and never as the default.</strong></p>
 <h2 id="documentation-the-dox-chain"><a class="header" href="#documentation-the-dox-chain">Documentation: The DOX Chain</a></h2>
 <p><code>AGENTS.md</code> files are binding contracts for their subtrees. Before editing,
 walk from the repository root to each file you intend to touch and read every

@@ -10,7 +10,7 @@ The server is a self-hosted IMAP web client.  It offers GPG public keys for emai
 - Keyword labels for unread mail. Each account has its own label list, copied from instance defaults at creation.
 - Filter Rules: GUI condition and action builder plus raw Sieve editor. A run-now panel applies rules on demand.
 - Compose with SMTP send and IMAP draft save.
-- PGP mail encryption. Generate or import a key, search `keys.openpgp.org`, check recipient keys before you send. Two key-protection modes.
+- PGP mail encryption. Generate or import a browser-protected key, search `keys.openpgp.org`, and check recipient keys before you send.
 - Contacts address book with groups, dedupe, bulk delete, CSV and vCard import and export, and photos.
 - CardDAV server (`/dav`, `/.well-known/carddav`) and optional CardDAV client to sync an external address book.
 - Multi-factor authentication: TOTP, one-time recovery codes, push-approval sign-in.

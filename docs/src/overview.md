@@ -24,7 +24,7 @@ All three clients share the same Go relay backend and the same 15-theme palette.
 | Keyword tabs/labels | Polls unread, local LLM classifies, IMAP keywords, per-user allowlist | Tabs from server tab/label fields, tune in Keywords screen | Relay sorts into tabs/labels, visibility in settings | Not detailed in README |
 | Filter rules | GUI + raw Sieve, run-now panel | — | — | — |
 | Contacts | Address book + groups, dedupe, CSV/vCard, photos, CardDAV server + client | Two-way sync via relay | Two-way sync, extended schema, reconciliation, groups/photos/IM/social/etc. | Synced list/detail, offline queued edits, groups, dedupe |
-| PGP | Generate/import, WKD lookup, recipient check, two protection modes, pickup links | QR show/scan own/other key onto contact | QR pickup link 2 min expiry, fingerprint confirmation, encryption state per message, relay-side encrypt/sign, pickup fallback 7 days, browser-only key handoff via draft | QR exchange, camera scan/show, fingerprint confirmation, marks unreadable encrypted mail |
+| PGP | Browser-protected key, WKD lookup, recipient check, pickup links | QR show/scan own/other key onto contact | QR pickup link 2 min expiry, fingerprint confirmation, encryption state per message, relay-side encrypt/sign, pickup fallback 7 days, browser-only key handoff via draft | QR exchange, camera scan/show, fingerprint confirmation, marks unreadable encrypted mail |
 | Push | Browser push + native pairing, central Cloudflare relays for FCM/APNs | FCM native, pull mode polling, delivery mode push/pull | APNs + 90s polling + background refresh | UnifiedPush 2 tiers + 90s polling |
 | MFA | TOTP, recovery codes, push-approval | Push approval via notification + in-app fallback | Approve from notification tap | N/A |
 

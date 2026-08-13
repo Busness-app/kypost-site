@@ -37,7 +37,7 @@
             const path_to_root = "";
             const default_light_theme = "patina-ky";
             const default_dark_theme = "patina-ky";
-            window.path_to_searchindex_js = "searchindex-10baaf50.js";
+            window.path_to_searchindex_js = "searchindex-24f425a8.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="toc-d1d12269.js"></script>
@@ -226,7 +226,7 @@
 <tr><td>Keyword tabs/labels</td><td>Polls unread, local LLM classifies, IMAP keywords, per-user allowlist</td><td>Tabs from server tab/label fields, tune in Keywords screen</td><td>Relay sorts into tabs/labels, visibility in settings</td><td>Not detailed in README</td></tr>
 <tr><td>Filter rules</td><td>GUI + raw Sieve, run-now panel</td><td>—</td><td>—</td><td>—</td></tr>
 <tr><td>Contacts</td><td>Address book + groups, dedupe, CSV/vCard, photos, CardDAV server + client</td><td>Two-way sync via relay</td><td>Two-way sync, extended schema, reconciliation, groups/photos/IM/social/etc.</td><td>Synced list/detail, offline queued edits, groups, dedupe</td></tr>
-<tr><td>PGP</td><td>Generate/import, WKD lookup, recipient check, two protection modes, pickup links</td><td>QR show/scan own/other key onto contact</td><td>QR pickup link 2 min expiry, fingerprint confirmation, encryption state per message, relay-side encrypt/sign, pickup fallback 7 days, browser-only key handoff via draft</td><td>QR exchange, camera scan/show, fingerprint confirmation, marks unreadable encrypted mail</td></tr>
+<tr><td>PGP</td><td>Browser-protected key, WKD lookup, recipient check, pickup links</td><td>QR show/scan own/other key onto contact</td><td>QR pickup link 2 min expiry, fingerprint confirmation, encryption state per message, relay-side encrypt/sign, pickup fallback 7 days, browser-only key handoff via draft</td><td>QR exchange, camera scan/show, fingerprint confirmation, marks unreadable encrypted mail</td></tr>
 <tr><td>Push</td><td>Browser push + native pairing, central Cloudflare relays for FCM/APNs</td><td>FCM native, pull mode polling, delivery mode push/pull</td><td>APNs + 90s polling + background refresh</td><td>UnifiedPush 2 tiers + 90s polling</td></tr>
 <tr><td>MFA</td><td>TOTP, recovery codes, push-approval</td><td>Push approval via notification + in-app fallback</td><td>Approve from notification tap</td><td>N/A</td></tr>
 </tbody>
@@ -328,7 +328,7 @@ docs/       local notes
 <li>Keyword labels for unread mail. Each account has its own label list, copied from instance defaults at creation.</li>
 <li>Filter Rules: GUI condition and action builder plus raw Sieve editor. A run-now panel applies rules on demand.</li>
 <li>Compose with SMTP send and IMAP draft save.</li>
-<li>PGP mail encryption. Generate or import a key, search <code>keys.openpgp.org</code>, check recipient keys before you send. Two key-protection modes.</li>
+<li>PGP mail encryption. Generate or import a browser-protected key, search <code>keys.openpgp.org</code>, and check recipient keys before you send.</li>
 <li>Contacts address book with groups, dedupe, bulk delete, CSV and vCard import and export, and photos.</li>
 <li>CardDAV server (<code>/dav</code>, <code>/.well-known/carddav</code>) and optional CardDAV client to sync an external address book.</li>
 <li>Multi-factor authentication: TOTP, one-time recovery codes, push-approval sign-in.</li>
@@ -1242,9 +1242,9 @@ flatpak-builder --run build-flatpak packaging/flatpak/com.urlxl.mail.yaml kypost
 <div style="break-before: page; page-break-before: always;"></div>
 <h1 id="pgp--encryption"><a class="header" href="#pgp--encryption">PGP &amp; Encryption</a></h1>
 <h2 id="scope"><a class="header" href="#scope">Scope</a></h2>
-<p>KyPost supports OpenPGP for mail encryption and signing, plus QR-based public-key exchange. It has two key-protection modes. Native clients do not hold a PGP private key; client-protected keys are used in the browser.</p>
+<p>KyPost supports OpenPGP for mail encryption and signing, plus QR-based public-key exchange. Your private key is protected in the browser. Native clients do not hold a PGP private key.</p>
 <h2 id="where-your-pgp-private-key-lives"><a class="header" href="#where-your-pgp-private-key-lives">Where your PGP private key lives</a></h2>
-<h3 id="client-protected-end-to-end"><a class="header" href="#client-protected-end-to-end">Client-protected (end-to-end)</a></h3>
+<h3 id="browser-protected-end-to-end"><a class="header" href="#browser-protected-end-to-end">Browser-protected (end-to-end)</a></h3>
 <ul>
 <li>Browser generates or imports the key.</li>
 <li>Browser wraps the key with a key derived from your account password: PBKDF2-HMAC-SHA256 with 600,000 iterations and AES-256-GCM. Browser uploads only the wrapped blob and public half.</li>
@@ -1587,7 +1587,6 @@ docker volume ls | grep kypost
 <li><strong>IMAP credentials:</strong> Stored encrypted at <code>/kypost/private/imap-config.key</code> (master key) and per-user encrypted payloads. The key does not rotate; compromise of the key compromises all encrypted credentials.</li>
 <li><strong>TOTP secrets:</strong> Master key at <code>/kypost/private/totp-secret.key</code>. Same rotation caveat.</li>
 <li><strong>Pairing secret:</strong> <code>/kypost/private/pairing.key</code> (generated on first start). Must be identical across replicas if you run multiple.</li>
-<li><strong>PGP server keys:</strong> Master key at <code>/kypost/private/pgp-server-key</code> (only if using server-protected PGP mode).</li>
 </ul>
 <p>All of these live in <code>/kypost/private</code>. <strong>Back up this volume separately and store it securely.</strong> Compromise of this directory compromises all user data.</p>
 <h3 id="first-run--bootstrap"><a class="header" href="#first-run--bootstrap">First Run &amp; Bootstrap</a></h3>
@@ -1634,8 +1633,7 @@ docker volume ls | grep kypost
 <ul>
 <li><strong>IMAP credentials:</strong> AES encryption with a master key (<code>imap-config.key</code>).</li>
 <li><strong>TOTP secrets:</strong> AES encryption with a master key (<code>totp-secret.key</code>).</li>
-<li><strong>PGP keys (server-protected mode):</strong> Encryption with a master key (<code>pgp-server-key</code>).</li>
-<li><strong>PGP keys (client-protected mode):</strong> Wrapped in the browser under a password-derived key; the server stores only the wrapped blob.</li>
+<li><strong>PGP keys:</strong> Wrapped in the browser under a password-derived key; the server stores only the wrapped blob.</li>
 <li><strong>Client recovery backups:</strong> The downloaded backup contains a second browser-created AES-GCM envelope. Its recovery secret is shown once and is not stored by KyPost.</li>
 </ul>
 <p>Unencrypted:</p>
@@ -1644,7 +1642,7 @@ docker volume ls | grep kypost
 <li><strong>Mailbox state:</strong> IMAP checkpoint, processed message IDs, decision history (which labels were assigned to which messages).</li>
 <li><strong>Configuration:</strong> Tuning prompts, notification preferences, rules, contacts.</li>
 </ul>
-<p><strong>If the <code>/kypost/private</code> volume is compromised, all encrypted data is compromised.</strong> This includes all IMAP credentials, TOTP secrets, and server-protected PGP keys.</p>
+<p><strong>If the <code>/kypost/private</code> volume is compromised, the IMAP credentials and TOTP secrets stored there are compromised.</strong> Browser-protected PGP keys are not decryptable from that volume alone.</p>
 <h3 id="encryption-in-transit"><a class="header" href="#encryption-in-transit">Encryption in Transit</a></h3>
 <ul>
 <li><strong>Sessions:</strong> Cookies marked <code>Secure</code> only on HTTPS (when <code>TRUSTED_PROXY_CIDRS</code> is set or TLS terminates in KyPost).</li>
@@ -2707,10 +2705,10 @@ Boundaries</em>, naming the cost explicitly.</li>
 <li><strong>The UI or <code>.env.example</code></strong> — at the point of choice, if the user selects
 it at runtime.</li>
 </ul>
-<p>The model for this is the PGP key-custody wording: Client-Protected vs
-Server-Protected, each with its costs stated flatly, including the sentence
-“this is <strong>not</strong> end-to-end encryption.” Aim for that. Write what the user
-loses, not a reassurance.</p>
+<p>The model for this is the PGP key-custody wording: Browser-Protected, with
+its costs stated flatly, including the sentence “this is <strong>not</strong> end-to-end
+encryption” where it applies. Aim for that. Write what the user loses, not
+a reassurance.</p>
 </li>
 <li>
 <p><strong>New attack surface is justified.</strong> A new dependency, a new outbound network
@@ -2744,10 +2742,8 @@ non-expert user in two sentences. If it cannot be explained, it cannot be
 consented to.</li>
 </ul>
 <h3 id="if-your-trade-off-is-legitimate"><a class="header" href="#if-your-trade-off-is-legitimate">If your trade-off is legitimate</a></h3>
-<p>Plenty are. Server-protected PGP keys are a real security downgrade and they
-ship, because background polling and password resets are worth it to some
-people and the cost is stated in three places. That is the standard: not “no
-trade-offs,” but <strong>no unmarked trade-offs, and never as the default.</strong></p>
+<p>Plenty are. That is the standard: not “no trade-offs,” but <strong>no unmarked
+trade-offs, and never as the default.</strong></p>
 <h2 id="documentation-the-dox-chain"><a class="header" href="#documentation-the-dox-chain">Documentation: The DOX Chain</a></h2>
 <p><code>AGENTS.md</code> files are binding contracts for their subtrees. Before editing,
 walk from the repository root to each file you intend to touch and read every

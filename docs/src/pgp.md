@@ -2,11 +2,11 @@
 
 ## Scope
 
-KyPost supports OpenPGP for mail encryption and signing, plus QR-based public-key exchange. It has two key-protection modes. Native clients do not hold a PGP private key; client-protected keys are used in the browser.
+KyPost supports OpenPGP for mail encryption and signing, plus QR-based public-key exchange. Your private key is protected in the browser. Native clients do not hold a PGP private key.
 
 ## Where your PGP private key lives
 
-### Client-protected (end-to-end)
+### Browser-protected (end-to-end)
 
 - Browser generates or imports the key.
 - Browser wraps the key with a key derived from your account password: PBKDF2-HMAC-SHA256 with 600,000 iterations and AES-256-GCM. Browser uploads only the wrapped blob and public half.

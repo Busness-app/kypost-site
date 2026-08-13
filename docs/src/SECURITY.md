@@ -158,7 +158,6 @@ If `clientIp` is a loopback or bridge address (e.g., `172.17.0.1`), every user s
 - **IMAP credentials:** Stored encrypted at `/kypost/private/imap-config.key` (master key) and per-user encrypted payloads. The key does not rotate; compromise of the key compromises all encrypted credentials.
 - **TOTP secrets:** Master key at `/kypost/private/totp-secret.key`. Same rotation caveat.
 - **Pairing secret:** `/kypost/private/pairing.key` (generated on first start). Must be identical across replicas if you run multiple.
-- **PGP server keys:** Master key at `/kypost/private/pgp-server-key` (only if using server-protected PGP mode).
 
 All of these live in `/kypost/private`. **Back up this volume separately and store it securely.** Compromise of this directory compromises all user data.
 
@@ -211,8 +210,7 @@ User data is stored in `/kypost/config/users/<userID>/` and `/kypost/state/users
 
 - **IMAP credentials:** AES encryption with a master key (`imap-config.key`).
 - **TOTP secrets:** AES encryption with a master key (`totp-secret.key`).
-- **PGP keys (server-protected mode):** Encryption with a master key (`pgp-server-key`).
-- **PGP keys (client-protected mode):** Wrapped in the browser under a password-derived key; the server stores only the wrapped blob.
+- **PGP keys:** Wrapped in the browser under a password-derived key; the server stores only the wrapped blob.
 - **Client recovery backups:** The downloaded backup contains a second browser-created AES-GCM envelope. Its recovery secret is shown once and is not stored by KyPost.
 
 Unencrypted:
@@ -221,7 +219,7 @@ Unencrypted:
 - **Mailbox state:** IMAP checkpoint, processed message IDs, decision history (which labels were assigned to which messages).
 - **Configuration:** Tuning prompts, notification preferences, rules, contacts.
 
-**If the `/kypost/private` volume is compromised, all encrypted data is compromised.** This includes all IMAP credentials, TOTP secrets, and server-protected PGP keys.
+**If the `/kypost/private` volume is compromised, the IMAP credentials and TOTP secrets stored there are compromised.** Browser-protected PGP keys are not decryptable from that volume alone.
 
 ### Encryption in Transit
 
