@@ -36,7 +36,7 @@
             const path_to_root = "../";
             const default_light_theme = "patina-ky";
             const default_dark_theme = "patina-ky";
-            window.path_to_searchindex_js = "../searchindex-36183f93.js";
+            window.path_to_searchindex_js = "../searchindex-10baaf50.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="../toc-d1d12269.js"></script>
@@ -178,7 +178,7 @@
                         <h1 id="android-client"><a class="header" href="#android-client">Android Client</a></h1>
 <p>Source: <code>kypost-android/README.md</code>.</p>
 <h2 id="what-it-is"><a class="header" href="#what-it-is">What it is</a></h2>
-<p>KyPost for Android is an Android email client backed by a self-hosted KyPost relay. It shows keyword-based inbox tabs and syncs contacts in both directions. Native-push pairing authenticates relay access and contact sync. It gets push through native pairing and FCM. It does not use Novu on the client.</p>
+<p>KyPost for Android is an Android email client backed by a self-hosted KyPost relay. It shows keyword-based inbox tabs and syncs contacts in both directions. Native-push pairing authenticates relay access and contact sync. It gets notifications through native pairing and FCM or direct pull. The current Android application id is <code>org.kysecurity.mail</code>; the package rename is a breaking change, so existing <code>com.urlxl.mail</code> installs must reinstall and pair again.</p>
 <h2 id="features"><a class="header" href="#features">Features</a></h2>
 <ul>
 <li><strong>Mail</strong>: The paired relay proxies mail. The app stores no mail credentials on the device.</li>
@@ -210,7 +210,7 @@
 <p>Cadence: WorkManager periodic work at the platform minimum of 15 minutes, plus immediate pull on foreground and after pairing. Near real-time needs a foreground service with a short loop and a persistent notification. That is not the default. The app backs off after <code>400</code>, <code>401</code>, <code>503</code>, and network errors.</p>
 <h2 id="firebase-setup"><a class="header" href="#firebase-setup">Firebase setup</a></h2>
 <ol>
-<li>Create or update the Firebase Android app for <code>com.urlxl.mail</code>.</li>
+<li>Create or update the Firebase Android app for <code>org.kysecurity.mail</code>.</li>
 <li>Download <code>google-services.json</code>.</li>
 <li>Put it at <code>app/google-services.json</code>.</li>
 <li>Enable FCM.</li>
@@ -230,7 +230,7 @@
 <li>Scheme and host must be exactly <code>kypost://native-pair</code>.</li>
 <li>Required params <code>sub</code>, <code>hash</code>, <code>srv</code>, <code>pt</code> must exist.</li>
 <li>Device must reach the resolved registration endpoint.</li>
-<li>Firebase config must match <code>com.urlxl.mail</code>.</li>
+<li>Firebase config must match <code>org.kysecurity.mail</code>.</li>
 <li><code>400</code> means malformed or missing field. <code>401</code> means bad or expired <code>pt</code>; scan a new QR code. <code>503</code> means backend has no <code>PAIRING_SECRET</code> and retry will not help.</li>
 <li>On Android 13+, grant notification permission or no system notification appears.</li>
 </ul>

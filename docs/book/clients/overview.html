@@ -36,7 +36,7 @@
             const path_to_root = "../";
             const default_light_theme = "patina-ky";
             const default_dark_theme = "patina-ky";
-            window.path_to_searchindex_js = "../searchindex-36183f93.js";
+            window.path_to_searchindex_js = "../searchindex-10baaf50.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="../toc-d1d12269.js"></script>
@@ -179,7 +179,7 @@
 <p>The ecosystem has three native clients. Each talks only to the relay. No client uses IMAP or SMTP. One device pairing with a QR code or deep link creates the relay credential. After that, the relay handles mail, keyword tabs, push, and contact sync.</p>
 <h2 id="which-client-for-which-platform"><a class="header" href="#which-client-for-which-platform">Which client for which platform</a></h2>
 <ul>
-<li><strong>Android</strong> — <code>kypost-android</code>, package <code>com.urlxl.mail</code>, FCM or UnifiedPush + pull fallback.</li>
+<li><strong>Android</strong> — <code>kypost-android</code>, package <code>org.kysecurity.mail</code>, FCM or UnifiedPush + pull fallback. The package rename is breaking for existing installs.</li>
 <li><strong>macOS &amp; iOS</strong> — <code>kypost-for-Mac</code>, bundle <code>com.urlxl.mail</code>, SwiftUI shared codebase, APNs + polling.</li>
 <li><strong>Linux</strong> — <code>kypost-Linux</code>, KDE Plasma and Plasma Mobile, Qt6/Kirigami Flatpak, UnifiedPush + polling.</li>
 </ul>
@@ -208,14 +208,14 @@
 <tr><td>Push</td><td>FCM native + pull <code>GET</code> polling, per-user <code>push</code>/<code>pull</code> mode on web</td><td>APNs + 90s foreground polling + iOS background refresh</td><td>UnifiedPush distributor + 90s polling</td></tr>
 <tr><td>Lock</td><td>Not listed</td><td>Require Unlock (Face ID/Touch ID/passcode), Hostile Location erases cache</td><td>PIN lock with lockout and wipe, credential seal with AES-256-GCM + Argon2</td></tr>
 <tr><td>QR camera</td><td>Scan or show QR on one screen</td><td>iOS scans with camera + pasted link fallback; macOS pasted link only</td><td>Camera scan and show</td></tr>
-<tr><td>Language</td><td>Kotlin (inferred from <code>build.gradle.kts</code>, but README says <code>com.urlxl.mail</code>)</td><td>Swift, SwiftUI, SwiftData, URLSession, WebKit, no external packages</td><td>C++/QML, Qt6/Kirigami, SQLite</td></tr>
+<tr><td>Language</td><td>Kotlin (<code>org.kysecurity.mail</code>)</td><td>Swift, SwiftUI, SwiftData, URLSession, WebKit, no external packages</td><td>C++/QML, Qt6/Kirigami, SQLite</td></tr>
 </tbody>
 </table>
 </div>
 <h2 id="bundle-and-naming"><a class="header" href="#bundle-and-naming">Bundle and naming</a></h2>
 <ul>
 <li>The Mac README says the app name is KyPost everywhere (Dock, Home Screen, About, permission prompts, project and scheme, deep link). Bundle IDs and Keychain group stay <code>com.urlxl.mail</code> on purpose. Renaming them is a separate high-risk step. See <code>Brand_Refresh_KyPost.md</code>.</li>
-<li>Android app ID is <code>com.urlxl.mail</code>.</li>
+<li>Android app ID is <code>org.kysecurity.mail</code>. Existing installs of <code>com.urlxl.mail</code> must reinstall and pair again.</li>
 </ul>
 <h2 id="pairing"><a class="header" href="#pairing">Pairing</a></h2>
 <p>All clients pair from the web app. See <a href="../pairing.html">Pairing</a> for the deep-link format and validation.</p>

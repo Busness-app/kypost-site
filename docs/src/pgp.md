@@ -2,7 +2,7 @@
 
 ## Scope
 
-KyPost supports OpenPGP for mail encryption and signing, plus QR-based public-key exchange. It has two key-protection modes. Clients do not hold a private key.
+KyPost supports OpenPGP for mail encryption and signing, plus QR-based public-key exchange. It has two key-protection modes. Native clients do not hold a PGP private key; client-protected keys are used in the browser.
 
 ## Where your PGP private key lives
 

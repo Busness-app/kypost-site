@@ -36,7 +36,7 @@
             const path_to_root = "";
             const default_light_theme = "patina-ky";
             const default_dark_theme = "patina-ky";
-            window.path_to_searchindex_js = "searchindex-36183f93.js";
+            window.path_to_searchindex_js = "searchindex-10baaf50.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="toc-d1d12269.js"></script>
@@ -221,6 +221,7 @@
 <h2 id="client-behavior"><a class="header" href="#client-behavior">Client behavior</a></h2>
 <h3 id="android"><a class="header" href="#android">Android</a></h3>
 <ul>
+<li>The current application id is <code>org.kysecurity.mail</code>. The rename from <code>com.urlxl.mail</code> is breaking: existing installs must reinstall, pair again, and re-enroll any device-held PGP identity.</li>
 <li>Stores pairing material (sub, hash, srv, reg, pairing token, last device id) in Keystore-backed <code>EncryptedSharedPreferences</code>. Notification history and sync status stay in plaintext DataStore.</li>
 <li>Calls the registration endpoint with the FCM token (<code>reg</code> or derived). Marks paired only on success (<code>ok:true</code> or <code>synced:true</code>). A scan alone does not pair it. Repeats on token refresh.</li>
 <li>Validates required params and resolves endpoint before the call.</li>
@@ -242,7 +243,7 @@
 <li>Use exactly <code>kypost://native-pair</code>.</li>
 <li>Provide <code>sub</code>, <code>hash</code>, <code>srv</code>, <code>pt</code>.</li>
 <li>Device must reach the resolved registration endpoint.</li>
-<li>Firebase config must match <code>com.urlxl.mail</code> (Android).</li>
+<li>Firebase config must match <code>org.kysecurity.mail</code> (Android).</li>
 <li><code>400</code> malformed, <code>401</code> bad/expired <code>pt</code> (scan new QR), <code>503</code> backend has no <code>PAIRING_SECRET</code>.</li>
 <li>On Android 13+, grant notification permission.</li>
 </ul>

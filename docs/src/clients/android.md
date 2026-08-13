@@ -4,7 +4,7 @@ Source: `kypost-android/README.md`.
 
 ## What it is
 
-KyPost for Android is an Android email client backed by a self-hosted KyPost relay. It shows keyword-based inbox tabs and syncs contacts in both directions. Native-push pairing authenticates relay access and contact sync. It gets push through native pairing and FCM. It does not use Novu on the client.
+KyPost for Android is an Android email client backed by a self-hosted KyPost relay. It shows keyword-based inbox tabs and syncs contacts in both directions. Native-push pairing authenticates relay access and contact sync. It gets notifications through native pairing and FCM or direct pull. The current Android application id is `org.kysecurity.mail`; the package rename is a breaking change, so existing `com.urlxl.mail` installs must reinstall and pair again.
 
 ## Features
 
@@ -55,7 +55,7 @@ Cadence: WorkManager periodic work at the platform minimum of 15 minutes, plus i
 
 ## Firebase setup
 
-1. Create or update the Firebase Android app for `com.urlxl.mail`.
+1. Create or update the Firebase Android app for `org.kysecurity.mail`.
 2. Download `google-services.json`.
 3. Put it at `app/google-services.json`.
 4. Enable FCM.
@@ -77,7 +77,7 @@ The app requests `POST_NOTIFICATIONS` at launch. If the user denies it, the app 
 - Scheme and host must be exactly `kypost://native-pair`.
 - Required params `sub`, `hash`, `srv`, `pt` must exist.
 - Device must reach the resolved registration endpoint.
-- Firebase config must match `com.urlxl.mail`.
+- Firebase config must match `org.kysecurity.mail`.
 - `400` means malformed or missing field. `401` means bad or expired `pt`; scan a new QR code. `503` means backend has no `PAIRING_SECRET` and retry will not help.
 - On Android 13+, grant notification permission or no system notification appears.
 

@@ -38,6 +38,7 @@ A `PAIRING_SECRET` shorter than 32 bytes disables pairing, pickup links, and PGP
 
 ### Android
 
+- The current application id is `org.kysecurity.mail`. The rename from `com.urlxl.mail` is breaking: existing installs must reinstall, pair again, and re-enroll any device-held PGP identity.
 - Stores pairing material (sub, hash, srv, reg, pairing token, last device id) in Keystore-backed `EncryptedSharedPreferences`. Notification history and sync status stay in plaintext DataStore.
 - Calls the registration endpoint with the FCM token (`reg` or derived). Marks paired only on success (`ok:true` or `synced:true`). A scan alone does not pair it. Repeats on token refresh.
 - Validates required params and resolves endpoint before the call.
@@ -59,7 +60,6 @@ A `PAIRING_SECRET` shorter than 32 bytes disables pairing, pickup links, and PGP
 - Use exactly `kypost://native-pair`.
 - Provide `sub`, `hash`, `srv`, `pt`.
 - Device must reach the resolved registration endpoint.
-- Firebase config must match `com.urlxl.mail` (Android).
+- Firebase config must match `org.kysecurity.mail` (Android).
 - `400` malformed, `401` bad/expired `pt` (scan new QR), `503` backend has no `PAIRING_SECRET`.
 - On Android 13+, grant notification permission.
-

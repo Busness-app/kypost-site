@@ -37,7 +37,7 @@
             const path_to_root = "";
             const default_light_theme = "patina-ky";
             const default_dark_theme = "patina-ky";
-            window.path_to_searchindex_js = "searchindex-36183f93.js";
+            window.path_to_searchindex_js = "searchindex-10baaf50.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="toc-d1d12269.js"></script>
@@ -826,7 +826,7 @@ npx wrangler deploy
 <p>The ecosystem has three native clients. Each talks only to the relay. No client uses IMAP or SMTP. One device pairing with a QR code or deep link creates the relay credential. After that, the relay handles mail, keyword tabs, push, and contact sync.</p>
 <h2 id="which-client-for-which-platform"><a class="header" href="#which-client-for-which-platform">Which client for which platform</a></h2>
 <ul>
-<li><strong>Android</strong> — <code>kypost-android</code>, package <code>com.urlxl.mail</code>, FCM or UnifiedPush + pull fallback.</li>
+<li><strong>Android</strong> — <code>kypost-android</code>, package <code>org.kysecurity.mail</code>, FCM or UnifiedPush + pull fallback. The package rename is breaking for existing installs.</li>
 <li><strong>macOS &amp; iOS</strong> — <code>kypost-for-Mac</code>, bundle <code>com.urlxl.mail</code>, SwiftUI shared codebase, APNs + polling.</li>
 <li><strong>Linux</strong> — <code>kypost-Linux</code>, KDE Plasma and Plasma Mobile, Qt6/Kirigami Flatpak, UnifiedPush + polling.</li>
 </ul>
@@ -855,14 +855,14 @@ npx wrangler deploy
 <tr><td>Push</td><td>FCM native + pull <code>GET</code> polling, per-user <code>push</code>/<code>pull</code> mode on web</td><td>APNs + 90s foreground polling + iOS background refresh</td><td>UnifiedPush distributor + 90s polling</td></tr>
 <tr><td>Lock</td><td>Not listed</td><td>Require Unlock (Face ID/Touch ID/passcode), Hostile Location erases cache</td><td>PIN lock with lockout and wipe, credential seal with AES-256-GCM + Argon2</td></tr>
 <tr><td>QR camera</td><td>Scan or show QR on one screen</td><td>iOS scans with camera + pasted link fallback; macOS pasted link only</td><td>Camera scan and show</td></tr>
-<tr><td>Language</td><td>Kotlin (inferred from <code>build.gradle.kts</code>, but README says <code>com.urlxl.mail</code>)</td><td>Swift, SwiftUI, SwiftData, URLSession, WebKit, no external packages</td><td>C++/QML, Qt6/Kirigami, SQLite</td></tr>
+<tr><td>Language</td><td>Kotlin (<code>org.kysecurity.mail</code>)</td><td>Swift, SwiftUI, SwiftData, URLSession, WebKit, no external packages</td><td>C++/QML, Qt6/Kirigami, SQLite</td></tr>
 </tbody>
 </table>
 </div>
 <h2 id="bundle-and-naming"><a class="header" href="#bundle-and-naming">Bundle and naming</a></h2>
 <ul>
 <li>The Mac README says the app name is KyPost everywhere (Dock, Home Screen, About, permission prompts, project and scheme, deep link). Bundle IDs and Keychain group stay <code>com.urlxl.mail</code> on purpose. Renaming them is a separate high-risk step. See <code>Brand_Refresh_KyPost.md</code>.</li>
-<li>Android app ID is <code>com.urlxl.mail</code>.</li>
+<li>Android app ID is <code>org.kysecurity.mail</code>. Existing installs of <code>com.urlxl.mail</code> must reinstall and pair again.</li>
 </ul>
 <h2 id="pairing"><a class="header" href="#pairing">Pairing</a></h2>
 <p>All clients pair from the web app. See <a href="#pairing--device-registration">Pairing</a> for the deep-link format and validation.</p>
@@ -870,7 +870,7 @@ npx wrangler deploy
 <h1 id="android-client"><a class="header" href="#android-client">Android Client</a></h1>
 <p>Source: <code>kypost-android/README.md</code>.</p>
 <h2 id="what-it-is"><a class="header" href="#what-it-is">What it is</a></h2>
-<p>KyPost for Android is an Android email client backed by a self-hosted KyPost relay. It shows keyword-based inbox tabs and syncs contacts in both directions. Native-push pairing authenticates relay access and contact sync. It gets push through native pairing and FCM. It does not use Novu on the client.</p>
+<p>KyPost for Android is an Android email client backed by a self-hosted KyPost relay. It shows keyword-based inbox tabs and syncs contacts in both directions. Native-push pairing authenticates relay access and contact sync. It gets notifications through native pairing and FCM or direct pull. The current Android application id is <code>org.kysecurity.mail</code>; the package rename is a breaking change, so existing <code>com.urlxl.mail</code> installs must reinstall and pair again.</p>
 <h2 id="features"><a class="header" href="#features">Features</a></h2>
 <ul>
 <li><strong>Mail</strong>: The paired relay proxies mail. The app stores no mail credentials on the device.</li>
@@ -902,7 +902,7 @@ npx wrangler deploy
 <p>Cadence: WorkManager periodic work at the platform minimum of 15 minutes, plus immediate pull on foreground and after pairing. Near real-time needs a foreground service with a short loop and a persistent notification. That is not the default. The app backs off after <code>400</code>, <code>401</code>, <code>503</code>, and network errors.</p>
 <h2 id="firebase-setup"><a class="header" href="#firebase-setup">Firebase setup</a></h2>
 <ol>
-<li>Create or update the Firebase Android app for <code>com.urlxl.mail</code>.</li>
+<li>Create or update the Firebase Android app for <code>org.kysecurity.mail</code>.</li>
 <li>Download <code>google-services.json</code>.</li>
 <li>Put it at <code>app/google-services.json</code>.</li>
 <li>Enable FCM.</li>
@@ -922,7 +922,7 @@ npx wrangler deploy
 <li>Scheme and host must be exactly <code>kypost://native-pair</code>.</li>
 <li>Required params <code>sub</code>, <code>hash</code>, <code>srv</code>, <code>pt</code> must exist.</li>
 <li>Device must reach the resolved registration endpoint.</li>
-<li>Firebase config must match <code>com.urlxl.mail</code>.</li>
+<li>Firebase config must match <code>org.kysecurity.mail</code>.</li>
 <li><code>400</code> means malformed or missing field. <code>401</code> means bad or expired <code>pt</code>; scan a new QR code. <code>503</code> means backend has no <code>PAIRING_SECRET</code> and retry will not help.</li>
 <li>On Android 13+, grant notification permission or no system notification appears.</li>
 </ul>
@@ -1108,6 +1108,7 @@ flatpak-builder --run build-flatpak packaging/flatpak/com.urlxl.mail.yaml kypost
 <h2 id="client-behavior"><a class="header" href="#client-behavior">Client behavior</a></h2>
 <h3 id="android-1"><a class="header" href="#android-1">Android</a></h3>
 <ul>
+<li>The current application id is <code>org.kysecurity.mail</code>. The rename from <code>com.urlxl.mail</code> is breaking: existing installs must reinstall, pair again, and re-enroll any device-held PGP identity.</li>
 <li>Stores pairing material (sub, hash, srv, reg, pairing token, last device id) in Keystore-backed <code>EncryptedSharedPreferences</code>. Notification history and sync status stay in plaintext DataStore.</li>
 <li>Calls the registration endpoint with the FCM token (<code>reg</code> or derived). Marks paired only on success (<code>ok:true</code> or <code>synced:true</code>). A scan alone does not pair it. Repeats on token refresh.</li>
 <li>Validates required params and resolves endpoint before the call.</li>
@@ -1129,7 +1130,7 @@ flatpak-builder --run build-flatpak packaging/flatpak/com.urlxl.mail.yaml kypost
 <li>Use exactly <code>kypost://native-pair</code>.</li>
 <li>Provide <code>sub</code>, <code>hash</code>, <code>srv</code>, <code>pt</code>.</li>
 <li>Device must reach the resolved registration endpoint.</li>
-<li>Firebase config must match <code>com.urlxl.mail</code> (Android).</li>
+<li>Firebase config must match <code>org.kysecurity.mail</code> (Android).</li>
 <li><code>400</code> malformed, <code>401</code> bad/expired <code>pt</code> (scan new QR), <code>503</code> backend has no <code>PAIRING_SECRET</code>.</li>
 <li>On Android 13+, grant notification permission.</li>
 </ul>
@@ -1241,7 +1242,7 @@ flatpak-builder --run build-flatpak packaging/flatpak/com.urlxl.mail.yaml kypost
 <div style="break-before: page; page-break-before: always;"></div>
 <h1 id="pgp--encryption"><a class="header" href="#pgp--encryption">PGP &amp; Encryption</a></h1>
 <h2 id="scope"><a class="header" href="#scope">Scope</a></h2>
-<p>KyPost supports OpenPGP for mail encryption and signing, plus QR-based public-key exchange. It has two key-protection modes. Clients do not hold a private key.</p>
+<p>KyPost supports OpenPGP for mail encryption and signing, plus QR-based public-key exchange. It has two key-protection modes. Native clients do not hold a PGP private key; client-protected keys are used in the browser.</p>
 <h2 id="where-your-pgp-private-key-lives"><a class="header" href="#where-your-pgp-private-key-lives">Where your PGP private key lives</a></h2>
 <h3 id="client-protected-end-to-end"><a class="header" href="#client-protected-end-to-end">Client-protected (end-to-end)</a></h3>
 <ul>
@@ -1495,7 +1496,6 @@ docker volume ls | grep kypost
 <p><strong>Do not build security controls on labels.</strong> Never create a filter rule that grants trust based on a label, and never auto-archive anything by label alone. This is not a fixable limitation—it is a known property of using local LLMs to classify sender-controlled text. All decisions are recorded on the Decisions page so you can audit what actually happened.</p>
 <p><strong>Encrypted mail is not classified, and is never labelled as encrypted.</strong> A PGP-encrypted message has no readable body, so it skips the classifier and is tagged with your account’s default label instead. It is deliberately <em>not</em> given an <code>Encrypted</code> keyword. IMAP keywords are stored on the mail server in the clear, so such a keyword would hand whoever runs that server a precise index of which of your messages are worth attacking—the exact adversary client-protected custody exists to defend against—while looking to you like a security feature. It would break the rule above in both directions at once: not trustworthy enough to rely on, and harmful merely by existing. The padlock you see in the reader is derived from the message itself each time it is displayed and is never written anywhere.</p>
 <p><strong>Encrypted mail also stays out of mobile push payloads.</strong> Native push travels to the relay Worker and on to FCM/APNs in cleartext at every hop. For an encrypted message the sender and subject are withheld from that payload regardless of your Content Preview setting, because a third-party PGP/MIME message that does not use protected headers carries its real subject in the clear. Web push is unaffected—those payloads are encrypted to your browser’s own subscription keys (RFC 8291), so Content Preview remains your choice there.</p>
-<p>See <a href="README.html#classification-flow">Classification flow</a> for details.</p>
 <h3 id="email-html-rendering"><a class="header" href="#email-html-rendering">Email HTML Rendering</a></h3>
 <p>KyPost renders email HTML in a sandboxed iframe with DOMPurify sanitization. The sandbox blocks most attacks (no script execution in the frame itself), but:</p>
 <ul>
@@ -1504,7 +1504,6 @@ docker volume ls | grep kypost
 <li><strong>Sender HTML survival.</strong> DOMPurify removes most dangerous elements, but sanitization is a defense layer, not a boundary. Treat all email HTML as potentially hostile, and do not trust email to be what it claims.</li>
 </ul>
 <h3 id="session-security"><a class="header" href="#session-security">Session Security</a></h3>
-<p>See <a href="README.html#session-behavior">Session Behavior</a> for full details. Key points:</p>
 <ul>
 <li>Sessions expire after 24 hours without activity (sliding window).</li>
 <li>Sessions have a hard cap: 7 days from issue, regardless of activity. Stolen cookies cannot be kept alive indefinitely.</li>
@@ -1727,13 +1726,6 @@ docker volume ls | grep kypost
 <ul>
 <li><strong>Vulnerability reports:</strong> <a href="https://github.com/Yoshiofthewire/kypost-server/security/advisories">GitHub Security Advisories</a></li>
 <li><strong>Maintainer:</strong> <a href="https://github.com/Yoshiofthewire">Yoshiofthewire</a></li>
-</ul>
-<h2 id="additional-resources"><a class="header" href="#additional-resources">Additional Resources</a></h2>
-<ul>
-<li><a href="README.html#where-your-pgp-private-key-lives">README Security Section</a> — PGP key custody, session behavior, users and roles</li>
-<li><a href="docs/Reverse_Proxy_Networking.html">Reverse Proxy Networking</a> — Setting up a proxy on <code>kypost-net</code></li>
-<li><a href="README.html#quick-start">Quick Start TLS Notes</a> — TLS termination and proxy configuration</li>
-<li>OWASP guidelines on secure development practices</li>
 </ul>
 <div style="break-before: page; page-break-before: always;"></div>
 <h1 id="licensing"><a class="header" href="#licensing">Licensing</a></h1>

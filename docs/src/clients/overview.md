@@ -4,7 +4,7 @@ The ecosystem has three native clients. Each talks only to the relay. No client 
 
 ## Which client for which platform
 
-- **Android** — `kypost-android`, package `com.urlxl.mail`, FCM or UnifiedPush + pull fallback.
+- **Android** — `kypost-android`, package `org.kysecurity.mail`, FCM or UnifiedPush + pull fallback. The package rename is breaking for existing installs.
 - **macOS & iOS** — `kypost-for-Mac`, bundle `com.urlxl.mail`, SwiftUI shared codebase, APNs + polling.
 - **Linux** — `kypost-Linux`, KDE Plasma and Plasma Mobile, Qt6/Kirigami Flatpak, UnifiedPush + polling.
 
@@ -31,12 +31,12 @@ All clients share:
 | Push | FCM native + pull `GET` polling, per-user `push`/`pull` mode on web | APNs + 90s foreground polling + iOS background refresh | UnifiedPush distributor + 90s polling |
 | Lock | Not listed | Require Unlock (Face ID/Touch ID/passcode), Hostile Location erases cache | PIN lock with lockout and wipe, credential seal with AES-256-GCM + Argon2 |
 | QR camera | Scan or show QR on one screen | iOS scans with camera + pasted link fallback; macOS pasted link only | Camera scan and show |
-| Language | Kotlin (inferred from `build.gradle.kts`, but README says `com.urlxl.mail`) | Swift, SwiftUI, SwiftData, URLSession, WebKit, no external packages | C++/QML, Qt6/Kirigami, SQLite |
+| Language | Kotlin (`org.kysecurity.mail`) | Swift, SwiftUI, SwiftData, URLSession, WebKit, no external packages | C++/QML, Qt6/Kirigami, SQLite |
 
 ## Bundle and naming
 
 - The Mac README says the app name is KyPost everywhere (Dock, Home Screen, About, permission prompts, project and scheme, deep link). Bundle IDs and Keychain group stay `com.urlxl.mail` on purpose. Renaming them is a separate high-risk step. See `Brand_Refresh_KyPost.md`.
-- Android app ID is `com.urlxl.mail`.
+- Android app ID is `org.kysecurity.mail`. Existing installs of `com.urlxl.mail` must reinstall and pair again.
 
 ## Pairing
 
