@@ -5,6 +5,9 @@ with the KyPost app installed.
 
 If you need a login, please join the KyPost Beta Google Group at <https://groups.google.com/g/kypost_close_beta>.
 
+The App Can be Downloaded on Android from https://play.google.com/store/apps/details?id=org.kysecurity.mail
+Or on the web from https://play.google.com/apps/testing/org.kysecurity.mail
+
 ### Pair the app
 
 1. On a computer, open <https://demo.kypost.org/>.
@@ -30,3 +33,4 @@ If you need a login, please join the KyPost Beta Google Group at <https://groups
 6. Verify your identity on the phone.
 
 The app is now ready for feature testing.
+
