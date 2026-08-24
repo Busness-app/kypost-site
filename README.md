@@ -55,4 +55,4 @@ the current status of each project.
 
 ## License
 
-AGPL / GPL-3.0
+MIT, developed by Busnes.app
