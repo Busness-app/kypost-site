@@ -26,8 +26,8 @@ Endpoints:
 
 Mobile two-way sync uses cursor-based endpoints:
 
-- `GET|POST /api/contacts/sync` — pairing token authenticates the call.
-- `GET /api/contacts/sync` with cursor on Android; server README frames it as mobile sync.
+- `GET|POST /api/contacts/sync` — cursor-based. Authenticated by the per-device credential (`X-Kypost-Device-Id` / `X-Kypost-Device-Secret`), not by a session.
+- Responses are size-bounded, so a large address book cannot force an unbounded allocation on the client.
 
 Android:
 

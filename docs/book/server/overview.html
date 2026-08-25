@@ -36,7 +36,7 @@
             const path_to_root = "../";
             const default_light_theme = "patina-ky";
             const default_dark_theme = "patina-ky";
-            window.path_to_searchindex_js = "../searchindex-9155a62d.js";
+            window.path_to_searchindex_js = "../searchindex-0e88e264.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="../toc-d1d12269.js"></script>
@@ -176,7 +176,7 @@
                 <div id="mdbook-content" class="content">
                     <main>
                         <h1 id="server--overview"><a class="header" href="#server--overview">Server — Overview</a></h1>
-<p>The server is a self-hosted IMAP web client.  It offers GPG public keys for email encryption, and sealed private key protection.  The server CANNOT read any PGP encypted emails. It adds local-AI keyword labels, a web UI, and a relay API for native clients.</p>
+<p>The server is a self-hosted IMAP web client. It offers OpenPGP public-key discovery and publishing for email encryption, and sealed private-key protection. In client-protected mode the server cannot read a user’s PGP-encrypted mail. It adds local-AI keyword labels, a web UI, and a relay API for native clients.</p>
 <h2 id="what-the-server-does"><a class="header" href="#what-the-server-does">What the server does</a></h2>
 <ul>
 <li>Single-container Docker runtime. <code>supervisord</code> manages the processes.</li>
@@ -185,14 +185,17 @@
 <li>Keyword labels for unread mail. Each account has its own label list, copied from instance defaults at creation.</li>
 <li>Filter Rules: GUI condition and action builder plus raw Sieve editor. A run-now panel applies rules on demand.</li>
 <li>Compose with SMTP send and IMAP draft save.</li>
-<li>PGP mail encryption. Generate or import a browser-protected key, search <code>keys.openpgp.org</code>, and check recipient keys before you send.</li>
+<li>PGP mail encryption. Generate or import a browser-protected key, discover recipient keys over WKD, keyservers and Autocrypt, check them before you send, and seal the key to a paired device so native clients can read encrypted mail. See <a href="../pgp.html">PGP &amp; Encryption</a>.</li>
+<li>Web Key Directory publishing at <code>/.well-known/openpgpkey/</code> for DNS-verified domains, so correspondents find your users’ keys without a keyserver.</li>
+<li>Send-as aliases, each verified by a DKIM-signed challenge from the alias’s own domain before it can be used.</li>
 <li>Contacts address book with groups, dedupe, bulk delete, CSV and vCard import and export, and photos.</li>
 <li>CardDAV server (<code>/dav</code>, <code>/.well-known/carddav</code>) and optional CardDAV client to sync an external address book.</li>
-<li>Multi-factor authentication: TOTP, one-time recovery codes, push-approval sign-in.</li>
+<li>Multi-factor authentication: TOTP, one-time recovery codes, push-approval sign-in with number matching.</li>
+<li>Single Sign-On against any standard OpenID Connect provider, with directory replication. KySignOn is a one-click preset; Authentik and Keycloak have their admin-group claims mapped. Authorization code + PKCE, ID tokens verified against the issuer’s JWKS, accounts claimed by the provider’s <code>sub</code> and never by username or email. Admin-configured under Admin → Server → SSO; <strong>requires <code>SERVER_BASE_URL</code></strong>.</li>
 <li>CAPTCHA on login: self-hosted proof-of-work by default, also Turnstile or Friendly Captcha, or <code>CAPTCHA_PROVIDER=none</code>.</li>
 <li>Browser push for each user, for all mail or keyword matches only, plus native push pairing.</li>
 <li>Settings panels: Appearance, Mail (IMAP/SMTP, send-as, contact sync, filters), Security, Notifications and Status, Email Labels (per-user prompt tuning), and Admin (runtime, diagnostics, label rules).</li>
-<li>Theme presets. The README says “a dozen”.</li>
+<li>15 theme presets, shared byte for byte with every native client. See <a href="../theming.html">Theming</a>.</li>
 </ul>
 <h2 id="quick-facts"><a class="header" href="#quick-facts">Quick facts</a></h2>
 <ul>

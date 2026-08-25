@@ -6,10 +6,10 @@ paired with native, relay-only clients for Android, iOS, macOS, and Linux.
 This repo is just the marketing site. The actual products live in their own
 repos:
 
-- [KyPost Server](https://github.com/Yoshiofthewire/KyPost-Server) — self-hosted IMAP/SMTP web client with local-AI keyword labeling
-- [KyPost for Android](https://github.com/Yoshiofthewire/KyPost-for-Android)
-- [KyPost for Mac & iOS](https://github.com/Yoshiofthewire/KyPost-for-Mac)
-- [KyPost for Linux](https://github.com/Yoshiofthewire/KyPost-for-Linux)
+- [KyPost Server](https://github.com/Busness-app/KyPost-Server) — self-hosted IMAP/SMTP web client with local-AI keyword labeling
+- [KyPost for Android](https://github.com/Busness-app/KyPost-for-Android)
+- [KyPost for Mac & iOS](https://github.com/Busness-app/KyPost-for-Mac)
+- [KyPost for Linux](https://github.com/Busness-app/KyPost-for-Linux)
 
 ## What's here
 
@@ -17,17 +17,19 @@ A single-page static site, no build step, no framework:
 
 ```
 index.html       All page sections
+privacy.html     Privacy policy
 css/styles.css   Layout, typography, @font-face, theme-wipe demo styling
 js/main.js       Mobile nav toggle, scroll-spy nav highlighting, theme-wipe scroll mechanic
 assets/          Logos, mascot art, self-hosted fonts (Space Grotesk, IBM Plex Mono),
                  and real KyPost web app screenshots used in the theme demo
 architecture/    Generated — the interactive architecture map (see below)
+docs/            mdbook — src/ is the source, book/ is the committed build
 ```
 
 ## The architecture map
 
 `/architecture/` is the only part of this repo that isn't hand-written. It is
-built by [KyData](https://github.com/Yoshiofthewire/KyData) from a JSON
+built by [KyData](https://github.com/Busness-app/KyData) from a JSON
 description of the KyPost repos, and it is committed here because the site has
 no build step.
 
@@ -47,11 +49,26 @@ self-contained: one HTML file with its script, styles, and data inlined.
 alongside it so it can be read without scraping the HTML.
 
 The page covers the ecosystem overview, cross-platform reach, the privacy
-model (client-held PGP keys, WKD/Autocrypt key discovery, sealed pickup
-links, protected subjects, generic push), the device-level security
+model (client-held PGP keys, device enrollment onto phones and desktops,
+WKD/Autocrypt key discovery, the six-state signature trust model, sealed
+pickup links, protected subjects, generic push), the device-level security
 hardening shipped across the clients, the shared 15-theme customization
 system (with a scroll-driven preview built from real app screenshots), and
 the current status of each project.
+
+## The documentation book
+
+`/docs/` is an [mdbook](https://rust-lang.github.io/mdBook/). `docs/src/` is the
+source and `docs/book/` is the build, committed for the same reason the
+architecture map is: the site has no build step. Edit `src/`, then:
+
+```sh
+cd docs && mdbook build
+```
+
+The book restates what the four product repos document. When their READMEs,
+`SECURITY.md` files, or wire contracts change, the book is what goes stale
+first — check it against them rather than against itself.
 
 ## License
 

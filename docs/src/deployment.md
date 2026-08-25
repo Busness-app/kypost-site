@@ -57,7 +57,11 @@ It installs a daily timer at 03:15 local time plus up to one hour jitter, enable
 
 From `kypost-Linux/README.md`:
 
-- Own signed Flatpak remote at `https://yoshiofthewire.github.io/KyPost-for-Linux/kypost.flatpakrepo` plus Flathub for the runtime. Each release also attaches a `.flatpak` bundle (no auto-updates). See `docs/DISTRIBUTION.md`.
+- Own signed Flatpak remote at `https://busness-app.github.io/KyPost-for-Linux/kypost.flatpakrepo`, app id `com.kysecurity.mail`, plus Flathub for the `org.kde.Platform//6.11` runtime. Each release also attaches a `.flatpak` bundle (no auto-updates). See `docs/DISTRIBUTION.md`.
+- The remote is live. `kypost.flatpakrepo` points at `https://busness-app.github.io/KyPost-for-Linux/repo/`, whose summary is GPG-signed and carries `app/com.kysecurity.mail/x86_64/master` and `app/com.kysecurity.mail/aarch64/master`.
+- The OSTree repo republishes on every push to `main`, so `flatpak update` tracks the branch. The `.flatpak` bundles are a separate thing: they attach only to a `v*` tagged release. The first is `v0.2.0`.
+- `scripts/verify-version.sh` keeps `CMakeLists.txt`, the AppStream `<release>` entry, and the git tag from drifting apart, and CI gates a `v*` build on all three agreeing. A binary reporting the previous version, or a stale AppStream entry that stops Discover offering the update, is the failure it exists to prevent.
+- CI builds aarch64 artifacts as well as x86-64, and gates the release on the version matching the tag.
 
 ## Push relay deployment
 

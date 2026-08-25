@@ -36,7 +36,7 @@
             const path_to_root = "";
             const default_light_theme = "patina-ky";
             const default_dark_theme = "patina-ky";
-            window.path_to_searchindex_js = "searchindex-9155a62d.js";
+            window.path_to_searchindex_js = "searchindex-0e88e264.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="toc-d1d12269.js"></script>
@@ -183,7 +183,12 @@
                       |
                       +---&gt; Ollama (local LLM)
                       +---&gt; Cloudflare Workers (FCM relay, APNs relay)
+                      +---&gt; Keyservers / WKD (key discovery and publishing)
+                      +---&gt; OpenID Connect provider (optional SSO)
 </code></pre>
+<p>Clients hold no mail credentials and no PGP private key until they are
+deliberately enrolled; see <a href="./pgp.html">PGP &amp; Encryption</a>. Each paired device
+authenticates with its own server-minted secret, revocable one device at a time.</p>
 <h2 id="server-processes"><a class="header" href="#server-processes">Server processes</a></h2>
 <p>There are four processes in one container. <code>supervisord</code> manages them:</p>
 <ul>
@@ -207,7 +212,27 @@
 <p>Warning: Labels are a hint, not a security boundary. A sender can influence the keyword on their own message. The allowlist is enforced after the model answers, so a message cannot get a label you did not configure, and it cannot move, delete, or mark other mail. Do not use a label to grant trust or to auto-archive.</p>
 <h2 id="client-architectures"><a class="header" href="#client-architectures">Client architectures</a></h2>
 <h3 id="android"><a class="header" href="#android">Android</a></h3>
-<p>TODO</p>
+<p>One Gradle module (<code>app/</code>), package <code>org.kysecurity.mail</code>, Views and XML layouts
+rather than Compose. Dependencies are wired by hand through <code>SingletonGraph.kt</code>.</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Package</th><th>Contents</th></tr>
+</thead>
+<tbody>
+<tr><td>(root)</td><td>Activities — inbox, email detail, compose, settings, themes, keywords — plus <code>AppNavigation</code>, <code>AppTheme</code>, <code>SingletonGraph</code></td></tr>
+<tr><td><code>data/</code></td><td>Room over SQLCipher: <code>AppDatabase</code>, DAOs and entities for mail and contacts, <code>DataRuntime</code></td></tr>
+<tr><td><code>mail/</code></td><td><code>MailRepository</code>, <code>MailSource</code>, cursor store and checkpointing</td></tr>
+<tr><td><code>contacts/</code></td><td>Contact list, detail, edit, address-book sheet, cursor store</td></tr>
+<tr><td><code>pgp/</code></td><td><code>ClientEncryptedSender</code>, device enrollment (activity, view model, envelope, code), <code>SignerBinding</code>, <code>PgpFingerprint</code>, <code>WebmailTab</code></td></tr>
+<tr><td><code>push/</code></td><td>FCM service, UnifiedPush service and registrar, pull notifications, pairing, MFA approval</td></tr>
+<tr><td><code>security/</code></td><td><code>AppLockManager</code>, <code>LockoutPolicy</code>, <code>PinPolicy</code>, <code>SecurityWipe</code>, <code>DatabaseKey</code>, <code>CredentialCipher</code>, <code>SpkiPinner</code>, Hostile Location settings, attachment ledger</td></tr>
+<tr><td><code>ui/</code></td><td><code>SplitInitializer</code> — activity embedding for master-detail above 800dp</td></tr>
+</tbody>
+</table>
+</div>
+<p>Large-screen layouts come from resource qualifiers (<code>res/layout-w600dp/</code>) and
+<code>res/xml/split_config.xml</code>, not from a separate codebase.</p>
 <h3 id="macos-and-ios"><a class="header" href="#macos-and-ios">macOS and iOS</a></h3>
 <p>One codebase in <code>KyPost/</code> builds for both platforms:</p>
 <div class="table-wrapper">
@@ -236,17 +261,20 @@
             repositories, theme data. QtCore/QtNetwork/QtSql only.
 app/        main.cpp, push/ (KUnifiedPush + KNotifications), platform/ (SecureStore),
             pgp/, contacts/, mail/, pairing/, qml/ (MobileRoot, DesktopRoot, pages)
-tests/      QtTest, stubbed HttpClient/FakeRelayServer; ctest-driven
+tests/      QtTest, stubbed HttpClient/FakeRelayServer; ctest-driven, plus the QML
+            suite and tests/guards.tsv, the security guards proven load-bearing
 packaging/  flatpak/ (manifest, desktop file, D-Bus service, AppStream), click/ (deferred)
 po/         gettext catalogs
-docs/       local notes
+scripts/    build-sqlcipher.sh, verify-guards.sh, verify-version.sh
+docs/       PARITY.md (authoritative Android-parity matrix), DISTRIBUTION.md,
+            THREADING.md, SETUP.md, RENAME_NOTES.md
 </code></pre>
 <h2 id="dependencies"><a class="header" href="#dependencies">Dependencies</a></h2>
 <ul>
 <li><strong>Server</strong>: Docker and Docker Compose required. Go 1.26+ and Node 20+ optional for local dev. Frontend uses React and Vite.</li>
-<li><strong>Android</strong>: Firebase project with <code>google-services.json</code>, FCM enabled.</li>
-<li><strong>macOS/iOS</strong>: Xcode 26, deployment target macOS and iOS 26.5, no Swift package dependencies, SwiftData, URLSession, WebKit.</li>
-<li><strong>Linux</strong>: Qt6 (<code>qt6-base</code>, <code>qt6-declarative</code>, <code>qt6-webengine</code>, <code>kirigami</code> KF6, <code>knotifications</code> KF6, <code>kdbusaddons</code> KF6, <code>ki18n</code> KF6, <code>qtkeychain-qt6</code>, <code>kunifiedpush</code>, <code>zxing-cpp</code>, <code>openssl</code>, <code>argon2</code>), CMake.</li>
+<li><strong>Android</strong>: Firebase project with <code>google-services.json</code>, FCM enabled. Bouncy Castle for OpenPGP, SQLCipher for the mail database, the UnifiedPush connector, and <code>play-services-code-scanner</code> for the pairing QR.</li>
+<li><strong>macOS/iOS</strong>: Xcode 26, deployment target macOS and iOS 26.5, SwiftData, URLSession, WebKit. One external dependency: GopenPGP, as a SHA-256-pinned binary XCFramework.</li>
+<li><strong>Linux</strong>: Qt6 (<code>qt6-base</code>, <code>qt6-declarative</code>, <code>qt6-webengine</code>, <code>qt6-multimedia</code>, <code>kirigami</code> KF6, <code>knotifications</code> KF6, <code>kstatusnotifieritem</code> KF6, <code>kdbusaddons</code> KF6, <code>ki18n</code> KF6, <code>qtkeychain-qt6</code>, <code>kunifiedpush</code>, <code>zxing-cpp</code>, <code>openssl</code>, <code>argon2</code>, <code>gpgme</code>), CMake, and SQLCipher built from source by <code>scripts/build-sqlcipher.sh</code>.</li>
 </ul>
 
                     </main>

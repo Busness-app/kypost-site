@@ -36,7 +36,7 @@
             const path_to_root = "../";
             const default_light_theme = "patina-ky";
             const default_dark_theme = "patina-ky";
-            window.path_to_searchindex_js = "../searchindex-9155a62d.js";
+            window.path_to_searchindex_js = "../searchindex-0e88e264.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="../toc-d1d12269.js"></script>
@@ -185,25 +185,30 @@
 <li><strong>Keyword tabs</strong>: Tabs come from server tab and label fields. Tune them in the Keywords screen.</li>
 <li><strong>Compose</strong>: To, Cc, and Bcc complete from local contacts. An address-book picker adds recipients.</li>
 <li><strong>Contacts</strong>: Two-way sync against the relay. Open it from the Inbox overflow menu.</li>
-<li><strong>PGP key signing</strong>: One screen shows your own PGP public-key QR code and scans another person QR code. It saves the key onto an existing contact.</li>
+<li><strong>PGP</strong>: One screen shows your own PGP public-key QR code and scans another person’s, saving that key onto an existing contact. The app encrypts outgoing mail to a recipient’s key on the device — the plaintext body never reaches the relay for that path — and decrypts client-custody mail once it holds a sealed key envelope (see <a href="../pgp.html#on-a-native-client-after-device-enrollment">Device enrollment</a>). Without that envelope, encrypted mail hands off to webmail in the user’s own browser or the installed webmail PWA, never a Custom Tab.</li>
+<li><strong>Signature badges</strong>: decided on the device from keys in the local contact store. The relay’s <code>verified</code> flag is not read at all.</li>
 <li><strong>MFA push approval</strong>: Push notifications approve or deny logins. An in-app screen handles approval when OEM background limits block the notification.</li>
 <li><strong>Themes</strong>: Shares presets with the web app. Default is Patina Ky. Choose in the Themes screen.</li>
-<li><strong>Push notifications</strong>: System notifications plus in-app history for new mail. Each user selects a delivery mode (<code>push</code> or <code>pull</code>).</li>
+<li><strong>Push notifications</strong>: System notifications plus in-app history for new mail. Delivery is FCM, a UnifiedPush distributor you choose, or App Pull, which polls your own server and involves neither. Each user selects the delivery mode (<code>push</code> or <code>pull</code>) on the web Notifications page.</li>
+<li><strong>Large screens</strong>: a navigation rail and wide inbox, contacts and compose layouts at 600dp, and inbox/contacts master-detail through activity embedding at 800dp — measured on a Fold, where 720dp wrongly split the 751dp cover screen. State survives fold and unfold: the folder, tab, scroll position, an in-progress contact edit, and the app lock.</li>
+<li><strong>Security</strong>: an app-lock PIN or biometric with escalating delays and wipe-on-repeat, Hostile Location Protection, and a SQLCipher-encrypted mail database. See <a href="../security.html#android">Security Model</a>.</li>
 </ul>
 <h2 id="push-pairing"><a class="header" href="#push-pairing">Push pairing</a></h2>
 <p>Deep link or QR code:</p>
-<pre><code>kypost://native-pair?sub=&lt;subscriberId&gt;&amp;hash=&lt;subscriberHash&gt;&amp;srv=&lt;serverUrl&gt;&amp;reg=&lt;registrationUrl&gt;&amp;pt=&lt;pairingToken&gt;
+<pre><code>kypost://native-pair?sub=&lt;subscriberId&gt;&amp;srv=&lt;serverUrl&gt;&amp;reg=&lt;registrationUrl&gt;&amp;pt=&lt;pairingToken&gt;&amp;pin=&lt;tlsPin&gt;
 </code></pre>
-<p>Required params: <code>sub</code>, <code>hash</code>, <code>srv</code>, <code>pt</code>. Optional: <code>reg</code>.</p>
-<p>Storage: Keystore-backed <code>EncryptedSharedPreferences</code> holds subscriber id, hash, server URL, registration URL, pairing token, last device id. Plaintext DataStore holds notification history and sync status.</p>
-<p>Registration: The app calls <code>reg</code> from the QR code. If <code>reg</code> is absent, it uses <code>{srv}/api/notifications/native/register</code>. It sends the FCM token. It marks the device as paired only after success (<code>ok:true</code> or <code>synced:true</code>). A scan alone does not pair it. It repeats the call on token refresh.</p>
+<p>Required params: <code>sub</code>, <code>srv</code>, <code>pt</code>. Optional: <code>reg</code>, <code>pin</code>.</p>
+<p><code>srv</code> and any <code>reg</code> must be <code>https</code> and the <strong>same origin</strong>. The app refuses the link otherwise, because <code>reg</code> is where the device secret is minted while the confirmation dialog shows the user <code>srv</code>. <code>hash</code> is legacy: a link that still carries it comes from an outdated server, the app ignores it, and the server no longer accepts it.</p>
+<p><strong>Authentication is per device, not per account.</strong> Registration exchanges the one-time <code>pairingToken</code> for a <code>deviceId</code> and a <code>deviceSecret</code> minted by the server. Every later request sends them as <code>X-Kypost-Device-Id</code> and <code>X-Kypost-Device-Secret</code> headers. Revoke a single device from the server’s Security page.</p>
+<p>Storage: a Keystore-backed <code>EncryptedSharedPreferences</code> file holds the subscriber id, server URL, registration URL, pairing token, device id and device secret. Plaintext DataStore holds notification history and sync status.</p>
+<p>Registration: The app calls <code>reg</code> from the QR code. If <code>reg</code> is absent, it uses <code>{srv}/api/notifications/native/register</code>. It sends the FCM token. It marks the device as paired only after success (<code>ok:true</code> or <code>synced:true</code>). A scan alone does not pair it. It repeats the call on token refresh, and each successful registration mints a <strong>new</strong> device secret that invalidates the previous one.</p>
 <p>FCM data keys: <code>messageId</code>, <code>senderName</code>, <code>emailSubject</code>, <code>Keywords</code>.</p>
 <h2 id="pull-mode-fcm-bypass"><a class="header" href="#pull-mode-fcm-bypass">Pull mode (FCM bypass)</a></h2>
 <p>The registration response also returns <code>deliveryMode</code> (<code>push</code> or <code>pull</code>) and <code>pullEndpoint</code>. If <code>pullEndpoint</code> is absent, the app uses <code>{srv}/api/notifications/native/pull</code>.</p>
 <p>In <code>pull</code> mode the app polls:</p>
-<pre><code>GET {pullEndpoint}?sub=&amp;hash=&amp;after=&lt;cursor&gt;
+<pre><code>GET {pullEndpoint}?after=&lt;cursor&gt;
 </code></pre>
-<p>Only those query params authenticate the call. <code>hash</code> is the URL-encoded subscriber HMAC. No session or Bearer token. FCM stays registered but is not the source of truth.</p>
+<p>The cursor is the only query parameter. Authentication is the <code>X-Kypost-Device-Id</code> and <code>X-Kypost-Device-Secret</code> headers, never a query parameter — credentials in a URL end up in access logs and browser history. No session and no Bearer token. FCM stays registered but is not the source of truth.</p>
 <p>The same dispatcher that handles an FCM data message renders each polled notification. Tap behavior is identical.</p>
 <p>Dedup uses strictly increasing <code>seq</code>. The app keeps a durable per-subscriber <code>lastCursor</code> at <code>max(lastCursor, response.cursor)</code> only after it delivers notifications, so a crash causes a re-fetch, not a loss.</p>
 <p><code>deliveryMode</code> in both register and pull responses is authoritative. A change to <code>push</code> on the web stops polling. A change to <code>pull</code> starts it. The app reads it again on each foreground.</p>
@@ -219,26 +224,52 @@
 <p>The app requests <code>POST_NOTIFICATIONS</code> at launch. If the user denies it, the app still parses payloads and saves them to in-app history. It does not show system notifications.</p>
 <h2 id="pairing-steps-from-qr"><a class="header" href="#pairing-steps-from-qr">Pairing steps from QR</a></h2>
 <ol>
-<li>Web app shows a QR code with the deep link (<code>sub</code>, <code>hash</code>, <code>srv</code>, <code>pt</code>, optional <code>reg</code>).</li>
-<li>In Push Notifications, tap Scan QR Code or open <code>kypost://native-pair</code> directly.</li>
-<li>The app validates <code>sub</code>, <code>hash</code>, <code>srv</code>, <code>pt</code> and resolves the registration endpoint.</li>
-<li>It calls the native registration endpoint with the FCM token. Success marks the device as paired.</li>
+<li>Web app shows a QR code with the deep link (<code>sub</code>, <code>srv</code>, <code>pt</code>, optional <code>reg</code> and <code>pin</code>).</li>
+<li>In Push Notifications, tap Scan QR Code or open <code>kypost://native-pair</code> directly. The scanner is Google’s <code>play-services-code-scanner</code>; pair by entering the URL instead if you would rather keep Play Services out of that path.</li>
+<li>The app validates <code>sub</code>, <code>srv</code>, <code>pt</code>, checks <code>srv</code> and any <code>reg</code> are <code>https</code> and same-origin, and resolves the registration endpoint.</li>
+<li>It shows a confirmation dialog naming the server host, then calls the native registration endpoint with the FCM token. Success marks the device as paired and stores the returned <code>deviceId</code> and <code>deviceSecret</code>.</li>
 <li>On each token refresh, it repeats the registration with stored pairing.</li>
 </ol>
 <h2 id="troubleshooting"><a class="header" href="#troubleshooting">Troubleshooting</a></h2>
 <ul>
 <li>Scheme and host must be exactly <code>kypost://native-pair</code>.</li>
-<li>Required params <code>sub</code>, <code>hash</code>, <code>srv</code>, <code>pt</code> must exist.</li>
+<li>Required params <code>sub</code>, <code>srv</code>, <code>pt</code> must exist, and <code>srv</code> and <code>reg</code> must be <code>https</code> and the same origin.</li>
 <li>Device must reach the resolved registration endpoint.</li>
 <li>Firebase config must match <code>org.kysecurity.mail</code>.</li>
 <li><code>400</code> means malformed or missing field. <code>401</code> means bad or expired <code>pt</code>; scan a new QR code. <code>503</code> means backend has no <code>PAIRING_SECRET</code> and retry will not help.</li>
 <li>On Android 13+, grant notification permission or no system notification appears.</li>
 </ul>
+<h2 id="installing"><a class="header" href="#installing">Installing</a></h2>
+<p>Signed builds are attached to each <a href="https://github.com/Busness-app/KyPost-for-Android/releases">tagged
+release</a>: an <code>.apk</code>
+to sideload, an <code>.aab</code> for Play distribution, and a <code>.sha256</code> beside each one.</p>
+<p>Verify before you install — the digest is the whole point of publishing it:</p>
+<pre><code class="language-sh">sha256sum -c kypost-&lt;tag&gt;.apk.sha256
+</code></pre>
+<p>There is no F-Droid or Play listing. The signing key is checked in CI before
+publication: the workflow refuses to release unless <code>apksigner</code> reports the
+expected signer, so an APK that verifies against the published digest carries
+the key the project intends.</p>
 <h2 id="build-and-test"><a class="header" href="#build-and-test">Build and test</a></h2>
 <pre><code class="language-sh">./gradlew testDebugUnitTest
 ./gradlew assembleDebug
-./gradlew connectedDebugAndroidTest   # needs device or emulator; covers EncryptedSharedPreferences store
+./gradlew connectedDebugAndroidTest   # needs device or emulator
 </code></pre>
+<p>Instrumented tests need a connected device or emulator <strong>with a secure lock
+screen set</strong>. The Keystore-backed enrollment vault refuses to create a key
+without one by design, so on a bare emulator the vault suites fail as though the
+code were broken. CI sets a PIN first.</p>
+<h3 id="release-builds"><a class="header" href="#release-builds">Release builds</a></h3>
+<p><code>:app:assembleRelease</code> fails without signing material, deliberately: AGP does not
+fall back to the debug keystore, so without the guard a green run would emit an
+unsigned APK. Add a gitignored <code>keystore.properties</code> at the repository root with
+<code>storeFile</code>, <code>storePassword</code>, <code>keyAlias</code> and <code>keyPassword</code>.</p>
+<p>CI’s <code>release-build</code> job generates a throwaway key per run, so every PR verifies
+the R8 configuration and <code>lintVitalRelease</code> without the real key being reachable
+from a <code>pull_request</code> trigger. Published builds come from <code>release.yml</code> on a <code>v*</code>
+tag: it reads the real key from the protected <code>release</code> environment, checks the
+tag against <code>versionName</code>, and refuses to publish unless <code>apksigner</code> reports the
+expected signer. Never build a release for distribution from a workstation.</p>
 <p>Test coverage:</p>
 <ul>
 <li>Deep-link parser (<code>NativePairingDeepLinkParserTest</code>)</li>

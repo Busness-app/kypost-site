@@ -17,8 +17,12 @@ Name is KyPost everywhere (Dock, Home Screen, About, permission prompts, Xcode p
 - **MFA approval** — approve login challenges from a notification tap.
 - **Contact sync** — two-way sync with the relay. Local edits win first, reconciliation keeps data safe. Contacts carry groups, photo, IM and social handles, websites, relations, extra dates, phonetic names, department, custom fields, pronouns, PGP public key.
 - **PGP QR exchange** — My QR Code makes a pickup link that expires in 2 minutes. Scan to add contact key reads another person link, shows fingerprint for out-of-band confirmation, and saves the key to a contact. iOS scans with camera and accepts a pasted link. macOS accepts only a pasted link (no VisionKit).
-- **Encryption state on each message** — a message the server decrypted says so (the server read your mail). A message only your browser can open says so and links to webmail. This app holds no PGP private key by design. See `docs/E2E_PGP.md` in the server repo.
-- **Encrypted and signed send** — for an account whose key the server holds, Encrypt and Sign flags travel with the message and the relay does OpenPGP work. If a recipient lacks a usable key, the relay refuses first and asks you. If you confirm, it mails a one-time pickup link and stores the plaintext on your server for up to 7 days with named recipients. An account whose key only the browser can unwrap cannot encrypt from this app. The app saves the draft on the server and hands off to webmail.
+- **Encryption state on each message** — a message the server decrypted says so, and you can then see that the server read your mail. For a server-custody account the app holds no private key at all. For a client-custody account it holds one only after you deliberately run [device enrollment](../pgp.md#on-a-native-client-after-device-enrollment): the key is sealed into the Secure Enclave and released on user presence, and a Decrypt action then appears on client-protected messages. Enabling Hostile Location Protection or resetting a stranded app lock destroys that key, and neither brings it back. Until a device is enrolled, encrypted mail links out to webmail. See `docs/E2E_PGP.md` in the server repo.
+- **Signature badges** — six states, computed on the device from keys it holds. Identity (confirmed out of band) and continuity (same key as last time) are separate claims, and a bound key that no longer matches its pin raises `keyChanged` rather than silently re-pinning.
+- **Folder management** — create, rename and delete server folders.
+- **Cursor-based delta sync** — refreshes fetch the delta rather than a full folder snapshot.
+- **Phishing flag** — the app surfaces the server's flag on mail impersonating KyPost, and seals the body's link path.
+- **Encrypted and signed send** — for an account whose key the server holds, Encrypt and Sign flags travel with the message and the relay does OpenPGP work. If a recipient lacks a usable key, the relay refuses first and asks you. If you confirm, it mails a one-time pickup link and stores the plaintext on your server for up to 7 days with named recipients. An account whose key only the browser can unwrap cannot encrypt from this app *yet*: the OpenPGP core is linked and the crypto seam supports encrypt-and-sign, but the send path still goes through the relay. The app saves the draft on the server and hands off to webmail.
 - **Themes** — 15 palettes that match web and Android exactly. Default is Patina Ky.
 
 ### Security (Settings → Security)
@@ -33,7 +37,7 @@ Name is KyPost everywhere (Dock, Home Screen, About, permission prompts, Xcode p
 - Xcode 26, deployment target macOS and iOS 26.5.
 - A running relay backend (live deployment behind Cloudflare at `mail.urlxl.com`).
 - For push: an APNs key on the backend.
-- No external Swift packages. SwiftData, URLSession, WebKit.
+- SwiftData, URLSession and WebKit. One external dependency: **GopenPGP**, consumed as a checksummed binary XCFramework through the local package in `Dependencies/GopenPGP`. It is built from source by `.github/workflows/gopenpgp-xcframework.yml` from the upstream tag pinned in `Dependencies/gopenpgp.env`, using upstream's own `build.sh`, and `Package.swift` pins its SHA-256 so the bytes cannot change without that line changing. Nothing outside `KyPost/Domain/Security/PgpCrypto.swift` and its conforming types may reference the library.
 
 ## Getting started
 
@@ -60,7 +64,7 @@ The README says the Android repo defines relay endpoints and payload shapes. See
 - `GET /api/pgp/bootstrap` — `hasIdentity`, `protection`
 - `POST /api/pgp/recipients/check` — contacts-only preflight (never `/resolve`)
 - `GET/POST /api/contacts/sync` — cursor-based
-- `GET /api/pgp/qr/token` — make pickup token and URL that expire in 2 minutes (pairing-auth `sub` and `hash`)
+- `GET /api/pgp/qr/token` — make pickup token and URL that expire in 2 minutes
 - `GET /api/pgp/qr/key?t=` — get scanned key and fingerprint (token is credential)
 - `POST /api/notifications/native/register` — APNs registration
 
@@ -79,9 +83,12 @@ Network tests run against a stubbed `HTTPClient`. No backend is needed.
 ## Known gaps (v2 candidates)
 
 - Attachments (compose and viewing)
-- Mail cursor and delta sync. Every refresh gets a full folder snapshot.
 - Read, archive, delete from the reader. Move-by-drag works on macOS.
 - Draft saving from compose. PGP webmail handoff saves a draft, but no Save Draft button and no auto-save.
 - Server-side search. Search runs against local cache.
 - QR scanning with camera on macOS (must paste; camera works on iOS).
+- On-device encrypt and sign. Reading client-protected mail has landed; writing it still goes through the relay.
+
+Closed since the last revision of this page: cursor-based delta sync, and folder
+create, rename and delete.
 

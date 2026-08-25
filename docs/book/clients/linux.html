@@ -36,7 +36,7 @@
             const path_to_root = "../";
             const default_light_theme = "patina-ky";
             const default_dark_theme = "patina-ky";
-            window.path_to_searchindex_js = "../searchindex-9155a62d.js";
+            window.path_to_searchindex_js = "../searchindex-0e88e264.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="../toc-d1d12269.js"></script>
@@ -188,39 +188,49 @@
 <li><strong>Inbox, message detail, HTML composer</strong> — reply, reply-all, forward, send, with attachments and drafts. A sandboxed <code>WebEngineView</code> renders the body with JavaScript and remote images disabled.</li>
 <li><strong>Server-side folders</strong> — standard mailboxes and subfolders. Create, rename, delete.</li>
 <li><strong>Contacts</strong> — synced list and detail. Create and edit offline and queue changes. Handles group membership and duplicates.</li>
-<li><strong>PGP</strong> — exchange public keys through QR codes. Scan or show a key with the camera, confirm fingerprint out of band. Marks encrypted mail it cannot read and links to webmail. Never holds a private key.</li>
+<li><strong>PGP</strong> — exchange public keys through QR codes. Scan or show a key with the camera, confirm the fingerprint out of band. Webmail can seal the account key to a temporary ECDH device key; KyPost imports it into the user’s GnuPG keyring and clears the transient key bytes. Once enrolled, end-to-end encrypted mail is <strong>decrypted and signed on this device</strong> through the user’s own <code>gpg-agent</code> (GPGME), so KyPost never sees the OpenPGP passphrase and hardware tokens and smartcards work unchanged. Sending signs and encrypts locally, gives each blind recipient their own ciphertext, keeps the real subject inside the ciphertext, and refuses to send at all if any recipient has no usable key — there is no silent downgrade. Attachments can be attached to an encrypted message. Mail this device holds no key for is still explained and routed to webmail.</li>
 <li><strong>Compose autocomplete</strong> — type name or address, select a synced contact.</li>
 <li><strong>Push over UnifiedPush</strong> — two tiers with fallback: system distributor, then 90-second polling. Mail still arrives with no distributor. Only your distributor push server sees a notification.</li>
-<li><strong>Security</strong> — optional PIN lock with lockout and wipe after repeated failures. Can encrypt the pairing credential behind that PIN (AES-256-GCM with Argon2; Qt exposes neither, see <code>core/security/CredentialCipher.h</code>). TOFU certificate pinning on first use. Hostile Location Protection writes nothing to disk.</li>
+<li><strong>Security</strong> — an optional PIN lock with a lockout, a configurable background-lock grace period, and a configurable erase-after-N-failures threshold (including “never”, which declines only the erase; the rate limit always stays). You can encrypt the pairing credential behind that PIN (AES-256-GCM with Argon2; Qt exposes neither, see <code>core/security/CredentialCipher.h</code>). The local database is <strong>encrypted at rest</strong> with SQLCipher, and an existing plaintext profile is converted on the next launch. The client pins the relay’s TLS chain on first use, anchored to the <strong>issuer</strong> rather than the leaf, so a routine renewal is not reported as impersonation. Hostile Location Protection writes nothing to disk and refuses to turn on at all if it cannot first erase what is already there.</li>
 <li><strong>15 themes</strong> — copied byte for byte from the shared design system.</li>
 <li><strong>Device pairing</strong> — paste a link or use a <code>kypost://</code> deep link.</li>
 <li><strong>Localized</strong> — every user string is wrapped for translation (<code>po/</code>).</li>
 </ul>
 <h2 id="installing"><a class="header" href="#installing">Installing</a></h2>
-<p>KyPost uses its own signed Flatpak remote:</p>
+<p>KyPost has its own signed Flatpak remote, and it is live for both <code>x86_64</code> and
+<code>aarch64</code>:</p>
 <pre><code class="language-sh">flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
-flatpak remote-add --if-not-exists kypost https://yoshiofthewire.github.io/KyPost-for-Linux/kypost.flatpakrepo
-flatpak install kypost com.urlxl.mail
+flatpak remote-add --if-not-exists kypost https://busness-app.github.io/KyPost-for-Linux/kypost.flatpakrepo
+flatpak install kypost com.kysecurity.mail
 </code></pre>
-<p><code>flatpak update</code> installs new versions. Flathub supplies the <code>org.kde.Platform</code> runtime. KyPost is not on Flathub and will not be; Flathub bans AI use and the backend uses AI. Each release also attaches a single <code>.flatpak</code> bundle, but a bundle gives no auto-updates. See <code>docs/DISTRIBUTION.md</code>.</p>
+<p><code>flatpak update</code> installs new versions. Flathub supplies the <code>org.kde.Platform//6.11</code> runtime. KyPost is not on Flathub and will not be; Flathub bans applications that use AI and the KyPost backend uses AI. A tagged release also attaches a single-file <code>.flatpak</code> bundle per architecture — <code>v0.2.0</code> carries <code>kypost-x86_64.flatpak</code> and <code>kypost-aarch64.flatpak</code> — but a bundle gives you no automatic updates. Prefer the remote unless you need an offline install. See <code>docs/DISTRIBUTION.md</code>.</p>
 <h2 id="building"><a class="header" href="#building">Building</a></h2>
 <p>KyPost needs Qt6. It dropped Qt5 and Ubuntu Touch. See <code>AGENTS.md</code> for reasons and review conditions. Use one out-of-tree build dir:</p>
-<pre><code class="language-sh">cmake -B build -S .
+<pre><code class="language-sh">cmake -B build -S . -DCMAKE_BUILD_TYPE=RelWithDebInfo
 cmake --build build
 ctest --test-dir build
 </code></pre>
-<p>Dependencies (Arch names): <code>qt6-base</code>, <code>qt6-declarative</code>, <code>qt6-webengine</code>, <code>kirigami</code> (KF6), <code>knotifications</code> (KF6), <code>kdbusaddons</code> (KF6), <code>ki18n</code> (KF6), <code>qtkeychain-qt6</code>, <code>kunifiedpush</code>, <code>zxing-cpp</code>, <code>openssl</code>, <code>argon2</code>. For Ubuntu and KDE neon equivalents, see <code>.github/workflows/ci.yml</code>.</p>
-<p><code>openssl</code> supplies AES-256-GCM and <code>argon2</code> supplies the memory-hard key derivation for the credential seal. See <code>core/security/CredentialCipher.h</code>.</p>
+<p>Dependencies (Arch names): <code>qt6-base</code>, <code>qt6-declarative</code>, <code>qt6-webengine</code>, <code>qt6-multimedia</code>, <code>kirigami</code> (KF6), <code>knotifications</code> (KF6), <code>kstatusnotifieritem</code> (KF6), <code>kdbusaddons</code> (KF6), <code>ki18n</code> (KF6), <code>qtkeychain-qt6</code>, <code>kunifiedpush</code>, <code>zxing-cpp</code>, <code>openssl</code>, <code>argon2</code>, <code>gpgme</code>. For Ubuntu and KDE neon equivalents, see <code>.github/workflows/ci.yml</code>.</p>
+<p><code>openssl</code> supplies AES-256-GCM and <code>argon2</code> supplies the memory-hard key derivation for the credential seal. See <code>core/security/CredentialCipher.h</code>. <code>gpgme</code> is the C API, not the <code>gpgmepp</code> C++ wrapper, and it is what delegates OpenPGP custody to the user’s <code>gpg-agent</code>.</p>
+<h3 id="encryption-at-rest-needs-sqlcipher"><a class="header" href="#encryption-at-rest-needs-sqlcipher">Encryption at rest needs SQLCipher</a></h3>
+<p>The command above builds a working client whose database is <strong>not</strong> encrypted —
+configure reports <code>SQLCipher: not configured (KYPOST_SQLCIPHER_ROOT unset)</code>.
+SQLCipher has to carry the SONAME <code>libsqlite3.so.0</code> and be built with
+<code>SQLITE_ENABLE_COLUMN_METADATA</code>, which distro packages generally do not do, so
+the repo builds it the same way CI and the Flatpak manifest do:</p>
+<pre><code class="language-sh">./scripts/build-sqlcipher.sh /tmp/sqlcipher
+cmake -B build -S . -DCMAKE_BUILD_TYPE=RelWithDebInfo -DKYPOST_SQLCIPHER_ROOT=/tmp/sqlcipher
+</code></pre>
 <h3 id="flatpak"><a class="header" href="#flatpak">Flatpak</a></h3>
 <pre><code class="language-sh">flatpak-builder --user --force-clean --install-deps-from=flathub \
-  build-flatpak packaging/flatpak/com.urlxl.mail.yaml
-flatpak-builder --run build-flatpak packaging/flatpak/com.urlxl.mail.yaml kypost
+  build-flatpak packaging/flatpak/com.kysecurity.mail.yaml
+flatpak-builder --run build-flatpak packaging/flatpak/com.kysecurity.mail.yaml kypost
 </code></pre>
 <p>This manifest is the packaging target for desktop and mobile. <code>packaging/click/</code> is an empty placeholder until UBports releases a Qt6/KF6 track.</p>
 <p>CI builds the manifest for each PR. For each push to <code>main</code>, CI publishes a signed OSTree repo to <code>gh-pages</code> (<code> .github/workflows/flatpak.yml</code>). The <code>flatpak remote-add</code> command above uses that repo.</p>
 <h2 id="architecture"><a class="header" href="#architecture">Architecture</a></h2>
 <p>As noted in <a href="../architecture.html">Architecture</a>. The <code>core/</code> boundary allows only Qt Core, Network, Sql. See <code>AGENTS.md</code> Section 5.</p>
-<p>Authoritative design source: <code>Linux_QT_Client_Plan.md</code> (decisions, wire contracts, push state machine, risks and gaps). <code>TESTING.md</code> is the manual checklist. <code>AGENTS.md</code> summarizes rules that break most easily.</p>
+<p>Authoritative design source: <code>Linux_QT_Client_Plan.md</code> (decisions, wire contracts, push state machine, risks and gaps). <code>docs/PARITY.md</code> is the authoritative Android-parity matrix. <code>TESTING.md</code> is the manual checklist. <code>AGENTS.md</code> summarizes rules that break most easily. <code>tests/guards.tsv</code> lists the security guards proven load-bearing, and <code>scripts/verify-guards.sh</code> checks them.</p>
 
                     </main>
 

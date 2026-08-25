@@ -36,7 +36,7 @@
             const path_to_root = "";
             const default_light_theme = "patina-ky";
             const default_dark_theme = "patina-ky";
-            window.path_to_searchindex_js = "searchindex-9155a62d.js";
+            window.path_to_searchindex_js = "searchindex-0e88e264.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="toc-d1d12269.js"></script>
@@ -193,13 +193,22 @@
 </ul>
 <p>Payload keys from the README: <code>messageId</code>, <code>senderName</code>, <code>emailSubject</code>, <code>Keywords</code> (and <code>token</code>, <code>title</code>, <code>body</code>, <code>data</code>, <code>platform</code>). The Workers translate them to FCM or APNs shapes. Both platforms handle the full payload identically client-side (APNs <code>worker-apns/README.md</code> shows the mapping).</p>
 <h2 id="generic-notifications-by-default"><a class="header" href="#generic-notifications-by-default">Generic notifications by default</a></h2>
-<p>The server README says push notifications are generic by default because subject lines are not encrypted in ordinary PGP/MIME. The marketing site also notes protected subjects and generic push.</p>
+<p>Push notifications are generic by default because subject lines are not
+encrypted in ordinary PGP/MIME. Sender and subject reach FCM or APNs only if the
+user turns previews on.</p>
+<p><strong>Encrypted mail is excluded from push payloads entirely</strong>, whatever the Content
+Preview setting, because native push travels through a relay and on to FCM or
+APNs in cleartext at every hop. Under Hostile Location Protection on Android,
+notifications carry no sender and no subject whether or not the app is locked.</p>
+<p>Notification content is opaque to the push transport. What the transport learns
+is timing.</p>
 <h2 id="client-specifics"><a class="header" href="#client-specifics">Client specifics</a></h2>
 <h3 id="android-from-kypost-androidreadmemd"><a class="header" href="#android-from-kypost-androidreadmemd">Android (from <code>kypost-android/README.md</code>)</a></h3>
 <ul>
+<li>Transports: <strong>FCM</strong>, a <strong>UnifiedPush</strong> distributor you choose, or <strong>App Pull</strong>, which polls your own server and involves neither Google nor a distributor.</li>
 <li>Delivery modes: <code>push</code> or <code>pull</code>, per user on the web Notifications page. <code>pull</code> means the server sends nothing to FCM and the app polls directly.</li>
-<li>FCM path: data payload keys <code>messageId</code>, <code>senderName</code>, <code>emailSubject</code>, <code>Keywords</code>; system notifications plus in-app history; each user selects <code>push</code> or <code>pull</code>; <code>POST_NOTIFICATIONS</code> permission on Android 13+.</li>
-<li>Pull path: <code>GET {pullEndpoint}?sub=&amp;hash=&amp;after=&lt;cursor&gt;</code> with <code>hash</code> HMAC, <code>seq</code> dedup, <code>lastCursor</code> durable per subscriber, only after delivery; respects <code>deliveryMode</code> from register and pull responses on each foreground; background WorkManager at 15 minutes plus foreground pull; optional foreground service for near real-time with a persistent notification (not the default); backs off on <code>400</code>, <code>401</code>, <code>503</code>, network errors.</li>
+<li>FCM path: data payload keys <code>messageId</code>, <code>senderName</code>, <code>emailSubject</code>, <code>Keywords</code>; system notifications plus in-app history; <code>POST_NOTIFICATIONS</code> permission on Android 13+.</li>
+<li>Pull path: <code>GET {pullEndpoint}?after=&lt;cursor&gt;</code>. The cursor is the <strong>only</strong> query parameter; authentication is the <code>X-Kypost-Device-Id</code> and <code>X-Kypost-Device-Secret</code> headers, never a query parameter, because credentials in a URL end up in access logs and browser history. <code>seq</code> dedup, <code>lastCursor</code> durable per subscriber and advanced only after delivery; respects <code>deliveryMode</code> from register and pull responses on each foreground; background WorkManager at 15 minutes plus foreground pull; optional foreground service for near real-time with a persistent notification (not the default); backs off on <code>400</code>, <code>401</code>, <code>503</code>, network errors.</li>
 <li>Storage: <code>deliveryMode</code> and <code>pullEndpoint</code> stored; if <code>pullEndpoint</code> absent, derived as <code>{srv}/api/notifications/native/pull</code>.</li>
 </ul>
 <h3 id="macos--ios-from-kypost-for-macreadmemd"><a class="header" href="#macos--ios-from-kypost-for-macreadmemd">macOS &amp; iOS (from <code>kypost-for-Mac/README.md</code>)</a></h3>
@@ -213,10 +222,12 @@
 </ul>
 <h2 id="server-api-for-native-push"><a class="header" href="#server-api-for-native-push">Server API for native push</a></h2>
 <ul>
-<li><code>POST /api/notifications/native/register</code> (pairing token auth)</li>
-<li><code>GET|DELETE /api/notifications/native/devices</code></li>
+<li><code>POST /api/notifications/native/register</code> (pairing token auth; returns a <code>deviceId</code> and a <code>deviceSecret</code>, and invalidates the previous secret)</li>
+<li><code>GET|DELETE /api/notifications/native/devices</code> (per-device revocation)</li>
 <li><code>POST /api/notifications/native/unpair</code></li>
 </ul>
+<p>Everything after registration authenticates with the <code>X-Kypost-Device-Id</code> and
+<code>X-Kypost-Device-Secret</code> headers. See <a href="./pairing.html">Pairing</a>.</p>
 <h2 id="relay-protection"><a class="header" href="#relay-protection">Relay protection</a></h2>
 <ul>
 <li>Per-minute limiter (10/min), per-IP register limiter, optional aggregate daily budget <code>RELAY_DAILY_BUDGET</code>. See <a href="./server/push-relays.html">Push Relays</a>.</li>

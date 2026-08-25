@@ -36,7 +36,7 @@
             const path_to_root = "";
             const default_light_theme = "patina-ky";
             const default_dark_theme = "patina-ky";
-            window.path_to_searchindex_js = "searchindex-9155a62d.js";
+            window.path_to_searchindex_js = "searchindex-0e88e264.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="toc-d1d12269.js"></script>
@@ -195,13 +195,23 @@ npm run build
 ./gradlew assembleDebug
 ./gradlew connectedDebugAndroidTest   # needs device or emulator
 </code></pre>
-<p>Instrumented tests cover the <code>EncryptedSharedPreferences</code> pairing store.</p>
+<p>Instrumented tests need a connected device or emulator <strong>with a secure lock
+screen set</strong> — the Keystore-backed enrollment vault refuses to create a key
+without one by design, so on a bare emulator the vault suites fail as though the
+code were broken. CI sets a PIN first.</p>
+<p><code>:app:assembleRelease</code> fails without signing material, deliberately: AGP does not
+fall back to the debug keystore. Add a gitignored <code>keystore.properties</code> at the
+repository root. Never build a release for distribution from a workstation —
+<code>release.yml</code> on a <code>v*</code> tag reads the real key from a protected environment,
+checks the tag against <code>versionName</code>, and refuses to publish unless <code>apksigner</code>
+reports the expected signer.</p>
 <p>Coverage includes: <code>NativePairingDeepLinkParserTest</code>, <code>PairingValidatorTest</code>, <code>NativeRegistrationEndpointResolverTest</code>, payload parser, <code>NativeRegistrationRequestMapperTest</code>, <code>SecurePairingStoreTest</code>.</p>
 <h2 id="macos--ios"><a class="header" href="#macos--ios">macOS &amp; iOS</a></h2>
 <p>From <code>kypost-for-Mac/README.md</code>:</p>
 <ul>
-<li>No external Swift packages. SwiftData, URLSession, WebKit.</li>
+<li>SwiftData, URLSession, WebKit, and one external dependency: GopenPGP, as a SHA-256-pinned binary XCFramework built by <code>.github/workflows/gopenpgp-xcframework.yml</code> from the upstream tag in <code>Dependencies/gopenpgp.env</code>.</li>
 <li>Xcode 26, deployment target macOS and iOS 26.5.</li>
+<li>CI runs the tests when signing material is available and compiles when it is not.</li>
 <li>Tests use Swift Testing (<code>@Test</code>, <code>#expect</code>) in <code>KyPost Tests/</code>. UI stubs in <code>KyPost UITests/</code>. Network tests run against stubbed <code>HTTPClient</code>. No backend needed.</li>
 </ul>
 <pre><code class="language-sh">xcodebuild test -project "KyPost.xcodeproj" -scheme "KyPost"
@@ -209,17 +219,28 @@ npm run build
 <p>Or run with ⌘U in Xcode.</p>
 <h2 id="linux"><a class="header" href="#linux">Linux</a></h2>
 <p>From <code>kypost-Linux/README.md</code>:</p>
-<pre><code class="language-sh">cmake -B build -S .
+<pre><code class="language-sh">./scripts/build-sqlcipher.sh /tmp/sqlcipher     # encryption at rest needs this
+cmake -B build -S . -DCMAKE_BUILD_TYPE=RelWithDebInfo -DKYPOST_SQLCIPHER_ROOT=/tmp/sqlcipher
 cmake --build build
 ctest --test-dir build
 </code></pre>
-<p>CI: builds the Flatpak manifest for each PR; for each push to <code>main</code>, publishes a signed OSTree repo to <code>gh-pages</code>.</p>
+<p>Without <code>KYPOST_SQLCIPHER_ROOT</code>, configure reports encrypted databases as
+unavailable and the build produces a client whose database is not encrypted. It
+says so rather than pretending.</p>
+<p>CI: builds the Flatpak manifest for each PR under a private D-Bus session; for
+each push to <code>main</code> it publishes a signed OSTree repo to the <code>gh-pages</code> branch,
+which is what the <code>kypost</code> remote serves. Tagged <code>v*</code> builds additionally attach
+<code>kypost-x86_64.flatpak</code> and <code>kypost-aarch64.flatpak</code> to the GitHub release.</p>
 <p>Flatpak:</p>
 <pre><code class="language-sh">flatpak-builder --user --force-clean --install-deps-from=flathub \
-  build-flatpak packaging/flatpak/com.urlxl.mail.yaml
-flatpak-builder --run build-flatpak packaging/flatpak/com.urlxl.mail.yaml kypost
+  build-flatpak packaging/flatpak/com.kysecurity.mail.yaml
+flatpak-builder --run build-flatpak packaging/flatpak/com.kysecurity.mail.yaml kypost
 </code></pre>
-<p>Tests use QtTest with stubbed <code>HttpClient</code> and <code>FakeRelayServer</code>, driven by <code>ctest</code>. See <code>TESTING.md</code> for the manual checklist and <code>AGENTS.md</code> for rules.</p>
+<p>Tests use QtTest with stubbed <code>HttpClient</code> and <code>FakeRelayServer</code>, driven by
+<code>ctest</code>, plus a QML suite. <code>tests/guards.tsv</code> lists the security guards proven
+load-bearing and <code>scripts/verify-guards.sh</code> checks them mechanically. See
+<code>TESTING.md</code> for the manual checklist, <code>docs/PARITY.md</code> for the authoritative
+Android-parity matrix, and <code>AGENTS.md</code> for rules.</p>
 
                     </main>
 

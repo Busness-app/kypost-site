@@ -36,7 +36,7 @@
             const path_to_root = "../";
             const default_light_theme = "patina-ky";
             const default_dark_theme = "patina-ky";
-            window.path_to_searchindex_js = "../searchindex-9155a62d.js";
+            window.path_to_searchindex_js = "../searchindex-0e88e264.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="../toc-d1d12269.js"></script>
@@ -190,8 +190,12 @@
 <li><strong>MFA approval</strong> — approve login challenges from a notification tap.</li>
 <li><strong>Contact sync</strong> — two-way sync with the relay. Local edits win first, reconciliation keeps data safe. Contacts carry groups, photo, IM and social handles, websites, relations, extra dates, phonetic names, department, custom fields, pronouns, PGP public key.</li>
 <li><strong>PGP QR exchange</strong> — My QR Code makes a pickup link that expires in 2 minutes. Scan to add contact key reads another person link, shows fingerprint for out-of-band confirmation, and saves the key to a contact. iOS scans with camera and accepts a pasted link. macOS accepts only a pasted link (no VisionKit).</li>
-<li><strong>Encryption state on each message</strong> — a message the server decrypted says so (the server read your mail). A message only your browser can open says so and links to webmail. This app holds no PGP private key by design. See <code>docs/E2E_PGP.md</code> in the server repo.</li>
-<li><strong>Encrypted and signed send</strong> — for an account whose key the server holds, Encrypt and Sign flags travel with the message and the relay does OpenPGP work. If a recipient lacks a usable key, the relay refuses first and asks you. If you confirm, it mails a one-time pickup link and stores the plaintext on your server for up to 7 days with named recipients. An account whose key only the browser can unwrap cannot encrypt from this app. The app saves the draft on the server and hands off to webmail.</li>
+<li><strong>Encryption state on each message</strong> — a message the server decrypted says so, and you can then see that the server read your mail. For a server-custody account the app holds no private key at all. For a client-custody account it holds one only after you deliberately run <a href="../pgp.html#on-a-native-client-after-device-enrollment">device enrollment</a>: the key is sealed into the Secure Enclave and released on user presence, and a Decrypt action then appears on client-protected messages. Enabling Hostile Location Protection or resetting a stranded app lock destroys that key, and neither brings it back. Until a device is enrolled, encrypted mail links out to webmail. See <code>docs/E2E_PGP.md</code> in the server repo.</li>
+<li><strong>Signature badges</strong> — six states, computed on the device from keys it holds. Identity (confirmed out of band) and continuity (same key as last time) are separate claims, and a bound key that no longer matches its pin raises <code>keyChanged</code> rather than silently re-pinning.</li>
+<li><strong>Folder management</strong> — create, rename and delete server folders.</li>
+<li><strong>Cursor-based delta sync</strong> — refreshes fetch the delta rather than a full folder snapshot.</li>
+<li><strong>Phishing flag</strong> — the app surfaces the server’s flag on mail impersonating KyPost, and seals the body’s link path.</li>
+<li><strong>Encrypted and signed send</strong> — for an account whose key the server holds, Encrypt and Sign flags travel with the message and the relay does OpenPGP work. If a recipient lacks a usable key, the relay refuses first and asks you. If you confirm, it mails a one-time pickup link and stores the plaintext on your server for up to 7 days with named recipients. An account whose key only the browser can unwrap cannot encrypt from this app <em>yet</em>: the OpenPGP core is linked and the crypto seam supports encrypt-and-sign, but the send path still goes through the relay. The app saves the draft on the server and hands off to webmail.</li>
 <li><strong>Themes</strong> — 15 palettes that match web and Android exactly. Default is Patina Ky.</li>
 </ul>
 <h3 id="security-settings--security"><a class="header" href="#security-settings--security">Security (Settings → Security)</a></h3>
@@ -206,7 +210,7 @@
 <li>Xcode 26, deployment target macOS and iOS 26.5.</li>
 <li>A running relay backend (live deployment behind Cloudflare at <code>mail.urlxl.com</code>).</li>
 <li>For push: an APNs key on the backend.</li>
-<li>No external Swift packages. SwiftData, URLSession, WebKit.</li>
+<li>SwiftData, URLSession and WebKit. One external dependency: <strong>GopenPGP</strong>, consumed as a checksummed binary XCFramework through the local package in <code>Dependencies/GopenPGP</code>. It is built from source by <code>.github/workflows/gopenpgp-xcframework.yml</code> from the upstream tag pinned in <code>Dependencies/gopenpgp.env</code>, using upstream’s own <code>build.sh</code>, and <code>Package.swift</code> pins its SHA-256 so the bytes cannot change without that line changing. Nothing outside <code>KyPost/Domain/Security/PgpCrypto.swift</code> and its conforming types may reference the library.</li>
 </ul>
 <h2 id="getting-started"><a class="header" href="#getting-started">Getting started</a></h2>
 <ol>
@@ -229,7 +233,7 @@
 <li><code>GET /api/pgp/bootstrap</code> — <code>hasIdentity</code>, <code>protection</code></li>
 <li><code>POST /api/pgp/recipients/check</code> — contacts-only preflight (never <code>/resolve</code>)</li>
 <li><code>GET/POST /api/contacts/sync</code> — cursor-based</li>
-<li><code>GET /api/pgp/qr/token</code> — make pickup token and URL that expire in 2 minutes (pairing-auth <code>sub</code> and <code>hash</code>)</li>
+<li><code>GET /api/pgp/qr/token</code> — make pickup token and URL that expire in 2 minutes</li>
 <li><code>GET /api/pgp/qr/key?t=</code> — get scanned key and fingerprint (token is credential)</li>
 <li><code>POST /api/notifications/native/register</code> — APNs registration</li>
 </ul>
@@ -242,12 +246,14 @@
 <h2 id="known-gaps-v2-candidates"><a class="header" href="#known-gaps-v2-candidates">Known gaps (v2 candidates)</a></h2>
 <ul>
 <li>Attachments (compose and viewing)</li>
-<li>Mail cursor and delta sync. Every refresh gets a full folder snapshot.</li>
 <li>Read, archive, delete from the reader. Move-by-drag works on macOS.</li>
 <li>Draft saving from compose. PGP webmail handoff saves a draft, but no Save Draft button and no auto-save.</li>
 <li>Server-side search. Search runs against local cache.</li>
 <li>QR scanning with camera on macOS (must paste; camera works on iOS).</li>
+<li>On-device encrypt and sign. Reading client-protected mail has landed; writing it still goes through the relay.</li>
 </ul>
+<p>Closed since the last revision of this page: cursor-based delta sync, and folder
+create, rename and delete.</p>
 
                     </main>
 

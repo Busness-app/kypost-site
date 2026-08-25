@@ -36,7 +36,7 @@
             const path_to_root = "";
             const default_light_theme = "patina-ky";
             const default_dark_theme = "patina-ky";
-            window.path_to_searchindex_js = "searchindex-9155a62d.js";
+            window.path_to_searchindex_js = "searchindex-0e88e264.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="toc-d1d12269.js"></script>
@@ -178,20 +178,17 @@
                         <h1 id="pairing--device-registration"><a class="header" href="#pairing--device-registration">Pairing &amp; Device Registration</a></h1>
 <p>All clients pair from the web app. The server creates the link. The client registers its push token.</p>
 <h2 id="deep-link-format"><a class="header" href="#deep-link-format">Deep link format</a></h2>
-<pre><code>kypost://native-pair?sub=&lt;subscriberId&gt;&amp;hash=&lt;subscriberHash&gt;&amp;srv=&lt;serverUrl&gt;&amp;reg=&lt;registrationUrl&gt;&amp;pt=&lt;pairingToken&gt;
+<pre><code>kypost://native-pair?sub=&lt;subscriberId&gt;&amp;srv=&lt;serverUrl&gt;&amp;reg=&lt;registrationUrl&gt;&amp;pt=&lt;pairingToken&gt;&amp;pin=&lt;tlsPin&gt;
 </code></pre>
 <ul>
 <li>
-<p>Required: <code>sub</code>, <code>hash</code>, <code>srv</code>, <code>pt</code></p>
+<p>Required: <code>sub</code>, <code>srv</code>, <code>pt</code></p>
 </li>
 <li>
-<p>Optional: <code>reg</code></p>
+<p>Optional: <code>reg</code>, <code>pin</code></p>
 </li>
 <li>
 <p><code>sub</code> — subscriber id</p>
-</li>
-<li>
-<p><code>hash</code> — subscriber hash (URL-encoded HMAC)</p>
 </li>
 <li>
 <p><code>srv</code> — server URL (origin the client must use)</p>
@@ -200,21 +197,32 @@
 <p><code>reg</code> — registration URL (if absent, derive <code>{srv}/api/notifications/native/register</code>)</p>
 </li>
 <li>
-<p><code>pt</code> — signed pairing token</p>
+<p><code>pt</code> — signed pairing token, valid for 90 seconds</p>
+</li>
+<li>
+<p><code>pin</code> — the server’s leaf SPKI pin, present only when the server terminates TLS itself. It lets the client pin the registration call <em>before</em> it discloses the pairing token and its push credentials, instead of sending them inside a trust-on-first-use window. Absent means TOFU. It is percent-encoded, and a malformed pin fails closed rather than dropping back to TOFU.</p>
 </li>
 </ul>
-<p><strong>Warning</strong>: set <code>SERVER_BASE_URL</code> in <code>.env</code> so <code>srv</code> and <code>reg</code> point to the correct public backend URL. That URL should be <code>https://</code> because each pairing token, pickup link, and QR key-exchange URL carries a Bearer token in the query string.</p>
+<p><code>hash</code> is <strong>legacy</strong>. Older servers emitted a <code>subscriberHash</code> here; the current
+clients ignore it and the server no longer accepts an account-wide subscriber
+HMAC as authentication. A link that still carries it comes from an outdated
+server.</p>
+<p><code>srv</code> and any <code>reg</code> must both be <code>https</code> and the <strong>same origin</strong>. Clients refuse
+the link otherwise, because <code>reg</code> is where the device secret is minted while the
+confirmation dialog shows the user <code>srv</code>.</p>
+<p><strong>Warning</strong>: set <code>SERVER_BASE_URL</code> in <code>.env</code> so <code>srv</code> and <code>reg</code> point to the correct public backend URL, and so SSO’s redirect URI does not come from the request’s <code>Host</code> header. That URL must be <code>https://</code> because each pairing token, pickup link, and QR key-exchange URL carries a Bearer token in the query string.</p>
 <h2 id="server-behavior"><a class="header" href="#server-behavior">Server behavior</a></h2>
 <ul>
-<li>Security → Devices renders a QR code link with <code>sub</code>, <code>hash</code>, <code>srv</code>, <code>reg</code>, <code>pt</code>.</li>
+<li>Security → Devices renders a QR code link with <code>sub</code>, <code>srv</code>, <code>reg</code>, <code>pt</code>, and — when KyPost terminates TLS itself — <code>pin</code>. The panel re-mints a token on every call.</li>
 <li><code>pt</code> is valid for 90 seconds. The UI shows a 4px countdown bar under the QR code. It shrinks over 90 seconds and changes from green to red. It is red for the last 15 seconds.</li>
 <li>Pairing secret is generated on first start at <code>/kypost/private/pairing.key</code>. Set <code>PAIRING_SECRET</code> only if replicas must share one. Value must be 32 bytes or longer or the three features stay disabled.</li>
 </ul>
 <p>Native registration:</p>
 <ul>
-<li><code>POST /api/notifications/native/register</code> validates the pairing token, stores device metadata and token.</li>
+<li><code>POST /api/notifications/native/register</code> validates the pairing token, stores device metadata and token, and mints a <code>deviceId</code> plus a <code>deviceSecret</code> returned exactly once. Each later registration mints a <strong>new</strong> secret and invalidates the previous one.</li>
+<li>Every later request authenticates with <code>X-Kypost-Device-Id</code> and <code>X-Kypost-Device-Secret</code> headers — never a query parameter, because credentials in a URL end up in access logs and browser history.</li>
 <li><code>GET /api/notifications/native/devices</code> lists paired native devices.</li>
-<li><code>DELETE /api/notifications/native/devices</code> removes one device by <code>deviceId</code>.</li>
+<li><code>DELETE /api/notifications/native/devices</code> removes one device by <code>deviceId</code>. Revocation is per device.</li>
 <li><code>POST /api/notifications/native/unpair</code> revokes all devices for the user.</li>
 </ul>
 <p>A <code>PAIRING_SECRET</code> shorter than 32 bytes disables pairing, pickup links, and PGP QR exchange. The reason is logged. Bytes matter, not characters, because the value is the HMAC key verbatim.</p>
@@ -222,26 +230,31 @@
 <h3 id="android"><a class="header" href="#android">Android</a></h3>
 <ul>
 <li>The current application id is <code>org.kysecurity.mail</code>. The rename from <code>com.urlxl.mail</code> is breaking: existing installs must reinstall, pair again, and re-enroll any device-held PGP identity.</li>
-<li>Stores pairing material (sub, hash, srv, reg, pairing token, last device id) in Keystore-backed <code>EncryptedSharedPreferences</code>. Notification history and sync status stay in plaintext DataStore.</li>
-<li>Calls the registration endpoint with the FCM token (<code>reg</code> or derived). Marks paired only on success (<code>ok:true</code> or <code>synced:true</code>). A scan alone does not pair it. Repeats on token refresh.</li>
-<li>Validates required params and resolves endpoint before the call.</li>
+<li>Stores pairing material (subscriber id, server URL, registration URL, pairing token, device id, device secret) in a Keystore-backed <code>EncryptedSharedPreferences</code> file. Notification history and sync status stay in plaintext DataStore.</li>
+<li>Validates the required params, checks that <code>srv</code> and any <code>reg</code> are <code>https</code> and the same origin, resolves the registration endpoint, then shows a confirmation dialog <strong>naming the server host</strong> before it calls anything.</li>
+<li>Calls the registration endpoint with the FCM token (<code>reg</code> or derived). Marks paired only on success (<code>ok:true</code> or <code>synced:true</code>). A scan alone does not pair it. Repeats on token refresh, storing the new <code>deviceId</code> and <code>deviceSecret</code> each time.</li>
+<li>The wipe’s server-side deregistration goes over the <strong>pinned</strong> connection using a pin captured before the wipe deletes it. With no pin it is refused rather than downgraded, so the credential is never handed to an unpinned connection at the moment the device is most likely to be on a hostile network. The cost is that the relay may keep the device listed until it is revoked by hand.</li>
 </ul>
 <h3 id="macos--ios"><a class="header" href="#macos--ios">macOS &amp; iOS</a></h3>
 <ul>
 <li>Deep link <code>kypost://native-pair?...</code> registers the device and stores credentials in the Keychain.</li>
 <li>Until you pair, the inbox shows a prompt that points to Settings → Connection.</li>
 <li>TOFU certificate pinning at first pairing; re-pair in Settings → Connection if the cert changes.</li>
+<li>Bundle IDs and the Keychain access group stay <code>com.urlxl.mail</code> on purpose; only the user-facing name and the deep-link scheme are KyPost.</li>
 </ul>
 <h3 id="linux"><a class="header" href="#linux">Linux</a></h3>
 <ul>
+<li>The application id is <code>com.kysecurity.mail</code>. The rename from <code>com.urlxl.mail</code> is recorded in <code>docs/RENAME_NOTES.md</code> in that repo.</li>
 <li>Paste a link or use the <code>kypost://</code> deep link.</li>
 <li>Can encrypt the pairing credential behind the PIN (AES-256-GCM + Argon2).</li>
-<li>TOFU pinning on first use.</li>
+<li>TOFU pinning on first use, anchored to the certificate’s issuer, so a renewal is not mistaken for impersonation. A certificate change is recovered from without destroying the pairing.</li>
+<li>“Secret store unreadable” is reported as itself, not as “never paired”.</li>
 </ul>
 <h2 id="troubleshooting-android-list-applies-broadly"><a class="header" href="#troubleshooting-android-list-applies-broadly">Troubleshooting (Android list, applies broadly)</a></h2>
 <ul>
 <li>Use exactly <code>kypost://native-pair</code>.</li>
-<li>Provide <code>sub</code>, <code>hash</code>, <code>srv</code>, <code>pt</code>.</li>
+<li>Provide <code>sub</code>, <code>srv</code>, <code>pt</code>. A link still carrying <code>hash</code> comes from an outdated server; it is ignored.</li>
+<li><code>srv</code> and <code>reg</code> must both be <code>https</code> and the same origin.</li>
 <li>Device must reach the resolved registration endpoint.</li>
 <li>Firebase config must match <code>org.kysecurity.mail</code> (Android).</li>
 <li><code>400</code> malformed, <code>401</code> bad/expired <code>pt</code> (scan new QR), <code>503</code> backend has no <code>PAIRING_SECRET</code>.</li>
