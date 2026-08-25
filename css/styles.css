@@ -774,6 +774,12 @@ section {
   padding: 0.5rem 0.9rem;
 }
 
+.project-links {
+  display: flex;
+  gap: 0.6rem;
+  flex-wrap: wrap;
+}
+
 /* ---------- Footer ---------- */
 
 footer {
