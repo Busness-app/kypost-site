@@ -11,7 +11,13 @@ IMAP/SMTP <---> kypost-server (Go) <---> clients (Android / macOS / iOS / Linux)
                       |
                       +---> Ollama (local LLM)
                       +---> Cloudflare Workers (FCM relay, APNs relay)
+                      +---> Keyservers / WKD (key discovery and publishing)
+                      +---> OpenID Connect provider (optional SSO)
 ```
+
+Clients hold no mail credentials and no PGP private key until they are
+deliberately enrolled; see [PGP & Encryption](./pgp.md). Each paired device
+authenticates with its own server-minted secret, revocable one device at a time.
 
 ## Server processes
 
@@ -42,7 +48,22 @@ Warning: Labels are a hint, not a security boundary. A sender can influence the 
 
 ### Android
 
-TODO
+One Gradle module (`app/`), package `org.kysecurity.mail`, Views and XML layouts
+rather than Compose. Dependencies are wired by hand through `SingletonGraph.kt`.
+
+| Package | Contents |
+|---|---|
+| (root) | Activities — inbox, email detail, compose, settings, themes, keywords — plus `AppNavigation`, `AppTheme`, `SingletonGraph` |
+| `data/` | Room over SQLCipher: `AppDatabase`, DAOs and entities for mail and contacts, `DataRuntime` |
+| `mail/` | `MailRepository`, `MailSource`, cursor store and checkpointing |
+| `contacts/` | Contact list, detail, edit, address-book sheet, cursor store |
+| `pgp/` | `ClientEncryptedSender`, device enrollment (activity, view model, envelope, code), `SignerBinding`, `PgpFingerprint`, `WebmailTab` |
+| `push/` | FCM service, UnifiedPush service and registrar, pull notifications, pairing, MFA approval |
+| `security/` | `AppLockManager`, `LockoutPolicy`, `PinPolicy`, `SecurityWipe`, `DatabaseKey`, `CredentialCipher`, `SpkiPinner`, Hostile Location settings, attachment ledger |
+| `ui/` | `SplitInitializer` — activity embedding for master-detail above 800dp |
+
+Large-screen layouts come from resource qualifiers (`res/layout-w600dp/`) and
+`res/xml/split_config.xml`, not from a separate codebase.
 
 ### macOS and iOS
 
@@ -72,16 +93,19 @@ core/       libkypostcore: models, SQLite DAOs, stores, relay networking, domain
             repositories, theme data. QtCore/QtNetwork/QtSql only.
 app/        main.cpp, push/ (KUnifiedPush + KNotifications), platform/ (SecureStore),
             pgp/, contacts/, mail/, pairing/, qml/ (MobileRoot, DesktopRoot, pages)
-tests/      QtTest, stubbed HttpClient/FakeRelayServer; ctest-driven
+tests/      QtTest, stubbed HttpClient/FakeRelayServer; ctest-driven, plus the QML
+            suite and tests/guards.tsv, the security guards proven load-bearing
 packaging/  flatpak/ (manifest, desktop file, D-Bus service, AppStream), click/ (deferred)
 po/         gettext catalogs
-docs/       local notes
+scripts/    build-sqlcipher.sh, verify-guards.sh, verify-version.sh
+docs/       PARITY.md (authoritative Android-parity matrix), DISTRIBUTION.md,
+            THREADING.md, SETUP.md, RENAME_NOTES.md
 ```
 
 
 ## Dependencies
 
 - **Server**: Docker and Docker Compose required. Go 1.26+ and Node 20+ optional for local dev. Frontend uses React and Vite.
-- **Android**: Firebase project with `google-services.json`, FCM enabled.
-- **macOS/iOS**: Xcode 26, deployment target macOS and iOS 26.5, no Swift package dependencies, SwiftData, URLSession, WebKit.
-- **Linux**: Qt6 (`qt6-base`, `qt6-declarative`, `qt6-webengine`, `kirigami` KF6, `knotifications` KF6, `kdbusaddons` KF6, `ki18n` KF6, `qtkeychain-qt6`, `kunifiedpush`, `zxing-cpp`, `openssl`, `argon2`), CMake.
+- **Android**: Firebase project with `google-services.json`, FCM enabled. Bouncy Castle for OpenPGP, SQLCipher for the mail database, the UnifiedPush connector, and `play-services-code-scanner` for the pairing QR.
+- **macOS/iOS**: Xcode 26, deployment target macOS and iOS 26.5, SwiftData, URLSession, WebKit. One external dependency: GopenPGP, as a SHA-256-pinned binary XCFramework.
+- **Linux**: Qt6 (`qt6-base`, `qt6-declarative`, `qt6-webengine`, `qt6-multimedia`, `kirigami` KF6, `knotifications` KF6, `kstatusnotifieritem` KF6, `kdbusaddons` KF6, `ki18n` KF6, `qtkeychain-qt6`, `kunifiedpush`, `zxing-cpp`, `openssl`, `argon2`, `gpgme`), CMake, and SQLCipher built from source by `scripts/build-sqlcipher.sh`.

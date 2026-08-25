@@ -23,15 +23,26 @@ Payload keys from the README: `messageId`, `senderName`, `emailSubject`, `Keywor
 
 ## Generic notifications by default
 
-The server README says push notifications are generic by default because subject lines are not encrypted in ordinary PGP/MIME. The marketing site also notes protected subjects and generic push.
+Push notifications are generic by default because subject lines are not
+encrypted in ordinary PGP/MIME. Sender and subject reach FCM or APNs only if the
+user turns previews on.
+
+**Encrypted mail is excluded from push payloads entirely**, whatever the Content
+Preview setting, because native push travels through a relay and on to FCM or
+APNs in cleartext at every hop. Under Hostile Location Protection on Android,
+notifications carry no sender and no subject whether or not the app is locked.
+
+Notification content is opaque to the push transport. What the transport learns
+is timing.
 
 ## Client specifics
 
 ### Android (from `kypost-android/README.md`)
 
+- Transports: **FCM**, a **UnifiedPush** distributor you choose, or **App Pull**, which polls your own server and involves neither Google nor a distributor.
 - Delivery modes: `push` or `pull`, per user on the web Notifications page. `pull` means the server sends nothing to FCM and the app polls directly.
-- FCM path: data payload keys `messageId`, `senderName`, `emailSubject`, `Keywords`; system notifications plus in-app history; each user selects `push` or `pull`; `POST_NOTIFICATIONS` permission on Android 13+.
-- Pull path: `GET {pullEndpoint}?sub=&hash=&after=<cursor>` with `hash` HMAC, `seq` dedup, `lastCursor` durable per subscriber, only after delivery; respects `deliveryMode` from register and pull responses on each foreground; background WorkManager at 15 minutes plus foreground pull; optional foreground service for near real-time with a persistent notification (not the default); backs off on `400`, `401`, `503`, network errors.
+- FCM path: data payload keys `messageId`, `senderName`, `emailSubject`, `Keywords`; system notifications plus in-app history; `POST_NOTIFICATIONS` permission on Android 13+.
+- Pull path: `GET {pullEndpoint}?after=<cursor>`. The cursor is the **only** query parameter; authentication is the `X-Kypost-Device-Id` and `X-Kypost-Device-Secret` headers, never a query parameter, because credentials in a URL end up in access logs and browser history. `seq` dedup, `lastCursor` durable per subscriber and advanced only after delivery; respects `deliveryMode` from register and pull responses on each foreground; background WorkManager at 15 minutes plus foreground pull; optional foreground service for near real-time with a persistent notification (not the default); backs off on `400`, `401`, `503`, network errors.
 - Storage: `deliveryMode` and `pullEndpoint` stored; if `pullEndpoint` absent, derived as `{srv}/api/notifications/native/pull`.
 
 ### macOS & iOS (from `kypost-for-Mac/README.md`)
@@ -45,9 +56,12 @@ The server README says push notifications are generic by default because subject
 
 ## Server API for native push
 
-- `POST /api/notifications/native/register` (pairing token auth)
-- `GET|DELETE /api/notifications/native/devices`
+- `POST /api/notifications/native/register` (pairing token auth; returns a `deviceId` and a `deviceSecret`, and invalidates the previous secret)
+- `GET|DELETE /api/notifications/native/devices` (per-device revocation)
 - `POST /api/notifications/native/unpair`
+
+Everything after registration authenticates with the `X-Kypost-Device-Id` and
+`X-Kypost-Device-Secret` headers. See [Pairing](./pairing.md).
 
 ## Relay protection
 
