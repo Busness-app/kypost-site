@@ -36,7 +36,7 @@
             const path_to_root = "";
             const default_light_theme = "patina-ky";
             const default_dark_theme = "patina-ky";
-            window.path_to_searchindex_js = "searchindex-9155a62d.js";
+            window.path_to_searchindex_js = "searchindex-0e88e264.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="toc-d1d12269.js"></script>
@@ -181,8 +181,8 @@
 <h2 id="single-hosted-multi-client"><a class="header" href="#single-hosted-multi-client">Single-hosted, multi-client</a></h2>
 <p>One backend serves all clients:</p>
 <ul>
-<li><strong>Server</strong> — multi-user (admin/user), per-user IMAP/SMTP, per-user label lists copied from instance defaults at account creation, per-user tuning prompts and notification preferences.</li>
-<li><strong>Android</strong> — keyword tabs, two-way contact sync, native-push pairing with FCM, optional pull mode.</li>
+<li><strong>Server</strong> — multi-user (admin/user), per-user IMAP/SMTP, per-user label lists copied from instance defaults at account creation, per-user tuning prompts and notification preferences, and OpenID Connect single sign-on with directory replication.</li>
+<li><strong>Android</strong> — keyword tabs, two-way contact sync, native-push pairing with FCM or UnifiedPush, optional pull mode, large-screen and foldable layouts.</li>
 <li><strong>macOS &amp; iOS</strong> — SwiftUI shared codebase, three-pane on macOS, tab layout on iOS, WebKit reader, APNs + 90s polling fallback.</li>
 <li><strong>Linux</strong> — Qt6/Kirigami, one Flatpak for KDE Plasma desktop (3-column) and Plasma Mobile (bottom-tab push navigation).</li>
 </ul>
@@ -196,23 +196,30 @@
 <tbody>
 <tr><td>Mail reading</td><td>IMAP inbox, folder mgmt, drag-drop move</td><td>Relay-proxied, no credentials on device</td><td>Server folders incl. subfolders, HTML via WebKit</td><td>Inbox/detail/composer, WebEngineView, server folders create/rename/delete</td></tr>
 <tr><td>Compose</td><td>Send via SMTP, draft save, attachments 25 MB</td><td>To/Cc/Bcc autocomplete from contacts, picker</td><td>Compose and send through relay</td><td>Reply/reply-all/forward, attachments, drafts, HTML composer</td></tr>
-<tr><td>Keyword tabs/labels</td><td>Polls unread, local LLM classifies, IMAP keywords, per-user allowlist</td><td>Tabs from server tab/label fields, tune in Keywords screen</td><td>Relay sorts into tabs/labels, visibility in settings</td><td>Not detailed in README</td></tr>
+<tr><td>Keyword tabs/labels</td><td>Polls unread, local LLM classifies, IMAP keywords, per-user allowlist</td><td>Tabs from server tab/label fields, tune in Keywords screen</td><td>Relay sorts into tabs/labels, visibility in settings</td><td>Tabs from the same server fields</td></tr>
 <tr><td>Filter rules</td><td>GUI + raw Sieve, run-now panel</td><td>—</td><td>—</td><td>—</td></tr>
 <tr><td>Contacts</td><td>Address book + groups, dedupe, CSV/vCard, photos, CardDAV server + client</td><td>Two-way sync via relay</td><td>Two-way sync, extended schema, reconciliation, groups/photos/IM/social/etc.</td><td>Synced list/detail, offline queued edits, groups, dedupe</td></tr>
-<tr><td>PGP</td><td>Browser-protected key, WKD lookup, recipient check, pickup links</td><td>QR show/scan own/other key onto contact</td><td>QR pickup link 2 min expiry, fingerprint confirmation, encryption state per message, relay-side encrypt/sign, pickup fallback 7 days, browser-only key handoff via draft</td><td>QR exchange, camera scan/show, fingerprint confirmation, marks unreadable encrypted mail</td></tr>
-<tr><td>Push</td><td>Browser push + native pairing, central Cloudflare relays for FCM/APNs</td><td>FCM native, pull mode polling, delivery mode push/pull</td><td>APNs + 90s polling + background refresh</td><td>UnifiedPush 2 tiers + 90s polling</td></tr>
+<tr><td>PGP</td><td>Browser-protected key, WKD/keyserver/Autocrypt discovery and WKD publishing, recipient check, browser-sealed pickup links, in-browser signature verification</td><td>QR key exchange; on-device encrypt, sign and decrypt once enrolled</td><td>QR pickup link 2 min expiry, fingerprint confirmation, encryption state per message, on-device decrypt once enrolled, relay-side encrypt/sign, pickup fallback 7 days</td><td>QR exchange, camera scan/show, on-device encrypt, sign and decrypt through the user’s own <code>gpg-agent</code></td></tr>
+<tr><td>Device enrollment</td><td>Seals the key to a device after a 14-character code matches</td><td>Keystore-backed, blocked while Hostile Location Protection is on</td><td>Secure Enclave, released on user presence</td><td>Imported into the user’s GnuPG keyring</td></tr>
+<tr><td>Cached mail at rest</td><td>Encrypted secrets on disk; no decrypted bodies cached</td><td>SQLCipher, key in the Keystore</td><td>SwiftData store with backup exclusion</td><td>SQLCipher, converted in place on upgrade</td></tr>
+<tr><td>Sign-in</td><td>Password + MFA, or OpenID Connect SSO</td><td>Per-device credential, no webmail sign-in</td><td>Per-device credential</td><td>Per-device credential</td></tr>
+<tr><td>Push</td><td>Browser push + native pairing, central Cloudflare relays for FCM/APNs</td><td>FCM, UnifiedPush, or App Pull polling; delivery mode push/pull</td><td>APNs + 90s polling + background refresh</td><td>UnifiedPush 2 tiers + 90s polling</td></tr>
 <tr><td>MFA</td><td>TOTP, recovery codes, push-approval</td><td>Push approval via notification + in-app fallback</td><td>Approve from notification tap</td><td>N/A</td></tr>
 </tbody>
 </table>
 </div>
 <h2 id="privacy-model"><a class="header" href="#privacy-model">Privacy model</a></h2>
-<p>The site’s architecture map page covers: client-held PGP keys, WKD/Autocrypt key discovery, sealed pickup links, protected subjects, generic push notifications by default, device-level hardening, and the 15-theme system. Details are on that map and in per-repo docs, not expanded in this overview.</p>
+<p>Covered in full by <a href="./pgp.html">PGP &amp; Encryption</a> and the <a href="./security.html">Security Model</a>:
+client-held PGP keys, device enrollment onto phones and desktops, WKD/Autocrypt
+key discovery, the six-state signature trust model, browser-sealed pickup links,
+protected subjects, generic push notifications by default, and device-level
+hardening. The 15-theme system is in <a href="./theming.html">Theming</a>.</p>
 <h2 id="repository-links"><a class="header" href="#repository-links">Repository links</a></h2>
 <ul>
-<li>KyPost Server — <code>https://github.com/Yoshiofthewire/KyPost-Server</code></li>
-<li>KyPost for Android — <code>https://github.com/Yoshiofthewire/KyPost-for-Android</code></li>
-<li>KyPost for Mac &amp; iOS — <code>https://github.com/Yoshiofthewire/KyPost-for-Mac</code></li>
-<li>KyPost for Linux — <code>https://github.com/Yoshiofthewire/KyPost-for-Linux</code></li>
+<li>KyPost Server — <code>https://github.com/Busness-app/KyPost-Server</code></li>
+<li>KyPost for Android — <code>https://github.com/Busness-app/KyPost-for-Android</code></li>
+<li>KyPost for Mac &amp; iOS — <code>https://github.com/Busness-app/KyPost-for-Mac</code></li>
+<li>KyPost for Linux — <code>https://github.com/Busness-app/KyPost-for-Linux</code></li>
 </ul>
 <h2 id="workspace-trust-note"><a class="header" href="#workspace-trust-note">Workspace trust note</a></h2>
 <p>These assume self-hosting on hardware you control.</p>

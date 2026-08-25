@@ -36,7 +36,7 @@
             const path_to_root = "";
             const default_light_theme = "patina-ky";
             const default_dark_theme = "patina-ky";
-            window.path_to_searchindex_js = "searchindex-9155a62d.js";
+            window.path_to_searchindex_js = "searchindex-0e88e264.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="toc-d1d12269.js"></script>
@@ -191,7 +191,7 @@
 <tr><td>API</td><td>No request/response schemas beyond field notes above</td></tr>
 <tr><td>Push Relays</td><td>No cost estimate or quota beyond <code>RELAY_DAILY_BUDGET</code></td></tr>
 <tr><td>Clients Overview</td><td>No shared release cadence</td></tr>
-<tr><td>Android</td><td>No min Android API level; no background-restriction tuning beyond backoff</td></tr>
+<tr><td>Android</td><td><code>minSdk</code> is 31; no background-restriction tuning beyond backoff</td></tr>
 <tr><td>macOS &amp; iOS</td><td>No TestFlight steps; known gaps are v2 candidates listed in README</td></tr>
 <tr><td>Linux</td><td>No Plasma Mobile device list</td></tr>
 <tr><td>Pairing</td><td>No signing algorithm beyond HMAC with <code>PAIRING_SECRET</code></td></tr>
@@ -199,7 +199,7 @@
 <tr><td>Contacts</td><td>No dedupe algorithm; no CardDAV sync interval</td></tr>
 <tr><td>PGP</td><td>No token lifetime beyond 2 min QR and up to 7-day pickup storage</td></tr>
 <tr><td>Security</td><td>No formal threat model file</td></tr>
-<tr><td>Theming</td><td>No 15 theme names beyond Patina Ky; no custom-theme guide</td></tr>
+<tr><td>Theming</td><td>Names and file locations are listed; there is no custom-theme editor to document</td></tr>
 <tr><td>Development</td><td>No style guide copy beyond <code>AGENTS.md</code>/<code>STYLE_GUIDE.md</code> pointers</td></tr>
 <tr><td>Deployment</td><td>No Kubernetes or non-systemd log rotation guide</td></tr>
 <tr><td>Licensing</td><td>No CLA/DCO; no third-party inventory beyond fonts</td></tr>
@@ -208,8 +208,15 @@
 </div>
 <h2 id="other-gaps-named-as-future-work"><a class="header" href="#other-gaps-named-as-future-work">Other gaps named as future work</a></h2>
 <ul>
-<li><strong>Mac known gaps (v2 candidates)</strong>: attachments, mail cursor/delta, read/archive/delete from reader, draft save button, server-side search, QR camera on macOS.</li>
-<li><strong>Linux</strong>: <code>packaging/click/</code> is deferred until UBports releases a Qt6/KF6 track.</li>
+<li><strong>Mac known gaps (v2 candidates)</strong>: attachments, read/archive/delete from reader, draft save button, server-side search, QR camera on macOS, and on-device encrypt-and-sign — reading client-protected mail has landed, writing it has not. Cursor/delta sync and folder create/rename/delete have since shipped.</li>
+<li><strong>Linux</strong>: <code>packaging/click/</code> is deferred until UBports releases a Qt6/KF6 track. Inbox window size is an open product question — Linux sends no <code>limit</code> and gets the relay’s default of 500 untruncated bodies where Android asks for 50.</li>
+<li><strong>Releases</strong>: Linux and Android both have published releases; Mac and the server do not yet. Android’s workflow creates its release as a <strong>draft</strong> gated behind a 90-minute wait timer on the <code>Release</code> environment, so a finished build is not the same as a public one — a maintainer publishes it from the Releases page.</li>
+</ul>
+<h2 id="where-these-gaps-are-tracked-upstream"><a class="header" href="#where-these-gaps-are-tracked-upstream">Where these gaps are tracked upstream</a></h2>
+<ul>
+<li><code>kypost-Linux/docs/PARITY.md</code> is the authoritative Android↔Linux parity matrix, with a status and a reason per row.</li>
+<li><code>kypost-android/SECURITY.md</code> states what each control protects and where it stops, including the residues a wipe cannot reach.</li>
+<li><code>kypost-server/README.md</code> states the classifier’s prompt-injection resistance as a measured property rather than a pending bug.</li>
 </ul>
 <h2 id="placeholders-for-future-data"><a class="header" href="#placeholders-for-future-data">Placeholders for future data</a></h2>
 <p>The book keeps the chapter list above even where the gap table says no data.</p>

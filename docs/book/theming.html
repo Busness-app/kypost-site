@@ -36,7 +36,7 @@
             const path_to_root = "";
             const default_light_theme = "patina-ky";
             const default_dark_theme = "patina-ky";
-            window.path_to_searchindex_js = "searchindex-9155a62d.js";
+            window.path_to_searchindex_js = "searchindex-0e88e264.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="toc-d1d12269.js"></script>
@@ -176,6 +176,62 @@
                 <div id="mdbook-content" class="content">
                     <main>
                         <h1 id="theming"><a class="header" href="#theming">Theming</a></h1>
+<h2 id="one-palette-set-five-surfaces"><a class="header" href="#one-palette-set-five-surfaces">One palette set, five surfaces</a></h2>
+<p>KyPost ships 15 theme presets, and they are the same 15 everywhere: the web UI,
+Android, iOS, macOS, and Linux. The palettes are not “matched by eye” — the
+values are copied byte for byte between the implementations, and the theme a
+user picks on one client is the theme they see on the next.</p>
+<p>The default is <strong>Patina Ky</strong>.</p>
+<h2 id="the-15-presets"><a class="header" href="#the-15-presets">The 15 presets</a></h2>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Theme</th><th></th><th>Theme</th></tr>
+</thead>
+<tbody>
+<tr><td>Patina Ky <em>(default)</em></td><td></td><td>Polished Ky</td></tr>
+<tr><td>Dark Matter</td><td></td><td>Light Matter</td></tr>
+<tr><td>Ocean</td><td></td><td>Sky</td></tr>
+<tr><td>Forest</td><td></td><td>Tropics</td></tr>
+<tr><td>Tropic Night</td><td></td><td>Sun</td></tr>
+<tr><td>Coffee</td><td></td><td>Space</td></tr>
+<tr><td>Cyber Punk</td><td></td><td>Neon Purple</td></tr>
+<tr><td>White Cliffs</td><td></td><td></td></tr>
+</tbody>
+</table>
+</div>
+<h2 id="where-each-implementation-lives"><a class="header" href="#where-each-implementation-lives">Where each implementation lives</a></h2>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Surface</th><th>File</th></tr>
+</thead>
+<tbody>
+<tr><td>Web</td><td><code>frontend/src/theme.ts</code> (<code>kypost-server</code>)</td></tr>
+<tr><td>Android</td><td><code>AppTheme.kt</code> (<code>kypost-android</code>)</td></tr>
+<tr><td>macOS &amp; iOS</td><td><code>KyPost/Style/</code> (<code>kypost-for-Mac</code>)</td></tr>
+<tr><td>Linux</td><td><code>core/theme/AppTheme.cpp</code> — the palette table; <code>ThemePalette.h</code> holds the invariant (<code>kypost-Linux</code>)</td></tr>
+</tbody>
+</table>
+</div>
+<p>These four are a binding contract. Changing a colour in one without changing it
+in the others breaks the promise that the theme travels with the user, so a
+palette edit is a four-repo change.</p>
+<p>Linux additionally asserts the invariant in code: <code>ThemePalette.h</code> checks the
+background’s perceptual lightness, so a theme declared light has to actually
+present as light.</p>
+<h2 id="choosing-a-theme"><a class="header" href="#choosing-a-theme">Choosing a theme</a></h2>
+<ul>
+<li><strong>Web</strong> — Settings → Appearance.</li>
+<li><strong>Android</strong> — the Themes screen.</li>
+<li><strong>macOS &amp; iOS</strong> — Settings (⌘, on macOS).</li>
+<li><strong>Linux</strong> — Settings.</li>
+</ul>
+<p>This site’s landing page carries a scroll-driven preview of six of them, built
+from real screenshots of the web app rather than mockups.</p>
+<h2 id="custom-themes"><a class="header" href="#custom-themes">Custom themes</a></h2>
+<p>There is no custom-theme editor. The preset list is the supported surface; a new
+palette is a code change in the four files above.</p>
 
                     </main>
 

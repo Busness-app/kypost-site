@@ -36,7 +36,7 @@
             const path_to_root = "";
             const default_light_theme = "patina-ky";
             const default_dark_theme = "patina-ky";
-            window.path_to_searchindex_js = "searchindex-9155a62d.js";
+            window.path_to_searchindex_js = "searchindex-0e88e264.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="toc-d1d12269.js"></script>
@@ -214,7 +214,11 @@ docker volume ls | grep kypost
 <h2 id="linux-distribution"><a class="header" href="#linux-distribution">Linux distribution</a></h2>
 <p>From <code>kypost-Linux/README.md</code>:</p>
 <ul>
-<li>Own signed Flatpak remote at <code>https://yoshiofthewire.github.io/KyPost-for-Linux/kypost.flatpakrepo</code> plus Flathub for the runtime. Each release also attaches a <code>.flatpak</code> bundle (no auto-updates). See <code>docs/DISTRIBUTION.md</code>.</li>
+<li>Own signed Flatpak remote at <code>https://busness-app.github.io/KyPost-for-Linux/kypost.flatpakrepo</code>, app id <code>com.kysecurity.mail</code>, plus Flathub for the <code>org.kde.Platform//6.11</code> runtime. Each release also attaches a <code>.flatpak</code> bundle (no auto-updates). See <code>docs/DISTRIBUTION.md</code>.</li>
+<li>The remote is live. <code>kypost.flatpakrepo</code> points at <code>https://busness-app.github.io/KyPost-for-Linux/repo/</code>, whose summary is GPG-signed and carries <code>app/com.kysecurity.mail/x86_64/master</code> and <code>app/com.kysecurity.mail/aarch64/master</code>.</li>
+<li>The OSTree repo republishes on every push to <code>main</code>, so <code>flatpak update</code> tracks the branch. The <code>.flatpak</code> bundles are a separate thing: they attach only to a <code>v*</code> tagged release. The first is <code>v0.2.0</code>.</li>
+<li><code>scripts/verify-version.sh</code> keeps <code>CMakeLists.txt</code>, the AppStream <code>&lt;release&gt;</code> entry, and the git tag from drifting apart, and CI gates a <code>v*</code> build on all three agreeing. A binary reporting the previous version, or a stale AppStream entry that stops Discover offering the update, is the failure it exists to prevent.</li>
+<li>CI builds aarch64 artifacts as well as x86-64, and gates the release on the version matching the tag.</li>
 </ul>
 <h2 id="push-relay-deployment"><a class="header" href="#push-relay-deployment">Push relay deployment</a></h2>
 <p>Maintainer runs Cloudflare Workers. See <a href="./server/push-relays.html">Push Relays</a> for setup, secrets, and redeploy. Self-hosters need no Firebase or Apple account.</p>

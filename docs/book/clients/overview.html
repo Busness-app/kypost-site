@@ -36,7 +36,7 @@
             const path_to_root = "../";
             const default_light_theme = "patina-ky";
             const default_dark_theme = "patina-ky";
-            window.path_to_searchindex_js = "../searchindex-9155a62d.js";
+            window.path_to_searchindex_js = "../searchindex-0e88e264.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="../toc-d1d12269.js"></script>
@@ -181,17 +181,20 @@
 <ul>
 <li><strong>Android</strong> — <code>kypost-android</code>, package <code>org.kysecurity.mail</code>, FCM or UnifiedPush + pull fallback. The package rename is breaking for existing installs.</li>
 <li><strong>macOS &amp; iOS</strong> — <code>kypost-for-Mac</code>, bundle <code>com.urlxl.mail</code>, SwiftUI shared codebase, APNs + polling.</li>
-<li><strong>Linux</strong> — <code>kypost-Linux</code>, KDE Plasma and Plasma Mobile, Qt6/Kirigami Flatpak, UnifiedPush + polling.</li>
+<li><strong>Linux</strong> — <code>kypost-Linux</code>, app id <code>com.kysecurity.mail</code>, KDE Plasma and Plasma Mobile, Qt6/Kirigami Flatpak, UnifiedPush + polling.</li>
 </ul>
 <h2 id="common-traits"><a class="header" href="#common-traits">Common traits</a></h2>
 <p>All clients share:</p>
 <ul>
-<li>Relay-only access. No mail credentials on the device (Android and Linux state this directly; macOS states it holds no PGP private key by design).</li>
+<li>Relay-only access. No mail credentials on the device.</li>
+<li>A per-device credential minted at registration (<code>deviceId</code> + <code>deviceSecret</code>), revocable one device at a time, that cannot sign in to webmail.</li>
 <li>Keyword-based inbox tabs that come from server fields. The user tunes them on each client.</li>
 <li>Compose with contact autocomplete and an address-book picker.</li>
 <li>Two-way contact sync against the relay.</li>
 <li>PGP public-key exchange through QR codes with fingerprint confirmation out of band.</li>
-<li>TOFU certificate pinning at first pairing (Android, macOS, Linux).</li>
+<li>Optional <strong>device enrollment</strong>, after which the client reads end-to-end encrypted mail without the server. Until then, encrypted mail hands off to webmail rather than showing ciphertext. See <a href="../pgp.html">PGP &amp; Encryption</a>.</li>
+<li>Signature verdicts decided locally from keys the device holds, in six states. The relay’s own <code>verified</code> flag is not read.</li>
+<li>Certificate pinning at first pairing. Android can additionally receive the pin in the pairing QR, closing the trust-on-first-use window.</li>
 <li>Hostile Location Protection or equivalent keep-no-data-on-device option.</li>
 <li>The same theme system. 15 themes that match byte for byte. Default is Patina Ky.</li>
 <li>Deep-link scheme <code>kypost://</code></li>
@@ -206,16 +209,20 @@
 <tr><td>UI</td><td>Native Android screens</td><td>iOS tab layout (<code>MainTabView</code>), macOS <code>NavigationSplitView</code> + pop-out <code>WindowGroup</code></td><td>Plasma desktop 3-column, Plasma Mobile bottom-tab, QML <code>MobileRoot</code> / <code>DesktopRoot</code></td></tr>
 <tr><td>Mail rendering</td><td>Not detailed</td><td>WebKit with JS off, remote content blocked</td><td>WebEngineView with JS and remote images disabled</td></tr>
 <tr><td>Push</td><td>FCM native + pull <code>GET</code> polling, per-user <code>push</code>/<code>pull</code> mode on web</td><td>APNs + 90s foreground polling + iOS background refresh</td><td>UnifiedPush distributor + 90s polling</td></tr>
-<tr><td>Lock</td><td>Not listed</td><td>Require Unlock (Face ID/Touch ID/passcode), Hostile Location erases cache</td><td>PIN lock with lockout and wipe, credential seal with AES-256-GCM + Argon2</td></tr>
-<tr><td>QR camera</td><td>Scan or show QR on one screen</td><td>iOS scans with camera + pasted link fallback; macOS pasted link only</td><td>Camera scan and show</td></tr>
-<tr><td>Language</td><td>Kotlin (<code>org.kysecurity.mail</code>)</td><td>Swift, SwiftUI, SwiftData, URLSession, WebKit, no external packages</td><td>C++/QML, Qt6/Kirigami, SQLite</td></tr>
+<tr><td>Lock</td><td>PIN or biometric, escalating delays, wipe-on-repeat, common PINs rejected</td><td>Require Unlock (Face ID/Touch ID/passcode), Hostile Location erases cache</td><td>PIN lock with configurable lockout, grace period and erase threshold; credential seal with AES-256-GCM + Argon2</td></tr>
+<tr><td>On-device PGP</td><td>Reads and writes once enrolled</td><td>Reads once enrolled; sending still goes through the relay</td><td>Reads and writes through the user’s own <code>gpg-agent</code></td></tr>
+<tr><td>Cached mail at rest</td><td>SQLCipher, key in the Keystore</td><td>SwiftData store with backup exclusion</td><td>SQLCipher, converted in place on upgrade</td></tr>
+<tr><td>Layout</td><td>Phone, plus a navigation rail and wide layouts at 600dp and master-detail via activity embedding at 800dp</td><td>iOS tab layout, macOS three-pane + pop-out readers</td><td>Plasma desktop 3-column, Plasma Mobile bottom-tab</td></tr>
+<tr><td>QR camera</td><td>Scan or show QR on one screen (Play Services code scanner)</td><td>iOS scans with camera + pasted link fallback; macOS pasted link only</td><td>Camera scan and show</td></tr>
+<tr><td>Language</td><td>Kotlin (<code>org.kysecurity.mail</code>)</td><td>Swift, SwiftUI, SwiftData, URLSession, WebKit; GopenPGP as its one external dependency</td><td>C++/QML, Qt6/Kirigami, SQLite/SQLCipher, GPGME</td></tr>
 </tbody>
 </table>
 </div>
 <h2 id="bundle-and-naming"><a class="header" href="#bundle-and-naming">Bundle and naming</a></h2>
 <ul>
 <li>The Mac README says the app name is KyPost everywhere (Dock, Home Screen, About, permission prompts, project and scheme, deep link). Bundle IDs and Keychain group stay <code>com.urlxl.mail</code> on purpose. Renaming them is a separate high-risk step. See <code>Brand_Refresh_KyPost.md</code>.</li>
-<li>Android app ID is <code>org.kysecurity.mail</code>. Existing installs of <code>com.urlxl.mail</code> must reinstall and pair again.</li>
+<li>Android app ID is <code>org.kysecurity.mail</code>. Existing installs of <code>com.urlxl.mail</code> must reinstall, pair again, and re-enrol any device-held PGP identity.</li>
+<li>Linux app ID is <code>com.kysecurity.mail</code>, renamed from <code>com.urlxl.mail</code>. See <code>docs/RENAME_NOTES.md</code> in that repo.</li>
 </ul>
 <h2 id="pairing"><a class="header" href="#pairing">Pairing</a></h2>
 <p>All clients pair from the web app. See <a href="../pairing.html">Pairing</a> for the deep-link format and validation.</p>
