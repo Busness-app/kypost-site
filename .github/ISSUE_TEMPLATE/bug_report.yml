@@ -5,6 +5,12 @@ body:
   - type: markdown
     attributes:
       value: >-
+        **Never report a security vulnerability here** — including anything about
+        what the privacy policy discloses. Use
+        [Security Advisories](https://github.com/Busness-app/kypost-site/security/advisories/new);
+        a public issue discloses it before a fix exists.
+
+
         This repository is **only the website**. Bugs in the server or a client
         belong in their own repository:
         [KyPost-Server](https://github.com/Busness-app/KyPost-Server/issues),
