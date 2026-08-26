@@ -3,8 +3,11 @@ contact_links:
   - name: Security vulnerability
     url: https://github.com/Busness-app/kypost-site/security/advisories/new
     about: Do not open a public issue. Report privately here.
-  - name: A problem with KyPost itself, not the website
+  - name: A problem with the KyPost server, not the website
     url: https://github.com/Busness-app/KyPost-Server/issues
+    about: Mail, labelling, pairing, PGP, the web UI, deployment.
+  - name: A problem with a KyPost app
+    url: https://github.com/Busness-app/KyPost-for-Android/issues
     about: >-
-      Bugs in the server or a client belong in their own repository. This one is
-      only the marketing site and the privacy policy.
+      Android here; Apple is KyPost-for-Mac and desktop is KyPost-for-Linux.
+      This repository is only the website and the privacy policy.

@@ -6,7 +6,11 @@ body:
     attributes:
       value: >-
         This repository is **only the website**. Bugs in the server or a client
-        belong in their own repository — see the links on the previous screen.
+        belong in their own repository:
+        [KyPost-Server](https://github.com/Busness-app/KyPost-Server/issues),
+        [Android](https://github.com/Busness-app/KyPost-for-Android/issues),
+        [Apple](https://github.com/Busness-app/KyPost-for-Mac/issues),
+        [Linux](https://github.com/Busness-app/KyPost-for-Linux/issues).
   - type: input
     id: url
     attributes:
