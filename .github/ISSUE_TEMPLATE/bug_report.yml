@@ -1,0 +1,39 @@
+name: Website problem
+description: Something on kypost.org is broken, wrong, or misleading.
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: >-
+        This repository is **only the website**. Bugs in the server or a client
+        belong in their own repository — see the links on the previous screen.
+  - type: input
+    id: url
+    attributes:
+      label: Page URL
+      placeholder: "https://www.kypost.org/privacy"
+    validations: {required: true}
+  - type: dropdown
+    id: kind
+    attributes:
+      label: What kind of problem?
+      options:
+        - "Factually wrong or out of date"
+        - "Broken link or 404"
+        - "Rendering or layout"
+        - "Accessibility"
+        - "Privacy policy is unclear or incomplete"
+        - "Other"
+    validations: {required: true}
+  - type: textarea
+    id: detail
+    attributes:
+      label: What is wrong, and what would be right?
+      description: >-
+        For a factual correction, saying what it *should* say saves a round trip.
+    validations: {required: true}
+  - type: input
+    id: browser
+    attributes:
+      label: Browser and device, for rendering or accessibility problems
+      placeholder: "Firefox 141, Android 15"
