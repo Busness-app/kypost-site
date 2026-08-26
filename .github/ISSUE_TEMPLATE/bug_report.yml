@@ -1,0 +1,49 @@
+name: Website problem
+description: Something on kypost.org is broken, wrong, or misleading.
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: >-
+        **Never report a security vulnerability here** — including anything about
+        what the privacy policy discloses. Use
+        [Security Advisories](https://github.com/Busness-app/kypost-site/security/advisories/new);
+        a public issue discloses it before a fix exists.
+
+
+        This repository is **only the website**. Bugs in the server or a client
+        belong in their own repository:
+        [KyPost-Server](https://github.com/Busness-app/KyPost-Server/issues),
+        [Android](https://github.com/Busness-app/KyPost-for-Android/issues),
+        [Apple](https://github.com/Busness-app/KyPost-for-Mac/issues),
+        [Linux](https://github.com/Busness-app/KyPost-for-Linux/issues).
+  - type: input
+    id: url
+    attributes:
+      label: Page URL
+      placeholder: "https://www.kypost.org/privacy"
+    validations: {required: true}
+  - type: dropdown
+    id: kind
+    attributes:
+      label: What kind of problem?
+      options:
+        - "Factually wrong or out of date"
+        - "Broken link or 404"
+        - "Rendering or layout"
+        - "Accessibility"
+        - "Privacy policy is unclear or incomplete"
+        - "Other"
+    validations: {required: true}
+  - type: textarea
+    id: detail
+    attributes:
+      label: What is wrong, and what would be right?
+      description: >-
+        For a factual correction, saying what it *should* say saves a round trip.
+    validations: {required: true}
+  - type: input
+    id: browser
+    attributes:
+      label: Browser and device, for rendering or accessibility problems
+      placeholder: "Firefox 141, Android 15"
