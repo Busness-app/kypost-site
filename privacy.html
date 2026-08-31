@@ -4,92 +4,81 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Privacy policy — KyPost</title>
-<meta name="description" content="How the KyPost website and self-hosted products handle information.">
+<meta name="description" content="How the KyPost website, services, server, and clients handle information.">
 <meta name="theme-color" content="#0d0f14">
 <meta name="referrer" content="strict-origin-when-cross-origin">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'self'; form-action 'self'; object-src 'none'; script-src 'self'; style-src 'self'; img-src 'self'; font-src 'self'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'self'; form-action 'self'; object-src 'none'; script-src 'none'; style-src 'self'; img-src 'self'; font-src 'self'">
+<link rel="canonical" href="https://www.kypost.org/privacy.html">
+<link rel="icon" type="image/png" href="assets/ky50p.png">
 <link rel="stylesheet" href="css/styles.css">
+<link rel="stylesheet" href="css/demo.css">
 </head>
-<body class="policy-page">
+<body class="policy-page example-policy">
 <a class="skip-link" href="#main-content">Skip to content</a>
-
-<header class="site-nav">
-  <div class="wrap">
-    <a href="index.html" class="brand"><img src="assets/ky50p.png" alt="KyPost logo">KyPost</a>
-    <a class="btn" href="index.html">Back to site</a>
-  </div>
-</header>
+<header class="site-nav"><div class="wrap"><a href="index.html" class="brand"><img src="assets/ky50p.png" alt="">KyPost</a><a class="btn" href="index.html">Back to site</a></div></header>
 
 <main id="main-content">
-  <section class="policy-hero">
-    <div class="wrap">
-      <span class="eyebrow">Privacy</span>
-      <h1>Privacy policy</h1>
-      <p class="lede">Last updated: August 24, 2026</p>
-      <p>This policy explains what information Busnes.app collects, where it goes, and what happens to it. KyPost has a static marketing website and a separate set of open-source, self-hosted products. Those are different data environments.</p>
+  <section class="policy-hero"><div class="wrap"><span class="eyebrow">Privacy</span><h1>Privacy policy</h1><p class="lede">Effective and last updated: August 30, 2026</p></div></section>
+
+  <section class="policy-summary" aria-labelledby="summary-title"><div class="wrap">
+    <span class="eyebrow">TL;DR</span><h2 id="summary-title">The short version</h2>
+    <div class="summary-grid">
+      <article><h3>This website</h3><p>No ads, analytics, cookies, accounts, or third-party embeds. The web host receives ordinary request logs.</p></article>
+      <article><h3>Your server</h3><p>A self-hosted KyPost installation is controlled by its operator. Busnes.app does not receive its mail or account data merely because it uses KyPost.</p></article>
+      <article><h3>Push relays</h3><p>If enabled, maintainer-operated relays process device tokens and limited notification data to deliver Apple or Google push notifications.</p></article>
+      <article><h3>Your choices</h3><p>You can use generic notifications, choose UnifiedPush or polling, and contact the relevant server operator about data on a self-hosted installation.</p></article>
     </div>
-  </section>
+    <p>This summary helps you understand the policy, but the full policy below controls.</p>
+  </div></section>
 
-  <section class="policy-content">
-    <div class="wrap">
-      <article>
-        <h2>1. The website</h2>
-        <p>The KyPost marketing site does not use advertising trackers, analytics scripts, cookies, account forms, or third-party embedded content. It does not ask you for personal information.</p>
-        <p>Like most websites, the hosting provider may receive ordinary request data such as your IP address, browser and device information, requested URL, referring page, and date and time. This information may appear in temporary security or server logs. KyPost does not use it to build profiles or sell it. Log retention depends on the hosting provider’s configuration.</p>
+  <section class="policy-content"><div class="wrap policy-layout">
+    <nav class="policy-toc" aria-label="Privacy policy contents"><strong>Contents</strong><a href="#who">1. Who we are</a><a href="#scope">2. Scope and roles</a><a href="#website">3. Website</a><a href="#services">4. Maintainer services</a><a href="#self-hosted">5. Self-hosted KyPost</a><a href="#sharing">6. Recipients</a><a href="#retention">7. Retention</a><a href="#rights">8. Rights</a><a href="#children">9. Children</a><a href="#changes">10. Changes</a><a href="#contact">11. Contact</a></nav>
+    <article>
+      <h2 id="who">1. Who we are</h2>
+      <p>Busnes.app is a d/b/a operated by <strong>Matthew Beacher</strong>. In this policy, “Busnes.app,” “we,” and “us” refer to Matthew Beacher doing business as Busnes.app. Contact us at <a href="mailto:privacy@busnes.app">privacy@busnes.app</a>.</p>
 
-        <h2>2. The self-hosted applications</h2>
-        <p>The KySecurity Suite includes several self-hosted applications. They run on infrastructure chosen and controlled by the person or organization that operates each installation. That operator—not the project maintainers—is normally responsible for the data processed by that installation and for configuring its retention, backups, access controls, and logs.</p>
-        <p>Each application may process the following information:</p>
-        <ul>
-          <li><strong>KyPost:</strong> account and authentication data, mail messages, headers, attachments, mailbox credentials, contacts, CardDAV records, public keys, wrapped private keys, device registrations, push tokens, notification preferences, filter rules, local classification results, diagnostics, and server logs.</li>
-          <li><strong>KyBookmarks:</strong> account and device data, encrypted bookmark and folder records, encrypted vault and recovery-key wrappers, synchronization metadata, tombstones, conflicts, and content-blind audit events. URLs, titles, notes, folder names, and favicons are intended to remain client-side or inside encrypted payloads. Clients may fetch favicons directly from the website associated with a bookmark.</li>
-          <li><strong>KyNotes:</strong> account, device, membership, and synchronization data; encrypted workbooks, projects, notes, tasks, attachments, collaboration records, and activity details. Full-text search is performed on the client after decryption. If you explicitly publish a site, its Markdown, images, links, and URL slug are public and are no longer encrypted.</li>
-          <li><strong>KyPassword:</strong> account and device data, authentication verifiers, encrypted KeePass vaults, encrypted files, wrapped vault keys, version history, conflict data, recovery material, and audit records. The design does not send the raw master password, plaintext vault key, or decrypted vault contents to the server.</li>
-          <li><strong>KySignOn:</strong> usernames, display names, email addresses where configured, password verifiers, sessions, MFA enrollment and challenge state, encrypted TOTP secrets, push registrations, OAuth/OIDC clients, authorization codes, tokens, requested scopes, and security audit events. This service is designed to share the minimum approved identity claims and tokens with registered applications.</li>
-          <li><strong>KyDNS:</strong> configured DNS records, services, aliases, views, API tokens, DHCP lease or service-discovery data, health-check results, cache entries, blacklist configuration, and forwarded DNS queries. Query logging is off by default, and recording the client IP is a separate opt-in setting. An operator’s choice of upstream resolver determines where forwarded queries go.</li>
-          <li><strong>KyRecovery:</strong> encrypted recovery capsules, recovery instructions and metadata, designated custodians, time-limited approvals, restore or drill state, and content-blind recovery events. KyRecovery is currently a product definition and is not represented as a generally available hosted service.</li>
-        </ul>
-        <p>The Android, iOS, macOS, and Linux KyPost clients can hold local caches of mail, contacts, attachments, keys, pairing data, and notification registrations, subject to the platform and features you enable. They communicate with the KyPost Server selected during pairing; they do not use KyPost-maintainer analytics or advertising telemetry. Some operating-system features, such as system contacts export or push delivery, are only used after you enable or authorize them.</p>
-        <p>The KyPost demo IMAP service is a development and test fixture. It uses seeded test messages by default; if an operator connects real mail or other real data to it, that operator is responsible for the resulting processing and retention.</p>
-        <p>KyPost’s design keeps private keys wrapped before they are uploaded and performs mail classification with the local model configured by the server operator. The maintainers do not receive this data merely because you use the software.</p>
+      <h2 id="scope">2. Scope and responsibilities</h2>
+      <p>This policy covers the kypost.org website, official KyPost client applications, and any push-relay or support service operated by Busnes.app. It does not make Busnes.app responsible for independently operated KyPost servers.</p>
+      <p>For the website and maintainer-operated services, Busnes.app determines why and how personal information is processed. For a self-hosted installation, the person or organization running that server normally makes those decisions and should provide its own privacy notice.</p>
 
-        <h2>3. Where information is sent</h2>
-        <p>Depending on the features enabled by the server operator, information can be sent to:</p>
-        <ul>
-          <li><strong>Your mail provider:</strong> KyPost Server connects to the mailbox configured by the operator using IMAP and SMTP, normally over TLS. That provider receives and processes mail according to its own policy.</li>
-          <li><strong>Mail recipients and other mail systems:</strong> sending a message necessarily shares the message and its delivery metadata with the chosen recipients and their providers.</li>
-          <li><strong>Key services:</strong> Web Key Directory and keyservers may receive public email addresses, public keys, and key lookup or publication requests. Private keys are not sent to these services.</li>
-          <li><strong>Push providers:</strong> Firebase Cloud Messaging, Apple Push Notification service, or a UnifiedPush provider may receive a device token and notification metadata. KyPost maintainers operate Cloudflare Workers that relay push requests to FCM and APNs endpoints. Those workers do not store push data beyond what is needed to operate and maintain the service, troubleshoot failures, and prevent spam or abuse. Push previews are optional; when disabled, notifications are generic.</li>
-          <li><strong>DNS upstreams:</strong> KyDNS may forward DNS queries over DNS-over-TLS, DNS-over-HTTPS, or—only when the operator explicitly configures it—plain DNS to providers such as Cloudflare, Quad9, Google, NextDNS, or another configured resolver. Those providers may see the query and the network information associated with it.</li>
-          <li><strong>Registered applications:</strong> KySignOn may send approved OAuth/OIDC identity claims, authorization codes, and tokens to registered clients such as KyPost, KyBookmarks, KyNotes, KyPassword, or another client the operator authorizes.</li>
-          <li><strong>Public visitors and custodians:</strong> a KyNotes site that you publish is intentionally public. KyRecovery may share encrypted recovery material or approval information with designated custodians according to the operator’s configuration.</li>
-          <li><strong>Services you choose:</strong> the operator may connect the server to other providers, backups, monitoring systems, or integrations. Their policies apply to the information they receive.</li>
-        </ul>
-        <p>KyPost does not send inbox contents to a cloud AI provider as part of its default local-classification design.</p>
+      <h2 id="website">3. The website</h2>
+      <p>The KyPost marketing and documentation site does not use advertising, analytics, cookies, account forms, or third-party embedded content.</p>
+      <table><thead><tr><th>Information</th><th>Purpose</th><th>Legal basis</th><th>Retention</th></tr></thead><tbody><tr><td>IP address, requested URL, referrer, browser/device information, and timestamp</td><td>Deliver the site, maintain security, and diagnose failures</td><td>Legitimate interests in operating and protecting the site</td><td>180 days</td></tr></tbody></table>
+      <p>The site is hosted by GitHub Pages. GitHub may process request information under its own privacy statement. Because the site does not track visitors across websites, it does not alter its behavior in response to Do Not Track or Global Privacy Control signals.</p>
 
-        <h2>4. What we do with information</h2>
-        <p>The site data described above is used to deliver the pages, maintain security, and diagnose abuse or failures. Product data is used by the server operator to authenticate users, synchronize mail and contacts, apply rules, classify messages, deliver notifications, publish or find public keys, and provide the features you enable.</p>
-        <p>KyPost does not sell personal information, use product data for advertising, or use it to create profiles for the maintainers. We may receive information when you voluntarily send it to us—for example, in a GitHub issue, pull request, support request, or security report. We use that information to respond, maintain the projects, and investigate or fix problems.</p>
+      <h2 id="services">4. Maintainer-operated services</h2>
+      <p>If an operator enables Apple Push Notification service or Firebase Cloud Messaging, a Busnes.app-operated Cloudflare Worker may process a server identifier, device token, delivery provider, notification payload, timestamp, and limited security or failure-log information. Generic notifications do not contain sender names, subjects, or message bodies. Preview content is included only when the user enables previews.</p>
+      <p>We use this information to deliver notifications, diagnose failed delivery, secure the relay, and prevent spam or abuse. The legal basis is performance of the requested service and our legitimate interests in keeping it reliable and secure. Relay request content is held only in memory for delivery; security and failure logs are retained for <strong>180 days</strong>.</p>
+      <p>If you contact us through GitHub or email, we process your account details, correspondence, and attachments to answer you, maintain KyPost, or investigate a security report. GitHub and your email provider process that information under their own terms.</p>
 
-        <h2>5. Retention, security, and your choices</h2>
-        <p>On a self-hosted installation, the server operator controls retention and deletion. You can ask that operator to delete an account or its data, subject to backups, legal obligations, and data held by mail providers, recipients, push providers, or other services. The KyPost project cannot delete data from a server it does not operate. Deleting a local client copy may not delete the server copy, and deleting a server copy may not remove copies already downloaded to another device, included in a backup, sent to a recipient, or published publicly.</p>
-        <p>KyPost uses encryption in transit where supported, client-held key protection, access controls, and platform security features. No software or transmission method is completely secure, so protect your server, devices, passwords, recovery material, and backups.</p>
-        <p>If you contact the maintainers, please do not include message contents, passwords, private keys, access tokens, or other secrets unless a maintainer specifically asks for a safely redacted diagnostic.</p>
+      <h2 id="self-hosted">5. Self-hosted KyPost</h2>
+      <p>A KyPost Server may process account information, password verifiers, sessions, mailbox credentials, messages, headers, attachments, contacts, public keys, encrypted or wrapped private-key material, device registrations, push tokens, preferences, filter rules, classification results, diagnostics, and logs.</p>
+      <p>The server operator chooses its infrastructure, users, integrations, backups, logging, retention, and deletion practices. Official clients may keep local copies of mail, contacts, attachments, keys, pairing information, and notification registrations. Busnes.app does not receive this information merely because someone installs or uses the software.</p>
+      <p>KyPost’s built-in classifier runs using the model configured on the operator’s server. The default design does not send inbox contents to a cloud AI provider. An operator can change the software or connect other services, so users should ask their operator about its actual configuration.</p>
 
-        <h2>6. Children, changes, and contact</h2>
-        <p>The website and products are not directed to children under 13. We do not knowingly collect personal information from children through the website.</p>
-        <p>We may update this policy when the website or products change. The “Last updated” date above identifies the current version. Material changes will be published on this page.</p>
-        <p>For questions about this policy or data handled by any KySecurity application, contact the maintainers through the <a href="https://github.com/Busness-app" target="_blank" rel="noopener">Busnes.app GitHub organization</a>. For data handled by a particular KySecurity Server, contact that server’s operator.</p>
-      </article>
-    </div>
-  </section>
+      <h2 id="sharing">6. Where information may go</h2>
+      <ul><li><strong>Website infrastructure:</strong> GitHub Pages and its infrastructure providers.</li><li><strong>Push delivery:</strong> Cloudflare, Apple, Google, or a UnifiedPush provider when the corresponding option is enabled.</li><li><strong>Mail delivery:</strong> the chosen IMAP/SMTP provider, recipients, and their mail providers.</li><li><strong>Key discovery:</strong> WKD hosts or public keyservers when lookup or publication is enabled.</li><li><strong>Support:</strong> GitHub and relevant email providers when someone contacts us.</li><li><strong>Legal and safety:</strong> authorities or other parties when required by law or reasonably necessary to protect rights, safety, and service security.</li></ul>
+      <p>Some recipients may process information outside your country. Applicable transfer protections depend on the server operator’s location, configuration, and chosen providers.</p>
+
+      <h2 id="retention">7. Retention and security</h2>
+      <p>We keep maintainer-controlled personal information only for the periods described above, then delete or anonymize it unless a longer period is required for legal, security, or dispute-resolution purposes. Self-hosted server operators determine their own retention and backup schedules.</p>
+      <p>We use access controls, encryption in transit, restricted service credentials, and limited logging appropriate to the information we control. No system is completely secure. Protect your server, devices, passwords, recovery material, and backups.</p>
+
+      <h2 id="rights">8. Your privacy rights</h2>
+      <p>Depending on where you live, you may have rights to access, correct, delete, restrict, or receive a copy of personal information; object to certain processing; withdraw consent; and complain to a privacy regulator. We do not sell personal information or use it for cross-context behavioral advertising.</p>
+      <p>Send requests concerning the website or maintainer-operated services to <a href="mailto:privacy@busnes.app">privacy@busnes.app</a>. For information held by a self-hosted KyPost Server, contact that server’s operator. We may need to verify your identity before completing a request.</p>
+
+      <h2 id="children">9. Children</h2>
+      <p>KyPost is not directed to children under 13, and we do not knowingly collect personal information from children through the website. If you believe a child has provided information to a maintainer-operated service, contact us so we can review and delete it where appropriate.</p>
+
+      <h2 id="changes">10. Changes to this policy</h2>
+      <p>We will post revisions here and update the date at the top. If a change materially affects a maintainer-operated service, we will also provide notice through an appropriate project or service channel before the change takes effect when reasonably possible.</p>
+
+      <h2 id="contact">11. Contact</h2>
+      <p>Privacy questions and requests: <a href="mailto:privacy@busnes.app">privacy@busnes.app</a></p>
+    </article>
+  </div></section>
 </main>
-
-<footer>
-  <div class="wrap">
-    <span>© 2026 Busnes.app — MIT licensed</span>
-    <span class="footer-links"><a href="index.html">Home</a><a href="https://github.com/Busness-app" target="_blank" rel="noopener">GitHub</a><a href="https://buymeacoffee.com/yoshiofthewire" target="_blank" rel="noopener">Buy me a coffee</a></span>
-  </div>
-</footer>
+<footer><div class="wrap"><span>© 2026 Busnes.app</span><span class="footer-links"><a href="index.html">Home</a><a href="https://github.com/Busness-app">GitHub</a></span></div></footer>
 </body>
 </html>

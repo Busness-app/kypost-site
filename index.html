@@ -3,471 +3,62 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>KyPost — A self-hosted email ecosystem</title>
-<meta name="description" content="KyPost is a self-hosted email ecosystem: a server you run yourself, paired with native apps for Android, iOS, macOS, and Linux — with local AI sorting, end-to-end PGP your server can't read, and shared themes.">
+<title>KyPost — Private email on your infrastructure</title>
+<meta name="description" content="Run KyPost on your infrastructure and use one private inbox across Android, iOS, macOS, Linux, and the web.">
 <meta name="theme-color" content="#0d0f14">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="permissions-policy" content="camera=(), geolocation=(), microphone=()">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'self'; form-action 'self'; object-src 'none'; script-src 'self'; style-src 'self'; img-src 'self'; font-src 'self'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'self'; form-action 'self'; object-src 'none'; script-src 'none'; style-src 'self'; img-src 'self'; font-src 'self'">
 <link rel="canonical" href="https://www.kypost.org/">
-<meta property="og:title" content="KyPost — A self-hosted email ecosystem">
-<meta property="og:description" content="A self-hosted server paired with native email clients for Android, iOS, macOS, and Linux.">
-<meta property="og:type" content="website">
-<meta property="og:url" content="https://www.kypost.org/">
-<meta property="og:image" content="https://www.kypost.org/assets/ky.png">
-<meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="KyPost — A self-hosted email ecosystem">
-<meta name="twitter:description" content="A self-hosted server paired with native email clients for Android, iOS, macOS, and Linux.">
-<meta name="twitter:image" content="https://www.kypost.org/assets/ky.png">
 <link rel="icon" type="image/png" href="assets/ky50p.png">
 <link rel="stylesheet" href="css/styles.css">
+<link rel="stylesheet" href="css/demo.css">
 </head>
-<body>
-
+<body class="demo-page">
 <a class="skip-link" href="#main-content">Skip to content</a>
-
-<header class="site-nav">
-  <div class="wrap">
-    <a href="#" class="brand">
-      <img src="assets/ky50p.png" alt="KyPost logo">
-      KyPost
-    </a>
-    <nav aria-label="Primary navigation">
-    <ul id="primary-navigation" class="nav-links">
-      <li><a href="#getting-started">Get started</a></li>
-      <li><a href="#ecosystem">Ecosystem</a></li>
-      <li><a href="#platforms">Platforms</a></li>
-      <li><a href="#projects">Projects</a></li>
-      <li><a href="https://www.kypost.org/docs/book/index.html" target="_blank" rel="noopener">Docs</a></li>
-    </ul>
-    </nav>
-    <div class="nav-actions">
-      <a class="btn btn-primary" href="https://github.com/Busness-app" target="_blank" rel="noopener">GitHub</a>
-      <button class="nav-toggle" type="button" aria-label="Open navigation" aria-controls="primary-navigation" aria-expanded="false">☰</button>
-    </div>
-  </div>
-</header>
+<header class="site-nav"><div class="wrap">
+  <a href="index.html" class="brand"><img src="assets/ky50p.png" alt="">KyPost</a>
+  <nav class="demo-nav" aria-label="Primary navigation"><a href="#how-it-works">How it works</a><a href="#platforms">Apps</a><a href="privacy.html">Privacy</a><a class="btn btn-primary" href="https://www.kypost.org/docs/book/index.html">Install</a></nav>
+</div></header>
 
 <main id="main-content">
-  <section class="hero">
-    <div class="rain-texture"></div>
-    <div class="wrap">
-      <div class="hero-copy">
-        <span class="status-pill">In active development — self-host today</span>
-        <h1>One inbox.<br>Every device.<br><span>Zero third parties.</span></h1>
-        <p class="lede">KyPost is a self-hosted email ecosystem: a server you run yourself, paired with native apps for Android, iOS, macOS, and Linux — built around local AI sorting, end-to-end PGP your own server can't read, and themes that follow you everywhere.</p>
-        <div class="hero-actions">
-          <a class="btn btn-primary" href="#getting-started">Get started</a>
-          <a class="btn" href="#ecosystem">See how it connects</a>
-        </div>
-      </div>
-      <div class="hero-art">
-        <img src="assets/ky.png" alt="KyPost octopus mascot holding an envelope">
-      </div>
+  <section class="demo-hero"><div class="rain-texture"></div><div class="wrap">
+    <div class="hero-copy">
+      <span class="status-pill">Open beta · self-host today</span>
+      <h1>One inbox.<br>Every device.<br><span>Your infrastructure.</span></h1>
+      <p class="lede">Run KyPost alongside your existing mailbox, then pair native apps for Android, iPhone, Mac, and Linux. Your server coordinates your devices, local AI sorts your inbox, and end-to-end encrypted messages are decrypted only on enrolled devices.</p>
+      <div class="hero-actions"><a class="btn btn-primary" href="https://www.kypost.org/docs/book/index.html">Install KyPost Server</a><a class="btn" href="#how-it-works">See how it works</a></div>
+      <p class="hero-proof">Open source · Existing IMAP/SMTP account · No advertising telemetry</p>
     </div>
-  </section>
+    <div class="product-shot"><img src="assets/PatinaKy.png" alt="KyPost inbox showing messages organized into categories"></div>
+  </div></section>
 
-  <section id="getting-started">
-    <div class="wrap">
-      <span class="eyebrow">Start here</span>
-      <h2>Run KyPost in a few steps</h2>
-      <p class="lede">Install the server first, then pair the native clients you use. Everything stays connected through your own KyPost Server.</p>
-
-      <div class="getting-started-grid">
-        <article class="getting-started-card">
-          <div class="getting-started-step">01</div>
-          <h3>Install the server</h3>
-          <p>Run KyPost Server with Docker on hardware you control, then connect it to your existing IMAP and SMTP mailbox.</p>
-          <a class="btn btn-primary" href="https://www.kypost.org/docs/book/index.html" target="_blank" rel="noopener">Documentation</a>
-        </article>
-
-        <article class="getting-started-card">
-          <div class="getting-started-step">02</div>
-          <h3>Pair your devices</h3>
-          <p>Open the client for your platform and scan the QR code from the server. Mail credentials stay on the server, and each device gets its own revocable credential.</p>
-          <div class="getting-started-links">
-            <a href="https://github.com/Busness-app/KyPost-for-Android" target="_blank" rel="noopener">Android</a>
-            <a href="https://github.com/Busness-app/KyPost-for-Mac" target="_blank" rel="noopener">macOS &amp; iOS</a>
-            <a href="https://github.com/Busness-app/KyPost-for-Linux" target="_blank" rel="noopener">Linux</a>
-          </div>
-        </article>
-
-        <article class="getting-started-card">
-          <div class="getting-started-step">03</div>
-          <h3>Harden your setup</h3>
-          <p>After pairing, set up your client-held PGP key, enrol each device so it can read encrypted mail, then configure MFA, push preferences, contacts, and server-side filtering.</p>
-          <a class="btn" href="https://github.com/Busness-app/KyPost-Server" target="_blank" rel="noopener">Server repository</a>
-        </article>
-      </div>
+  <section class="benefits" aria-labelledby="benefits-title"><div class="wrap">
+    <span class="eyebrow">Why KyPost</span><h2 id="benefits-title">Control without giving up convenience</h2>
+    <div class="demo-grid">
+      <article><h3>Your server</h3><p>Connect the mailbox you already use. Credentials, rules, contacts, and local classification stay on infrastructure you choose.</p></article>
+      <article><h3>Your devices</h3><p>Pair once with a QR code. Each device receives a separate credential that you can revoke without disrupting the others.</p></article>
+      <article><h3>Your keys</h3><p>End-to-end encrypted messages are decrypted on enrolled devices—not by the KyPost relay.</p></article>
     </div>
-  </section>
+  </div></section>
 
-  <section id="ecosystem">
-    <div class="wrap">
-      <span class="eyebrow">How it fits together</span>
-      <h2>One server. Every client.</h2>
-      <p class="lede">KyPost isn't a single app — it's a self-hosted mail server plus a family of native clients that all pair to it the same way.</p>
-
-      <div class="hub">
-        <div class="hub-node hub-center">
-          <div class="hub-icon">SRV</div>
-          <div>
-            <h3>KyPost Server</h3>
-            <p>Runs on your own hardware. Connects to your real mailbox over IMAP/SMTP, classifies unread mail with a local Ollama model, looks up and publishes PGP keys over WKD, and hands off mail, push, and contacts to every paired client.</p>
-          </div>
-        </div>
-
-        <div class="hub-arrow">▼ pairs once via QR code or deep link ▼</div>
-
-        <div class="hub-spokes">
-          <div class="hub-node">
-            <h3>Mac &amp; iOS</h3>
-            <p>SwiftUI client that talks only to the relay — pair once, and mail, push, and contacts stay in lockstep with the server.</p>
-          </div>
-          <div class="hub-node">
-            <h3>Android</h3>
-            <p>Kotlin client that is relay-only, just like the Apple client — zero mail credentials ever stored on-device, and its cached mail encrypted at rest.</p>
-          </div>
-          <div class="hub-node">
-            <h3>Linux</h3>
-            <p>One Qt6/Kirigami codebase for Linux Desktop and Plasma Mobile, shipped as a signed Flatpak — relay-only, just like the Apple and Android clients.</p>
-          </div>
-        </div>
-      </div>
-
-      <div class="section-actions">
-        <a class="btn btn-primary" href="architecture/">Open the architecture map</a>
-        <p class="section-note">Every service, module, and connection across the four repos — open any piece to see what is inside it, or recolour the whole map by data flow, security, or load.</p>
-      </div>
+  <section id="how-it-works"><div class="wrap">
+    <span class="eyebrow">Three steps</span><h2>From Docker to inbox</h2>
+    <div class="demo-grid numbered">
+      <article><span>01</span><h3>Install</h3><p>Run KyPost Server with Docker and connect it to your IMAP and SMTP provider.</p></article>
+      <article><span>02</span><h3>Pair</h3><p>Scan the server QR code from each native client. Mailbox credentials remain on the server.</p></article>
+      <article><span>03</span><h3>Choose</h3><p>Enable device encryption, MFA, local sorting, push delivery, and privacy options at your pace.</p></article>
     </div>
-  </section>
+    <div class="section-actions"><a class="btn" href="architecture/">Explore the architecture</a><p class="section-note">Inspect KyPost’s components, data flows, security boundaries, and performance in the interactive architecture map.</p></div>
+  </div></section>
 
-  <section id="platforms">
-    <div class="wrap">
-      <span class="eyebrow">Cross-platform</span>
-      <h2>Plays well with others</h2>
-      <p class="lede">Every surface shares the same pairing flow, the same 15 themes, and the same fonts — switching devices never means relearning the app.</p>
+  <section id="platforms"><div class="wrap platform-demo">
+    <div><span class="eyebrow">Available clients</span><h2>Native where you need it</h2><p class="lede">Android and Linux are in open beta. The Apple client is currently testing. Webmail is included with the server.</p></div>
+    <ul class="availability"><li><strong>Android</strong><span>Open beta</span></li><li><strong>Linux</strong><span>Open beta</span></li><li><strong>macOS &amp; iOS</strong><span>Testing</span></li><li><strong>Web</strong><span>Included</span></li></ul>
+  </div></section>
 
-      <div class="platform-grid">
-        <div class="platform-card">
-          <span class="tag">Kotlin · Relay</span>
-          <h3>Android</h3>
-          <p>Relay-only, keyword tabs, MFA push approval, and push, UnifiedPush or plain pull. Once enrolled it decrypts and encrypts with your own key on the phone, and unfolds into a navigation rail and a two-pane inbox on tablets and foldables.</p>
-        </div>
-        <div class="platform-card">
-          <span class="tag">SwiftUI · Relay</span>
-          <h3>iOS</h3>
-          <p>Pairs to your server once; native inbox, cursor-based delta sync, PGP QR key exchange, APNs push. Enrolled devices read end-to-end encrypted mail with a key held in the Secure Enclave.</p>
-        </div>
-        <div class="platform-card">
-          <span class="tag">SwiftUI · Relay</span>
-          <h3>macOS</h3>
-          <p>Same codebase as iOS — three-pane view, pop-out readers, menu-bar shortcuts, folder create, rename and delete.</p>
-        </div>
-        <div class="platform-card">
-          <span class="tag">Qt6 / Kirigami · Relay</span>
-          <h3>Linux Desktop</h3>
-          <p>KDE Plasma sidebar layout, shipped as a signed Flatpak. PGP custody is delegated to your own gpg-agent, so hardware tokens and smartcards work unchanged.</p>
-        </div>
-        <div class="platform-card">
-          <span class="tag">Qt6 / Kirigami · Relay</span>
-          <h3>Plasma Mobile</h3>
-          <p>Same Flatpak, mobile UI root — bottom tabs, swipe-to-archive and delete.</p>
-        </div>
-        <div class="platform-card">
-          <span class="tag">OpenPGP · WKD</span>
-          <h3>Any OpenPGP client</h3>
-          <p>Publish your key over Web Key Directory and Thunderbird, GnuPG, or any WKD-aware app can encrypt to you — no KyPost required on their end.</p>
-        </div>
-        <div class="platform-card">
-          <span class="tag">CardDAV · Standard</span>
-          <h3>Any CardDAV client</h3>
-          <p>Your server is a CardDAV server, so iOS Contacts, DAVx5, Thunderbird, or anything else that speaks the standard can sync your address book directly.</p>
-        </div>
-        <div class="platform-card">
-          <span class="tag">Go + React · PWA</span>
-          <h3>Web</h3>
-          <p>The server's own browser UI — config, logs, compose, and every theme, no install required. Add it to your home screen or dock and the same UI installs as a PWA, no app store needed.</p>
-        </div>
-      </div>
-
-      <p class="platform-note">Every KyPost client is relay-only: you pair once via QR code or deep link, and mail, push, and contacts flow through your own KyPost Server from then on. People outside your server just need OpenPGP.</p>
-    </div>
-  </section>
-
-  <section id="privacy">
-    <div class="wrap">
-      <span class="eyebrow">Privacy by default</span>
-      <h2>End-to-end means your server can't read it either</h2>
-      <p class="lede">KyPost keeps your private key on your own machines instead of on the server — and everywhere encryption would quietly weaken, it stops and asks first.</p>
-
-      <div class="privacy-grid">
-        <div class="privacy-card">
-          <div class="step">01 — Key custody</div>
-          <h3>Your key stays yours</h3>
-          <p>Your private key is wrapped under your password and unwrapped only in your browser — the server can't decrypt your mail, and it no longer caches decrypted bodies to disk.</p>
-        </div>
-        <div class="privacy-card">
-          <div class="step">02 — Device enrollment</div>
-          <h3>Encrypted mail reads on the phone now</h3>
-          <p>Webmail seals your key to a key the device generated and never exported — Android's Keystore, Apple's Secure Enclave, or your own GnuPG keyring on Linux. Both screens show the same 14-character code first, and the browser refuses to seal if they differ, because the server is the party that could swap that key.</p>
-        </div>
-        <div class="privacy-card">
-          <div class="step">03 — Finding keys</div>
-          <h3>Encryption without the key-signing party</h3>
-          <p>Your server looks recipients up through Web Key Directory, then keyservers, and harvests Autocrypt headers from DKIM-authenticated mail — pinning what it finds on first use. Each rung is yours to switch off, any discovered key is yours to reject, and scanning a fingerprint in person is still there when it matters.</p>
-        </div>
-        <div class="privacy-card">
-          <div class="step">04 — Publishing</div>
-          <h3>Be findable on your own domain</h3>
-          <p>Verify a domain once by DNS, and your server serves WKD for it — so anyone in Thunderbird, GnuPG, or ProtonMail can encrypt to you unprompted. Publication is opt-out per user and only ever for addresses you actually send from.</p>
-        </div>
-        <div class="privacy-card">
-          <div class="step">05 — No silent downgrade</div>
-          <h3>It refuses rather than weakens</h3>
-          <p>An encrypted send to someone with no key on file is refused, not quietly turned into something weaker. Confirm the fallback and you get a one-time pickup link — sealed in your own browser, so your server stores only ciphertext it can't open.</p>
-        </div>
-        <div class="privacy-card">
-          <div class="step">06 — Signatures</div>
-          <h3>Six answers, not a green tick</h3>
-          <p>A signature badge is decided on your device, from keys your device already holds — the relay's own verdict is never read. Confirmed in person and same key as last time are different claims, so KyPost makes them different badges, and a key that changed under a sender you know raises an alarm instead of quietly re-pinning.</p>
-        </div>
-        <div class="privacy-card">
-          <div class="step">07 — Metadata</div>
-          <h3>The subject line is inside the envelope</h3>
-          <p>Encrypted mail carries its real subject inside the encrypted part using the LAMPS protected-headers convention, so the outer envelope says nothing. Push notifications are generic by default — sender and subject only travel to Google or Apple if you turn previews on.</p>
-        </div>
-        <div class="privacy-card">
-          <div class="step">08 — Under the hood</div>
-          <h3>Your server, your rules</h3>
-          <p>Mail lives on infrastructure you control, and unread-mail classification runs on a local Ollama model — no cloud AI provider ever sees your inbox.</p>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <section id="security">
-    <div class="wrap">
-      <span class="eyebrow">Hardened by design</span>
-      <h2>Encryption is the start, not the finish</h2>
-      <p class="lede">Beyond PGP, every client ships device-level protections and the server guards its own front door — because a compromised device, a convincing email, or a patient guesser shouldn't mean a compromised inbox.</p>
-
-      <div class="security-grid">
-        <div class="security-card">
-          <h3>App lock</h3>
-          <p>A PIN with escalating delays and wipe-on-repeat protects Android and Linux; Face ID, Touch ID, or a passcode protects Apple devices.</p>
-        </div>
-        <div class="security-card">
-          <h3>Hostile location mode</h3>
-          <p>One tap disables on-device caching of mail, contacts, and attachments for border crossings or other high-risk situations.</p>
-        </div>
-        <div class="security-card">
-          <h3>Certificate pinning</h3>
-          <p>Pairing pins your server's certificate, and later changes fail closed instead of silently trusting a hostile network. Where your server terminates TLS itself, the pin rides along in the pairing QR — so even the very first call is pinned rather than trusted on faith.</p>
-        </div>
-        <div class="security-card">
-          <h3>Encrypted at rest</h3>
-          <p>Cached mail, contacts, and their PGP keys sit in a SQLCipher database on Android and Linux, keyed from the OS keystore. An existing plaintext profile converts itself on the next launch, and never deletes the original before the replacement verifies.</p>
-        </div>
-        <div class="security-card">
-          <h3>Credentials per device</h3>
-          <p>Pairing mints an id and secret for that one device, and it can't sign in to webmail. Lose a phone and you revoke that phone — every other device keeps working.</p>
-        </div>
-        <div class="security-card">
-          <h3>Locked credentials</h3>
-          <p>Seal relay credentials behind your PIN so background mail checks and MFA approvals wait until you unlock the app.</p>
-        </div>
-        <div class="security-card">
-          <h3>KyPost impersonation</h3>
-          <p>The server flags mail impersonating KyPost, and clients reject kypost:// links before they can open a fraudulent pairing prompt.</p>
-        </div>
-        <div class="security-card">
-          <h3>Sandboxed messages</h3>
-          <p>Sender HTML runs without JavaScript, remote content, or navigation. Blocked links are clearly labeled.</p>
-        </div>
-        <div class="security-card">
-          <h3>Backups and extraction blocked</h3>
-          <p>OS-level controls keep KyPost data out of device backups, cloud backups, and forensic pulls.</p>
-        </div>
-        <div class="security-card">
-          <h3>Screen-capture protection</h3>
-          <p>Mail, PGP, and security screens are excluded from recordings and screen sharing within each OS's limits.</p>
-        </div>
-        <div class="security-card">
-          <h3>Costly password guessing</h3>
-          <p>Three wrong passwords lock the account for 15 minutes. Optional self-hosted proof-of-work makes every attempt consume CPU.</p>
-        </div>
-        <div class="security-card">
-          <h3>Number-matched MFA</h3>
-          <p>Push MFA uses number matching instead of one-tap approval, reducing the risk of MFA-fatigue attacks.</p>
-        </div>
-        <div class="security-card">
-          <h3>Your own identity provider</h3>
-          <p>Sign in through any OpenID Connect provider — authorization code with PKCE, ID tokens checked against the issuer's JWKS, and accounts claimed by the provider's subject rather than by a username someone else could register. KySignOn is a one-click preset; Authentik and Keycloak have their admin-group claims mapped.</p>
-        </div>
-        <div class="security-card">
-          <h3>Updates you asked for</h3>
-          <p>The container reports a new release and emails the admin, but never controls Docker on its host. The host-side updater verifies the image's build attestation before it applies anything and rolls back on a failed health check. A daily timer exists, and it is opt-in.</p>
-        </div>
-        <div class="security-card">
-          <h3>Adversarial reviews</h3>
-          <p>Every repository receives repeated whole-project reviews by an AI adversary. Public fixes include regression tests that fail if the bug returns.</p>
-        </div>
-      </div>
-
-      <p class="security-note">The device protections have landed on Android, Mac &amp; iOS, and Linux, each using the strongest primitive its platform offers — so the details differ where the OS does. The sign-in defences live on your server and cover every client at once.</p>
-    </div>
-  </section>
-
-  <section id="customize">
-    <div class="wrap">
-      <span class="eyebrow">Make it yours</span>
-      <h2>Categories, rules, and 15 themes — shared everywhere</h2>
-      <p class="lede">Every client speaks the same theme language, so the way you sort mail and the way it looks travels with you.</p>
-
-      <div class="pillars">
-        <div class="pillar">
-          <h3>Categories</h3>
-          <p>Unread mail is auto-labeled by a local AI model and sorted into keyword tabs — no manual filing.</p>
-        </div>
-        <div class="pillar">
-          <h3>Rules</h3>
-          <p>Tune the classifier's prompt per user to change what counts as which category, right from the web UI.</p>
-        </div>
-        <div class="pillar">
-          <h3>Themes</h3>
-          <p>15 palettes, from Patina Ky to Cyber Punk, defined once and shared byte-for-byte across web, Android, Mac, iOS, and Linux.</p>
-        </div>
-        <div class="pillar">
-          <h3>Filtering</h3>
-          <p>Inbox rules run as an expanded Sieve script on your own server — write a condition once and every client sees the same filtered result.</p>
-        </div>
-        <div class="pillar">
-          <h3>Notifications</h3>
-          <p>Pick your delivery path per device: Firebase, APNs, or UnifiedPush for instant push, or plain client pull if you'd rather trade a little immediacy for a lot more privacy. Either way the alert is generic unless you opt into previews.</p>
-        </div>
-        <div class="pillar">
-          <h3>Contacts</h3>
-          <p>Manage your contacts from any client, synced across web, Android, Mac, iOS, and Linux — and over CardDAV to anything else that speaks it.</p>
-        </div>
-      </div>
-    </div>
-
-    <div class="theme-demo-scroller">
-      <div class="theme-demo-sticky">
-        <div class="wrap">
-          <p class="theme-demo-caption">Scroll to preview the shared theme system — starting from the default, <strong>Patina Ky</strong></p>
-          <div class="theme-stage">
-            <div class="theme-layer t-patina-ky" data-layer="0">
-              <img src="assets/PatinaKy.png" alt="KyPost web inbox in the Patina Ky theme">
-              <span class="theme-label">Patina Ky</span>
-            </div>
-            <div class="theme-layer t-cyber-punk" data-layer="1">
-              <img src="assets/CyberPunk.png" alt="KyPost web inbox in the Cyber Punk theme">
-              <span class="theme-label">Cyber Punk</span>
-            </div>
-            <div class="theme-layer t-ocean" data-layer="2">
-              <img src="assets/Ocean.png" alt="KyPost web inbox in the Ocean theme">
-              <span class="theme-label">Ocean</span>
-            </div>
-            <div class="theme-layer t-forest" data-layer="3">
-              <img src="assets/Forest.png" alt="KyPost web inbox in the Forest theme">
-              <span class="theme-label">Forest</span>
-            </div>
-            <div class="theme-layer t-sun" data-layer="4">
-              <img src="assets/Sun.png" alt="KyPost web inbox in the Sun theme">
-              <span class="theme-label">Sun</span>
-            </div>
-            <div class="theme-layer t-polished-ky" data-layer="5">
-              <img src="assets/PolishKy.png" alt="KyPost web inbox in the Polished Ky theme">
-              <span class="theme-label">Polished Ky</span>
-            </div>
-          </div>
-          <div class="theme-dots">
-            <span class="active"></span><span></span><span></span><span></span><span></span><span></span>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <section id="projects">
-    <div class="wrap">
-      <span class="eyebrow">The repos</span>
-      <h2>Four projects, one ecosystem</h2>
-      <p class="lede">Everything is open source. The server, Android, and Linux are in open beta and installable now; the Apple client is still in testing.</p>
-
-      <div class="project-grid">
-        <div class="project-card">
-          <div class="project-card-head">
-            <div>
-              <h3>KyPost Server</h3>
-              <span class="tech">Go · React · Docker</span>
-            </div>
-            <span class="status status-beta">Available Now — Open Beta</span>
-          </div>
-          <p>Self-hosted IMAP/SMTP web client with local-AI keyword labeling, client-held PGP keys, WKD publishing and lookup, OpenID Connect single sign-on, multi-user roles, push relays for mobile, and 15 shared themes.</p>
-          <a class="btn" href="https://github.com/Busness-app/KyPost-Server" target="_blank" rel="noopener">View on GitHub</a>
-        </div>
-
-        <div class="project-card">
-          <div class="project-card-head">
-            <div>
-              <h3>KyPost for Android</h3>
-              <span class="tech">Kotlin</span>
-            </div>
-            <span class="status status-beta">Available Now — Open Beta</span>
-          </div>
-          <p>Native, relay-only email client with keyword inbox tabs, on-device encrypt, sign and decrypt, a SQLCipher mail store, app lock with wipe-on-repeat, MFA push approval, and FCM, UnifiedPush or pull delivery. Large screens get a navigation rail and a two-pane inbox. Signed APKs and App Bundles are published from tagged releases, each with a SHA-256 alongside it.</p>
-          <div class="project-links">
-            <a class="btn btn-primary" href="https://github.com/Busness-app/KyPost-for-Android/releases" target="_blank" rel="noopener">Releases</a>
-            <a class="btn" href="https://github.com/Busness-app/KyPost-for-Android" target="_blank" rel="noopener">View on GitHub</a>
-          </div>
-        </div>
-
-        <div class="project-card">
-          <div class="project-card-head">
-            <div>
-              <h3>KyPost for Mac &amp; iOS</h3>
-              <span class="tech">SwiftUI</span>
-            </div>
-            <span class="status status-testing">Currently Testing</span>
-          </div>
-          <p>One SwiftUI codebase for macOS and iOS — relay-only, with PGP QR key exchange, on-device decryption of end-to-end mail from a Secure Enclave key, server folders you can create and rename, cursor-based delta sync, biometric app lock, contact sync, and APNs push.</p>
-          <a class="btn" href="https://github.com/Busness-app/KyPost-for-Mac" target="_blank" rel="noopener">View on GitHub</a>
-        </div>
-
-        <div class="project-card">
-          <div class="project-card-head">
-            <div>
-              <h3>KyPost for Linux</h3>
-              <span class="tech">Qt · Kirigami</span>
-            </div>
-            <span class="status status-beta">Available Now — Open Beta</span>
-          </div>
-          <p>One Qt6 codebase, two UI roots — Linux Desktop and Plasma Mobile — installable today from KyPost's own signed Flatpak remote for x86-64 and aarch64, with UnifiedPush notifications, a SQLCipher store, and OpenPGP delegated to your own gpg-agent.</p>
-          <div class="project-links">
-            <a class="btn btn-primary" href="https://github.com/Busness-app/KyPost-for-Linux/releases" target="_blank" rel="noopener">Releases</a>
-            <a class="btn" href="https://github.com/Busness-app/KyPost-for-Linux" target="_blank" rel="noopener">View on GitHub</a>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-
+  <section class="final-cta"><div class="wrap"><span class="eyebrow">Ready when you are</span><h2>Put your inbox on your infrastructure.</h2><a class="btn btn-primary" href="https://www.kypost.org/docs/book/index.html">Open the installation guide</a><a class="btn" href="https://github.com/Busness-app/KyPost-Server">View source</a></div></section>
 </main>
-
-<footer>
-  <div class="wrap">
-    <span>© 2026 Busnes.app — MIT licensed</span>
-    <span class="footer-links">
-      <a href="privacy.html">Privacy policy</a>
-      <a href="https://github.com/Busness-app" target="_blank" rel="noopener">GitHub</a>
-      <a href="https://buymeacoffee.com/yoshiofthewire" target="_blank" rel="noopener">Buy me a coffee</a>
-    </span>
-  </div>
-</footer>
-
-<script src="js/main.js"></script>
+<footer><div class="wrap"><span>© 2026 Busnes.app</span><span class="footer-links"><a href="architecture/">Architecture</a><a href="privacy.html">Privacy</a><a href="https://github.com/Busness-app">GitHub</a></span></div></footer>
 </body>
 </html>
