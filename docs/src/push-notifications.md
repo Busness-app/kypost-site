@@ -32,8 +32,9 @@ Preview setting, because native push travels through a relay and on to FCM or
 APNs in cleartext at every hop. Under Hostile Location Protection on Android,
 notifications carry no sender and no subject whether or not the app is locked.
 
-Notification content is opaque to the push transport. What the transport learns
-is timing.
+Native push providers handle the payload sent to them and can observe delivery
+metadata such as device tokens and timing. Web Push is different: its payload
+is encrypted to the browser's subscription keys.
 
 ## Client specifics
 

@@ -37,7 +37,7 @@
             const path_to_root = "";
             const default_light_theme = "patina-ky";
             const default_dark_theme = "patina-ky";
-            window.path_to_searchindex_js = "searchindex-0e88e264.js";
+            window.path_to_searchindex_js = "searchindex-ec5be782.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="toc-d1d12269.js"></script>
@@ -177,7 +177,7 @@
                 <div id="mdbook-content" class="content">
                     <main>
                         <h1 id="introduction"><a class="header" href="#introduction">Introduction</a></h1>
-<p>KyPost is a self-hosted email ecosystem: a server you run yourself, paired with native apps for Android, iOS, macOS, and Linux — built around local AI sorting, end-to-end PGP your own server can’t read, and themes that follow you everywhere.</p>
+<p>KyPost is a self-hosted email ecosystem: a server you run yourself, paired with native apps for Android, iOS, macOS, and Linux — built around local AI sorting, end-to-end encrypted messages that decrypt only on enrolled devices, and themes that follow you everywhere.</p>
 <p>The repositories live under the <a href="https://github.com/Busness-app">Busness-app</a>
 GitHub organization.</p>
 <h2 id="software-covered"><a class="header" href="#software-covered">Software covered</a></h2>
@@ -197,7 +197,7 @@ GitHub organization.</p>
 </table>
 </div>
 <h2 id="how-this-book-is-organized"><a class="header" href="#how-this-book-is-organized">How this book is organized</a></h2>
-<p>Each chapter covers one system, it’s install and configuration.</p>
+<p>Each chapter covers one system, its installation, and its configuration.</p>
 <h2 id="conventions"><a class="header" href="#conventions">Conventions</a></h2>
 <ul>
 <li>Where wording matters (security warnings, env var defaults), the text keeps the original phrasing or quotes it.</li>
@@ -228,7 +228,7 @@ GitHub organization.</p>
 <tr><td>Keyword tabs/labels</td><td>Polls unread, local LLM classifies, IMAP keywords, per-user allowlist</td><td>Tabs from server tab/label fields, tune in Keywords screen</td><td>Relay sorts into tabs/labels, visibility in settings</td><td>Tabs from the same server fields</td></tr>
 <tr><td>Filter rules</td><td>GUI + raw Sieve, run-now panel</td><td>—</td><td>—</td><td>—</td></tr>
 <tr><td>Contacts</td><td>Address book + groups, dedupe, CSV/vCard, photos, CardDAV server + client</td><td>Two-way sync via relay</td><td>Two-way sync, extended schema, reconciliation, groups/photos/IM/social/etc.</td><td>Synced list/detail, offline queued edits, groups, dedupe</td></tr>
-<tr><td>PGP</td><td>Browser-protected key, WKD/keyserver/Autocrypt discovery and WKD publishing, recipient check, browser-sealed pickup links, in-browser signature verification</td><td>QR key exchange; on-device encrypt, sign and decrypt once enrolled</td><td>QR pickup link 2 min expiry, fingerprint confirmation, encryption state per message, on-device decrypt once enrolled, relay-side encrypt/sign, pickup fallback 7 days</td><td>QR exchange, camera scan/show, on-device encrypt, sign and decrypt through the user’s own <code>gpg-agent</code></td></tr>
+<tr><td>PGP</td><td>Browser-protected key, WKD/keyserver/Autocrypt discovery and WKD publishing, recipient check, browser-sealed pickup links, in-browser signature verification</td><td>QR key exchange; on-device encrypt, sign and decrypt once enrolled</td><td>QR pickup link 2 min expiry, fingerprint confirmation, on-device decrypt once enrolled; server-custody accounts can use relay-side encrypt/sign, while browser-protected accounts hand sending off to webmail</td><td>QR exchange, camera scan/show, on-device encrypt, sign and decrypt through the user’s own <code>gpg-agent</code></td></tr>
 <tr><td>Device enrollment</td><td>Seals the key to a device after a 14-character code matches</td><td>Keystore-backed, blocked while Hostile Location Protection is on</td><td>Secure Enclave, released on user presence</td><td>Imported into the user’s GnuPG keyring</td></tr>
 <tr><td>Cached mail at rest</td><td>Encrypted secrets on disk; no decrypted bodies cached</td><td>SQLCipher, key in the Keystore</td><td>SwiftData store with backup exclusion</td><td>SQLCipher, converted in place on upgrade</td></tr>
 <tr><td>Sign-in</td><td>Password + MFA, or OpenID Connect SSO</td><td>Per-device credential, no webmail sign-in</td><td>Per-device credential</td><td>Per-device credential</td></tr>
@@ -277,7 +277,7 @@ authenticates with its own server-minted secret, revocable one device at a time.
 </ul>
 <p>The image sets <code>OLLAMA_MODELS=/kypost/ollama-models</code>.</p>
 <h2 id="classification-flow"><a class="header" href="#classification-flow">Classification flow</a></h2>
-<p>The server polls unread mail and applies IMAP keywords. The there are seven steps:</p>
+<p>The server polls unread mail and applies IMAP keywords. There are seven steps:</p>
 <ol>
 <li>Fetch unread messages from IMAP (<code>INBOX</code> by default).</li>
 <li>Redact sensitive patterns.</li>
@@ -399,16 +399,17 @@ docs/       PARITY.md (authoritative Android-parity matrix), DISTRIBUTION.md,
 <p>Copy the environment file and set <code>KYPOST_BIND</code>:</p>
 <pre><code class="language-bash">cp .env.example .env
 </code></pre>
-<p>Edit the .env to match your configureation.  How this is configured has large security implications, so any changes need to be deliberate.
-The defaults listed are designed to be sensable, but will need to be changed for your needs.  Please check the .env.example for a full list.</p>
+<p>Edit <code>.env</code> to match your configuration. These choices have significant security implications, so make changes deliberately.
+The supplied values are sensible starting points, but you must adapt them to your deployment. Read <code>.env.example</code> for the complete list and its security notes.</p>
 <p><code>TZ=America/New_York</code> sets your local time zone, update as needed.
 <code>SERVER_BASE_URL=</code> sets the address your server is located at.
-<code>KYPOST_BIND=127.0.0.1</code> Set this if you are using kypost-net to talk to a proxy for SSH like Cloudfared or NGX
-<code>CAPTCHA_PROVIDER=pow</code> Set this to NONE to turn off CAPTCHA.  <strong>This default requres TLS</strong></p>
+<code>KYPOST_BIND=127.0.0.1</code> publishes the server only on loopback. Use it when an HTTPS proxy such as cloudflared or nginx reaches KyPost on the same host. A proxy running as a container on <code>kypost-net</code> can instead connect directly to <code>http://KyPost-Server:5866</code> without publishing the port.
+<code>CAPTCHA_PROVIDER=pow</code> enables the self-hosted proof-of-work CAPTCHA. Set it to <code>none</code> to disable CAPTCHA. <strong>The default requires TLS except on localhost.</strong></p>
 </li>
 <li>
-<p>Build and start the container:</p>
-<pre><code class="language-bash">docker compose up --build -d
+<p>Create the model cache directory, then build and start the container:</p>
+<pre><code class="language-bash">mkdir -p share/ollama/models
+docker compose up --build -d
 </code></pre>
 </li>
 <li>
@@ -434,18 +435,14 @@ docker compose exec kypost-server rm /kypost/config/first-run-password.txt
 </ol>
 <h2 id="after-setup"><a class="header" href="#after-setup">After setup</a></h2>
 <ul>
-<li>
-<p>Create the model cache directory once before first run:</p>
-<pre><code class="language-bash">mkdir -p share/ollama/models
-</code></pre>
-</li>
-<li>
-<p>Verify the client IP handling. Sign in and fetch <code>GET /api/status</code>. The README says <code>clientIp</code> must be your own public address and <code>proxyHeadersTrusted</code> must be <code>true</code> (or <code>false</code> for direct TLS in KyPost). If <code>clientIp</code> is a loopback or bridge address, every user shares one lockout key.</p>
-</li>
+<li>Verify the client IP handling. Sign in and fetch <code>GET /api/status</code>. The README says <code>clientIp</code> must be your own public address and <code>proxyHeadersTrusted</code> must be <code>true</code> (or <code>false</code> for direct TLS in KyPost). If <code>clientIp</code> is a loopback or bridge address, every user shares one lockout key.</li>
 </ul>
 <div style="break-before: page; page-break-before: always;"></div>
 <h1 id="server--configuration"><a class="header" href="#server--configuration">Server — Configuration</a></h1>
-<h2 id="environment-variables"><a class="header" href="#environment-variables">Environment variables</a></h2>
+<h2 id="common-environment-variables"><a class="header" href="#common-environment-variables">Common environment variables</a></h2>
+<p>This is a practical summary, not the complete configuration contract. Use the
+server repository’s <a href="https://github.com/Busness-app/KyPost-Server/blob/main/.env.example"><code>.env.example</code></a>
+for every supported setting, its current default, and its security notes.</p>
 <ul>
 <li><code>WEB_PORT</code> (5866)</li>
 <li><code>TZ</code> (America/New_York)</li>
@@ -467,6 +464,11 @@ docker compose exec kypost-server rm /kypost/config/first-run-password.txt
 <li><code>CAPTCHA_PROVIDER</code> (optional; <code>pow</code>, <code>turnstile</code>, <code>friendly</code>, or <code>none</code>; works with 3-strikes/15-minute lockout)</li>
 <li><code>CAPTCHA_SITE_KEY</code> and <code>CAPTCHA_SECRET_KEY</code> (required with <code>turnstile</code> or <code>friendly</code>, not with <code>pow</code>)</li>
 <li><code>POW_MAX_NUMBER</code>, <code>POW_SECRET_FILE</code>, <code>POW_SECRET</code> (optional, <code>CAPTCHA_PROVIDER=pow</code> only; see <code>.env.example</code>)</li>
+<li><code>KYPOST_BIND</code> (required by Compose; <code>.env.example</code> starts at <code>127.0.0.1</code>)</li>
+<li><code>TRUSTED_PROXY_CIDRS</code> (optional; narrowly identifies proxies whose forwarded headers may be trusted)</li>
+<li><code>TLS_CERT_FILE</code> and <code>TLS_KEY_FILE</code> (optional; required together for direct TLS termination)</li>
+<li><code>ALLOW_INSECURE_HTTP</code> and <code>ALLOW_INSECURE_SMTP</code> (optional, default off; explicit security downgrade acknowledgements)</li>
+<li><code>BOOTSTRAP_ADMIN_USER</code> and <code>BOOTSTRAP_ADMIN_PASS</code> (optional, first run only)</li>
 </ul>
 <p>The image also sets <code>OLLAMA_MODELS=/kypost/ollama-models</code>. The classifier default appears in four places: Dockerfile, docker-compose.yml, .env.example, and backend fallback. All use <code>nemotron-3-nano:4b</code>.</p>
 <h2 id="tls-options"><a class="header" href="#tls-options">TLS options</a></h2>
@@ -483,7 +485,8 @@ docker compose exec kypost-server rm /kypost/config/first-run-password.txt
 </li>
 </ol>
 <p>Options 2 and 3 need <code>TRUSTED_PROXY_CIDRS</code> set to the proxy address, for example <code>127.0.0.1/32</code> or a pinned address on <code>kypost-net</code> (for example <code>10.89.0.10/32</code>). Name the proxy address narrowly, not a wide range, or a peer in the range can forge <code>X-Forwarded-For</code>. Behind Cloudflare, the server reads <code>CF-Connecting-IP</code> before <code>X-Forwarded-For</code>.</p>
-<p>For network layout and DNS details see <code>docs/Reverse_Proxy_Networking.md</code>.</p>
+<p>For network layout and DNS details see
+<a href="https://github.com/Busness-app/KyPost-Server/blob/main/docs/Reverse_Proxy_Networking.md"><code>docs/Reverse_Proxy_Networking.md</code></a>.</p>
 <h2 id="choosing-a-classifier-model"><a class="header" href="#choosing-a-classifier-model">Choosing a classifier model</a></h2>
 <p>Measured on a 60-email benchmark, five repeats, zero run-to-run variance:</p>
 <div class="table-wrapper">
@@ -561,7 +564,7 @@ docker compose up -d
 <p>Confirm archive:</p>
 <pre><code class="language-bash">tar tzf kypost-backup.tar.gz | grep -E 'private/|state/users/' | head
 </code></pre>
-<p>Store the archive and <code>backup-version.txt</code> together, encrypted or in a safe place. The archive holds keys that unwrap IMAP and TOTP secrets. It does not hold data to decrypt a user PGP private key. That half never leaves the browser.</p>
+<p>Store the archive and <code>backup-version.txt</code> together, encrypted or in a safe place. The archive holds keys that unwrap IMAP and TOTP secrets. It may also hold wrapped PGP private-key blobs and sealed device-enrollment envelopes, but it does not contain the password-derived wrapping key or a plaintext PGP private key.</p>
 <h2 id="restore"><a class="header" href="#restore">Restore</a></h2>
 <p>Restore into empty volumes, running the same version the backup came from.</p>
 <pre><code class="language-bash">docker compose down -v
@@ -590,8 +593,8 @@ docker compose -f docker-compose.yml -f docker-compose.restore.yml up -d
 </ol>
 <p>Do these checks before you upgrade to a newer version. A reset checkpoint re-labels and re-notifies everything.</p>
 <div style="break-before: page; page-break-before: always;"></div>
-<h1 id="server--api-highlights"><a class="header" href="#server--api-highlights">Server — API Highlights</a></h1>
-<p>This page lists endpoints. It does not describe request or response bodies.</p>
+<h1 id="server--selected-api-endpoints"><a class="header" href="#server--selected-api-endpoints">Server — Selected API Endpoints</a></h1>
+<p>This page highlights commonly used endpoints; it is not a complete API reference and does not describe every request or response body. The server router is authoritative. Native-client wire contracts are documented in the server repository and must be updated with compatible client changes.</p>
 <h2 id="auth"><a class="header" href="#auth">Auth</a></h2>
 <ul>
 <li><code>POST /api/auth/login</code></li>
@@ -1267,8 +1270,9 @@ user turns previews on.</p>
 Preview setting, because native push travels through a relay and on to FCM or
 APNs in cleartext at every hop. Under Hostile Location Protection on Android,
 notifications carry no sender and no subject whether or not the app is locked.</p>
-<p>Notification content is opaque to the push transport. What the transport learns
-is timing.</p>
+<p>Native push providers handle the payload sent to them and can observe delivery
+metadata such as device tokens and timing. Web Push is different: its payload
+is encrypted to the browser’s subscription keys.</p>
 <h2 id="client-specifics"><a class="header" href="#client-specifics">Client specifics</a></h2>
 <h3 id="android-from-kypost-androidreadmemd"><a class="header" href="#android-from-kypost-androidreadmemd">Android (from <code>kypost-android/README.md</code>)</a></h3>
 <ul>
@@ -1625,7 +1629,7 @@ their upstream IMAP provider keeps the full link.</p>
 <ul>
 <li>Subject lines are not encrypted in ordinary PGP/MIME. The outer header is visible. Push notifications are generic by default.</li>
 <li>Encrypted mail is excluded from push payloads by the server whatever the Content Preview setting, because native push travels through a relay and on to FCM or APNs in cleartext at every hop.</li>
-<li>Notification content is opaque to the push transport. What the transport learns is timing.</li>
+<li>Native push providers can see the payload sent to them, along with delivery metadata such as device tokens and timing. KyPost therefore omits sender and subject from encrypted-mail payloads regardless of the Content Preview setting. Web Push payloads are separately encrypted to the browser’s subscription keys.</li>
 </ul>
 <h2 id="push-relay-protection"><a class="header" href="#push-relay-protection">Push relay protection</a></h2>
 <p>See <a href="#server--push-relays">Push Relays</a>: token pinning, per-minute and per-IP rate limits, optional daily budget, Durable Object coordination, fail-closed behavior.</p>
@@ -1682,8 +1686,6 @@ present as light.</p>
 <li><strong>macOS &amp; iOS</strong> — Settings (⌘, on macOS).</li>
 <li><strong>Linux</strong> — Settings.</li>
 </ul>
-<p>This site’s landing page carries a scroll-driven preview of six of them, built
-from real screenshots of the web app rather than mockups.</p>
 <h2 id="custom-themes"><a class="header" href="#custom-themes">Custom themes</a></h2>
 <p>There is no custom-theme editor. The preset list is the supported surface; a new
 palette is a code change in the four files above.</p>
@@ -1773,11 +1775,11 @@ docker volume ls | grep kypost
 <h2 id="reverse-proxy-networking"><a class="header" href="#reverse-proxy-networking">Reverse proxy networking</a></h2>
 <p>The server README devotes a long note to this. Summary:</p>
 <ul>
-<li><code>KYPOST_BIND</code> decides which interface publishes 5866 and has no default.</li>
+<li><code>KYPOST_BIND</code> decides which interface publishes 5866. The supplied <code>.env.example</code> selects <code>127.0.0.1</code>; Compose still requires the variable to be present.</li>
 <li>For a proxy on the same host, use <code>127.0.0.1</code>. For a proxy elsewhere, use the LAN IP or <code>0.0.0.0</code> to publish everywhere.</li>
 <li>Better still, run the proxy as a container on <code>kypost-net</code> (the Compose network) and point it at <code>http://KyPost-Server:5866</code>. That DNS name stays valid across rebuilds and ignores published ports.</li>
 <li>To detect a mistake, fetch <code>GET /api/status</code> after sign-in. <code>clientIp</code> must be your public address and <code>proxyHeadersTrusted</code> must be <code>true</code> (or <code>false</code> for direct TLS termination in KyPost). If <code>clientIp</code> is a gateway like <code>172.x.0.1</code>, every user shares one lockout bucket and the cookie is not marked <code>Secure</code>.</li>
-<li>Behind different hosts, combine direct TLS in KyPost (<code>TLS_CERT_FILE</code> + <code>TLS_KEY_FILE</code>) with a proxy. Use a self-signed cert and make the proxy skip verification (<code>noTLSVerify: true</code> on cloudflared, <code>proxy_ssl_verify off</code> on nginx).</li>
+<li>Behind different hosts, combine direct TLS in KyPost (<code>TLS_CERT_FILE</code> + <code>TLS_KEY_FILE</code>) with a proxy. Prefer a certificate the proxy explicitly trusts and keep upstream verification enabled. Disabling upstream verification leaves the proxy-to-KyPost hop vulnerable to interception and should be limited to a network whose trust boundary you understand.</li>
 </ul>
 <p>Full snippet and error recovery are in <code>docs/Reverse_Proxy_Networking.md</code>.</p>
 <h2 id="updating-server"><a class="header" href="#updating-server">Updating (server)</a></h2>
@@ -1810,279 +1812,37 @@ docker volume ls | grep kypost
 </ul>
 <div style="break-before: page; page-break-before: always;"></div>
 <h1 id="security-policy"><a class="header" href="#security-policy">Security Policy</a></h1>
-<p>KyPost is a self-hosted IMAP web client with end-to-end encryption support. This document describes security practices, known limitations, responsible disclosure, and deployment security considerations.</p>
-<h2 id="reporting-security-vulnerabilities"><a class="header" href="#reporting-security-vulnerabilities">Reporting Security Vulnerabilities</a></h2>
-<p>If you discover a security vulnerability in KyPost, please report it responsibly via GitHub Security Advisories rather than opening a public issue.</p>
-<h3 id="how-to-report"><a class="header" href="#how-to-report">How to Report</a></h3>
-<ol>
-<li>Go to the <a href="https://github.com/Busness-app/KyPost-Server/security/advisories">Security Advisories</a> page</li>
-<li>Click “Report a vulnerability”</li>
-<li>Provide a detailed description, affected versions, and reproduction steps if applicable</li>
-<li>Do not disclose the vulnerability publicly until a patch is available</li>
-</ol>
-<h3 id="disclosure-timeline"><a class="header" href="#disclosure-timeline">Disclosure Timeline</a></h3>
-<p>The timeline for public disclosure depends on severity:</p>
+<h2 id="supported-versions"><a class="header" href="#supported-versions">Supported versions</a></h2>
+<p>Security fixes are made against the latest KyPost release. Upgrade to the
+current release before reporting a problem that may already have been fixed.</p>
+<h2 id="reporting-a-vulnerability"><a class="header" href="#reporting-a-vulnerability">Reporting a vulnerability</a></h2>
+<p>Report vulnerabilities privately through
+<a href="https://github.com/Busness-app/KyPost-Server/security/advisories">GitHub Security Advisories</a>.
+Do not open a public issue containing vulnerability details.</p>
+<p>Include the affected version, impact, reproduction steps, and any suggested
+mitigation. Reports are acknowledged within two business days. Disclosure and
+credit are coordinated with the reporter after a tested fix is available.</p>
+<h2 id="security-model-and-deployment"><a class="header" href="#security-model-and-deployment">Security model and deployment</a></h2>
+<p>Read the <a href="#security-model">Security Model</a> before deploying KyPost. It documents
+the trust boundaries for PGP key custody, native push, device pairing, local
+AI classification, client storage, TLS termination, and trusted proxy headers.</p>
+<p>The server repository contains the authoritative operational guidance:</p>
 <ul>
-<li><strong>Critical</strong> (e.g., unauthenticated data access, authentication bypass, remote code execution): 30 days</li>
-<li><strong>High</strong> (e.g., privilege escalation, cryptographic weakness): 60 days</li>
-<li><strong>Moderate</strong> (e.g., denial of service, information disclosure): 90 days</li>
+<li><a href="https://github.com/Busness-app/KyPost-Server/blob/main/SECURITY.md">Server security policy</a></li>
+<li><a href="https://github.com/Busness-app/KyPost-Server/blob/main/docs/Reverse_Proxy_Networking.md">Reverse proxy networking</a></li>
+<li><a href="https://github.com/Busness-app/KyPost-Server/blob/main/.env.example">Environment configuration</a></li>
 </ul>
-<p>We will:</p>
-<ul>
-<li>Acknowledge receipt of your report within 2 business days</li>
-<li>Provide a timeline and severity assessment</li>
-<li>Develop and test a patch</li>
-<li>Coordinate a release that includes the fix before the deadline</li>
-<li>Credit you in the patch release notes (unless you prefer anonymity)</li>
-</ul>
-<p>This timeline assumes good-faith coordination. Patches are publicly available before any advisory is published.</p>
-<h3 id="security-advisory-credits"><a class="header" href="#security-advisory-credits">Security Advisory Credits</a></h3>
-<p>We acknowledge security researchers and community members who help us improve. If you’d like credit in our release notes, please let us know your preferred name or handle when reporting.</p>
-<h2 id="known-limitations--trust-boundaries"><a class="header" href="#known-limitations--trust-boundaries">Known Limitations &amp; Trust Boundaries</a></h2>
-<p>KyPost is honest about what it does and does not protect. Read these carefully before deploying or relying on specific features.</p>
-<h3 id="pgp-key-custody"><a class="header" href="#pgp-key-custody">PGP Key Custody</a></h3>
-<p><strong>Client-Protected (End-to-End):</strong> Your browser generates or wraps the key under a password-derived key. The server cannot open it. Costs: you must unlock it each browser session, and admin operations cannot access your encrypted mail. Security can create an encrypted offline recovery backup in the browser; restoring it requires both the downloaded file and its separately displayed random secret. Neither the plaintext key nor the secret is sent to or stored by the server.</p>
-<h3 id="automatic-label-classification"><a class="header" href="#automatic-label-classification">Automatic Label Classification</a></h3>
-<p>Labels (keywords) assigned by the classifier are <strong>a sorting hint, not a security boundary.</strong> The classifier reads sender-controlled email, so a sender can write instructions into their message and influence which label it receives. Testing shows roughly 50-87% resistance to prompt injection depending on configuration, but every model tested let some through.</p>
-<p>What an attacker can achieve: steer the label on <strong>their own message</strong> into a different folder (e.g., <code>Primary</code> instead of <code>Promotions</code>). The keyword allowlist is enforced in Go after the model answers, so output outside that list is discarded. A message cannot be deleted, moved, marked read, or cause any other message to be affected.</p>
-<p><strong>Do not build security controls on labels.</strong> Never create a filter rule that grants trust based on a label, and never auto-archive anything by label alone. This is not a fixable limitation—it is a known property of using local LLMs to classify sender-controlled text. All decisions are recorded on the Decisions page so you can audit what actually happened.</p>
-<p><strong>Encrypted mail is not classified, and is never labelled as encrypted.</strong> A PGP-encrypted message has no readable body, so it skips the classifier and is tagged with your account’s default label instead. It is deliberately <em>not</em> given an <code>Encrypted</code> keyword. IMAP keywords are stored on the mail server in the clear, so such a keyword would hand whoever runs that server a precise index of which of your messages are worth attacking—the exact adversary client-protected custody exists to defend against—while looking to you like a security feature. It would break the rule above in both directions at once: not trustworthy enough to rely on, and harmful merely by existing. The padlock you see in the reader is derived from the message itself each time it is displayed and is never written anywhere.</p>
-<p><strong>Encrypted mail also stays out of mobile push payloads.</strong> Native push travels to the relay Worker and on to FCM/APNs in cleartext at every hop. For an encrypted message the sender and subject are withheld from that payload regardless of your Content Preview setting, because a third-party PGP/MIME message that does not use protected headers carries its real subject in the clear. Web push is unaffected—those payloads are encrypted to your browser’s own subscription keys (RFC 8291), so Content Preview remains your choice there.</p>
-<h3 id="email-html-rendering"><a class="header" href="#email-html-rendering">Email HTML Rendering</a></h3>
-<p>KyPost renders email HTML in a sandboxed iframe with DOMPurify sanitization. The sandbox blocks most attacks (no script execution in the frame itself), but:</p>
-<ul>
-<li><strong>Remote content loads on opt-in.</strong> Images, stylesheets, and other remote resources are not loaded by default. Users can opt in per message.</li>
-<li><strong>Links open in new windows</strong> (via <code>&lt;base target="_blank"&gt;</code>). The link destination is not constrained by KyPost; it goes wherever the sender directed.</li>
-<li><strong>Sender HTML survival.</strong> DOMPurify removes most dangerous elements, but sanitization is a defense layer, not a boundary. Treat all email HTML as potentially hostile, and do not trust email to be what it claims.</li>
-</ul>
-<h3 id="session-security"><a class="header" href="#session-security">Session Security</a></h3>
-<ul>
-<li>Sessions expire after 24 hours without activity (sliding window).</li>
-<li>Sessions have a hard cap: 7 days from issue, regardless of activity. Stolen cookies cannot be kept alive indefinitely.</li>
-<li>Sessions are swept every hour; expiry does not wait for the cookie to be presented again.</li>
-</ul>
-<h3 id="carddav--external-services"><a class="header" href="#carddav--external-services">CardDAV &amp; External Services</a></h3>
-<ul>
-<li>CardDAV clients (phones, desktop apps) authenticate with a per-user app-specific password separate from your login password.</li>
-<li>CardDAV clients that sync from external servers should use HTTPS-only connections.</li>
-<li>KyPost does not validate external CardDAV server certificates beyond the OS default. Use a trusted network or a known server.</li>
-</ul>
-<h3 id="mobile-pairing"><a class="header" href="#mobile-pairing">Mobile Pairing</a></h3>
-<ul>
-<li>Pairing tokens are valid for 90 seconds and signed with a per-instance secret.</li>
-<li>All pairing payloads (QR codes, pickup links, key exchange URLs) carry bearer credentials in the query string.</li>
-<li>Set <code>SERVER_BASE_URL</code> to an HTTPS URL so credentials travel over TLS.</li>
-<li>Pairing secrets must remain on the server only. Multi-replica deployments share one secret via <code>PAIRING_SECRET</code>.</li>
-</ul>
-<h2 id="deployment-security"><a class="header" href="#deployment-security">Deployment Security</a></h2>
-<p>Your deployment choices determine the actual security of KyPost. This section covers the configuration decisions that matter most.</p>
-<h3 id="tls--network-binding"><a class="header" href="#tls--network-binding">TLS &amp; Network Binding</a></h3>
-<p><strong>This is the most important decision you make.</strong> KyPost serves plain HTTP by default. Session cookies are marked <code>Secure</code> only when the request provably arrived over TLS.</p>
-<p><strong>Before exposing KyPost to a network, get TLS in front of it.</strong> On bare <code>http://</code>, cookies are sent in the clear on every request.</p>
-<p>Three ways to get TLS:</p>
-<p><strong>1. Terminate TLS in KyPost (recommended if you control the host)</strong></p>
-<ul>
-<li>Set <code>TLS_CERT_FILE</code> and <code>TLS_KEY_FILE</code> to mounted certificate paths.</li>
-<li>KyPost will reload certificates without a restart (important: restarting logs everyone out).</li>
-<li>Setting only one path is a startup error; it will not fall back to cleartext.</li>
-<li>This is the only option where “did this arrive over TLS?” is answered by the connection itself, not by a header. <code>TRUSTED_PROXY_CIDRS</code> does not apply.</li>
-<li>Certificates are never baked into the image.</li>
-<li>See <code>.env.example</code> and the commented volume in <code>docker-compose.yml</code>.</li>
-</ul>
-<p><strong>2. Cloudflare Tunnel</strong></p>
-<ul>
-<li>cloudflared gives the browser a real HTTPS origin (needed for proof-of-work CAPTCHA).</li>
-<li>No TLS configuration of your own.</li>
-<li>Set <code>TRUSTED_PROXY_CIDRS</code> to the proxy’s address.</li>
-</ul>
-<p><strong>3. Reverse proxy you operate</strong> (nginx, Caddy, etc.)</p>
-<ul>
-<li>Set <code>TRUSTED_PROXY_CIDRS</code> to the proxy’s address.</li>
-<li>Proxy must use HTTPS when reaching KyPost if the hop carries session cookies across a real network.</li>
-</ul>
-<h3 id="kypost_bind-which-interface-to-publish"><a class="header" href="#kypost_bind-which-interface-to-publish">KYPOST_BIND: Which Interface to Publish</a></h3>
-<p><code>KYPOST_BIND</code> controls which interface publishes port 5866. It has no default—compose refuses to start without it.</p>
-<ul>
-<li><strong><code>127.0.0.1</code></strong>: loopback only. Use when your reverse proxy runs on this same host.</li>
-<li><strong>Your LAN IP</strong> (e.g., <code>192.168.1.10</code>): publish to the LAN. Use when a proxy on another machine reaches this host.</li>
-<li><strong><code>0.0.0.0</code></strong>: publish everywhere. Use only when you deliberately want KyPost reachable on all interfaces. <strong>This is usually wrong unless you also set <code>ALLOW_INSECURE_HTTP=true</code> and understand the consequences.</strong></li>
-</ul>
-<p><strong>Check where your proxy actually reaches this container from</strong> before choosing. Loopback publishing severs a proxy that arrives by the host’s LAN address, which is the typical shape for cloudflared or an nginx on another machine.</p>
-<p><strong>Better practice:</strong> Run the proxy as a container on <code>kypost-net</code> (the network the compose file defines) and point it at <code>http://KyPost-Server:5866</code>. That network has DNS, nothing needs publishing, and the path ignores source NAT entirely—the server sees the real client IP. See <a href="docs/Reverse_Proxy_Networking.html">Reverse_Proxy_Networking.md</a> for setup and Docker error recovery.</p>
-<h3 id="trusted_proxy_cidrs-client-ip-trust"><a class="header" href="#trusted_proxy_cidrs-client-ip-trust">TRUSTED_PROXY_CIDRS: Client IP Trust</a></h3>
-<p>When a reverse proxy sits in front of KyPost, the server sees the proxy’s address as the client IP. This address is used as the key for:</p>
-<ul>
-<li>Login rate limiting (3 strikes, 15-minute lockout)</li>
-<li>Per-IP account lockout (looser, across all accounts)</li>
-<li>Instance-wide login rate limit</li>
-<li>MFA push approval notifications (the push names the address)</li>
-</ul>
-<p><strong>If <code>TRUSTED_PROXY_CIDRS</code> is empty, forwarded headers are discarded entirely.</strong> Every caller is keyed as the proxy, so all users share one lockout bucket and push notifications show the gateway address instead of the user signing in.</p>
-<p><strong>If <code>TRUSTED_PROXY_CIDRS</code> is set, KyPost trusts <code>X-Forwarded-Proto</code>, <code>X-Forwarded-Host</code>, and <code>X-Forwarded-For</code> from that CIDR.</strong> This marks cookies <code>Secure</code> and keys lockouts off the real caller. Cloudflare Tunnel also reads <code>CF-Connecting-IP</code> in preference to <code>X-Forwarded-For</code> (the edge appends your IP to XFF, but cloudflared may append its own hop after it).</p>
-<p><strong>Name the proxy’s address specifically, not a wide range.</strong> Any peer inside the range you name can forge their own client IP and bypass every rate limit and lockout. Example:</p>
-<ul>
-<li>Proxy on same host: <code>TRUSTED_PROXY_CIDRS=127.0.0.1/32</code></li>
-<li>Proxy pinned on <code>kypost-net</code>: <code>TRUSTED_PROXY_CIDRS=10.89.0.10/32</code> (replace with your proxy’s actual Docker network IP)</li>
-<li>Cloudflare Tunnel: <code>TRUSTED_PROXY_CIDRS=0.0.0.0/0</code> is unavoidable; Tunnel is the proxy and only Cloudflare can reach it</li>
-</ul>
-<p>This replaces the old <code>TRUST_PROXY_HEADERS=true</code>, which trusted forwarded headers on <em>every</em> connection from any peer and was only ever safe when nothing but the proxy could reach the port.</p>
-<h3 id="verification-confirm-your-setup"><a class="header" href="#verification-confirm-your-setup">Verification: Confirm Your Setup</a></h3>
-<p><strong>Verify rather than assume.</strong> Sign in and fetch <code>GET /api/status</code>. Check two fields:</p>
-<ul>
-<li><code>clientIp</code>: must be your own public address (or <code>127.0.0.1</code> if TLS-terminating in KyPost)</li>
-<li><code>proxyHeadersTrusted</code>: must be <code>true</code> (if using a reverse proxy) or <code>false</code> (if TLS-terminating in KyPost)</li>
-</ul>
-<p>If <code>clientIp</code> is a loopback or bridge address (e.g., <code>172.17.0.1</code>), every user shares one lockout bucket and the session cookie is not being marked <code>Secure</code>.</p>
-<h3 id="secret-handling"><a class="header" href="#secret-handling">Secret Handling</a></h3>
-<ul>
-<li><strong>Bootstrap password:</strong> On first start, KyPost writes the generated admin password to <code>first-run-password.txt</code> (mode <code>600</code>) in the config volume. Read it and delete it immediately. Logs are unrotated by default and readable by anything with Docker socket access—the password is never logged. This holds for both bootstrap paths: the container’s <code>--mode bootstrap-admin</code> step and a server started directly against an empty config directory. If the file cannot be written, startup fails rather than falling back to printing the password.</li>
-<li><strong>IMAP credentials:</strong> Stored encrypted at <code>/kypost/private/imap-config.key</code> (master key) and per-user encrypted payloads. The key does not rotate; compromise of the key compromises all encrypted credentials.</li>
-<li><strong>TOTP secrets:</strong> Master key at <code>/kypost/private/totp-secret.key</code>. Same rotation caveat.</li>
-<li><strong>Pairing secret:</strong> <code>/kypost/private/pairing.key</code> (generated on first start). Must be identical across replicas if you run multiple.</li>
-</ul>
-<p>All of these live in <code>/kypost/private</code>. <strong>Back up this volume separately and store it securely.</strong> Compromise of this directory compromises all user data.</p>
-<h3 id="first-run--bootstrap"><a class="header" href="#first-run--bootstrap">First Run &amp; Bootstrap</a></h3>
-<ul>
-<li>Bootstrap credentials are written to a file on first run, not logged. Running the binary directly (systemd, CI, a bare host) takes the same path as the container: the password goes to <code>first-run-password.txt</code>, and only its <em>path</em> is printed.</li>
-<li>You can pass <code>BOOTSTRAP_ADMIN_PASS</code> on the first run to avoid the file write (you already have the password).</li>
-<li>You can also pass <code>BOOTSTRAP_ADMIN_USER</code> to name the initial admin (default: <code>admin</code>).</li>
-<li>The bootstrap account starts on the password-change screen and cannot access anything else until you change it.</li>
-<li><strong>Change the password immediately after first login.</strong></li>
-</ul>
-<h2 id="authentication--authorization"><a class="header" href="#authentication--authorization">Authentication &amp; Authorization</a></h2>
-<h3 id="login-flow"><a class="header" href="#login-flow">Login Flow</a></h3>
-<ul>
-<li>Username + password, with per-account salt and work factor.</li>
-<li>Password never reaches the server. The browser derives an authentication half (what gets sent) and a key-wrapping half (for PGP key encryption, stays in the browser).</li>
-<li>CAPTCHA challenge on login (optional, configurable: <code>pow</code>, <code>turnstile</code>, <code>friendly</code>, or <code>none</code>).</li>
-<li>Proof-of-work CAPTCHA (<code>pow</code>) uses <code>crypto.subtle</code> and requires HTTPS (except localhost). Difficulty adapts per address; escalation is counted per IP and decays after 15 minutes or on successful login.</li>
-<li>3-strikes account lockout (15 minutes).</li>
-<li>Per-IP lockout (looser, across all accounts).</li>
-<li>Instance-wide login rate limit.</li>
-</ul>
-<h3 id="multi-factor-authentication-1"><a class="header" href="#multi-factor-authentication-1">Multi-Factor Authentication</a></h3>
-<ul>
-<li><strong>TOTP:</strong> Time-based one-time passwords from an authenticator app.</li>
-<li><strong>Recovery codes:</strong> One-time codes for account recovery if you lose your authenticator.</li>
-<li><strong>Push approval:</strong> A pairing device receives a push notification and approves or denies the sign-in. Set up on Security’s Devices tab.</li>
-</ul>
-<p>Recovery codes are the only way to regain access if you lose your authenticator and have no paired push device. <strong>Export and store them securely.</strong></p>
-<h3 id="roles--authorization"><a class="header" href="#roles--authorization">Roles &amp; Authorization</a></h3>
-<ul>
-<li><strong>Admin:</strong> Create users, reset passwords, deactivate accounts, view system logs, edit global settings, start health repair.</li>
-<li><strong>User:</strong> Connect their own IMAP/SMTP, read mail, manage their own rules and filters, set notification preferences, tune their own prompt.</li>
-</ul>
-<p>Authorization is checked on every request. Deactivation or role changes take effect on the user’s next request, not at the next login.</p>
-<h3 id="session-revocation"><a class="header" href="#session-revocation">Session Revocation</a></h3>
-<ul>
-<li>Logout invalidates the server-side session and clears the cookie.</li>
-<li>Deactivation or demotion takes effect on the user’s next authenticated request.</li>
-<li>KyPost will not let you deactivate or demote the last active admin.</li>
-</ul>
-<h2 id="data-protection"><a class="header" href="#data-protection">Data Protection</a></h2>
-<h3 id="encryption-at-rest"><a class="header" href="#encryption-at-rest">Encryption at Rest</a></h3>
-<p>User data is stored in <code>/kypost/config/users/&lt;userID&gt;/</code> and <code>/kypost/state/users/&lt;userID&gt;/</code>. What is encrypted:</p>
-<ul>
-<li><strong>IMAP credentials:</strong> AES encryption with a master key (<code>imap-config.key</code>).</li>
-<li><strong>TOTP secrets:</strong> AES encryption with a master key (<code>totp-secret.key</code>).</li>
-<li><strong>PGP keys:</strong> Wrapped in the browser under a password-derived key; the server stores only the wrapped blob.</li>
-<li><strong>Client recovery backups:</strong> The downloaded backup contains a second browser-created AES-GCM envelope. Its recovery secret is shown once and is not stored by KyPost.</li>
-</ul>
-<p>Unencrypted:</p>
-<ul>
-<li><strong>User account metadata:</strong> Username, role, hashed auth secret, account status.</li>
-<li><strong>Mailbox state:</strong> IMAP checkpoint, processed message IDs, decision history (which labels were assigned to which messages).</li>
-<li><strong>Configuration:</strong> Tuning prompts, notification preferences, rules, contacts.</li>
-</ul>
-<p><strong>If the <code>/kypost/private</code> volume is compromised, the IMAP credentials and TOTP secrets stored there are compromised.</strong> Browser-protected PGP keys are not decryptable from that volume alone.</p>
-<h3 id="encryption-in-transit"><a class="header" href="#encryption-in-transit">Encryption in Transit</a></h3>
-<ul>
-<li><strong>Sessions:</strong> Cookies marked <code>Secure</code> only on HTTPS (when <code>TRUSTED_PROXY_CIDRS</code> is set or TLS terminates in KyPost).</li>
-<li><strong>API calls:</strong> All backend endpoints expect HTTPS (enforced by cookie marking and browser same-origin policy).</li>
-<li><strong>CardDAV:</strong> Sync clients should use HTTPS-only servers.</li>
-<li><strong>Mobile pairing:</strong> QR codes and pickup links carry bearer tokens in the query string. Use HTTPS for <code>SERVER_BASE_URL</code>.</li>
-<li><strong>External services:</strong> Push relay APIs use HTTPS only (<code>PUSH_RELAY_URL</code> and <code>APNS_RELAY_URL</code> must be HTTPS).</li>
-</ul>
-<h3 id="sensitive-data-in-logs"><a class="header" href="#sensitive-data-in-logs">Sensitive Data in Logs</a></h3>
-<ul>
-<li>Passwords are never logged.</li>
-<li>IMAP credentials are never logged in full; auth errors mention only the server and username.</li>
-<li>CAPTCHA solutions are not logged.</li>
-<li>Mail content (subject, body) is not logged except for decision history (which labels were assigned).</li>
-</ul>
-<p>Check <code>/kypost/logs</code> regularly and configure your log aggregator appropriately if you have one.</p>
-<h2 id="security-headers--defense-in-depth"><a class="header" href="#security-headers--defense-in-depth">Security Headers &amp; Defense-in-Depth</a></h2>
-<p>KyPost applies multiple defense layers to protect against common web attacks.</p>
-<h3 id="content-security-policy"><a class="header" href="#content-security-policy">Content Security Policy</a></h3>
-<p>CSP is configured per CAPTCHA provider to block script injection and limit the capabilities an attacker can use if HTML sanitization fails. Directives:</p>
-<ul>
-<li><strong>script-src:</strong> <code>'self'</code> plus provider-specific origins only (e.g., <code>challenges.cloudflare.com</code> for Turnstile, <code>cdn.jsdelivr.net</code> for Friendly Captcha). <strong>Never <code>'unsafe-inline'</code> or <code>'unsafe-eval'</code>.</strong></li>
-<li><strong>style-src:</strong> <code>'self'</code> and <code>'unsafe-inline'</code> (for the Quill editor’s inline styles). No third-party origin.</li>
-<li><strong>font-src:</strong> <code>'self'</code> and <code>data:</code>. The webfonts are served from this origin out of the app bundle, not from Google Fonts — an install with no CAPTCHA configured, or on the self-hosted <code>pow</code> provider, makes no cross-origin request at all.</li>
-<li><strong>img-src/media-src:</strong> Allows remote content (shown after user opt-in per message) and data URIs.</li>
-<li><strong>object-src:</strong> <code>'none'</code> (blocks Flash, PDF plugins, etc.).</li>
-<li><strong>frame-ancestors:</strong> <code>'none'</code> (prevents clickjacking).</li>
-<li><strong>base-uri:</strong> <code>'self'</code> (prevents injection of a malicious <code>&lt;base&gt;</code> tag).</li>
-<li><strong>form-action:</strong> <code>'self'</code> (all forms submit to this origin).</li>
-</ul>
-<h3 id="other-security-headers"><a class="header" href="#other-security-headers">Other Security Headers</a></h3>
-<ul>
-<li><strong>X-Content-Type-Options:</strong> <code>nosniff</code> (prevents MIME sniffing).</li>
-<li><strong>X-Frame-Options:</strong> <code>DENY</code> (prevents framing).</li>
-<li><strong>Referrer-Policy:</strong> <code>strict-origin-when-cross-origin</code> (limits referrer information).</li>
-<li><strong>Permissions-Policy:</strong> Blocks powerful features (camera, microphone, geolocation, payment, etc.) that KyPost never needs.</li>
-<li><strong>Cross-Origin-Opener-Policy:</strong> <code>same-origin</code> (severs <code>window.opener</code> for client-protected PGP keys).</li>
-<li><strong>Strict-Transport-Security:</strong> <code>max-age=31536000; includeSubDomains</code> (on HTTPS only).</li>
-</ul>
-<h3 id="email-html-sanitization"><a class="header" href="#email-html-sanitization">Email HTML Sanitization</a></h3>
-<p>Email HTML is sanitized with DOMPurify before rendering in a sandboxed iframe. The sandbox blocks script execution in the frame itself, but <strong>DOMPurify is a defense layer, not a boundary.</strong> Treat all email HTML as potentially hostile.</p>
-<h3 id="captcha--rate-limiting"><a class="header" href="#captcha--rate-limiting">CAPTCHA &amp; Rate Limiting</a></h3>
-<ul>
-<li><strong>CAPTCHA:</strong> Optional on login. Proof-of-work (<code>pow</code>) is self-hosted and requires HTTPS. Turnstile and Friendly Captcha use third-party verification.</li>
-<li><strong>Account lockout:</strong> 3 failed login attempts = 15-minute lockout per account.</li>
-<li><strong>Per-IP lockout:</strong> Looser, across all accounts.</li>
-<li><strong>Instance-wide limit:</strong> Meters login attempts across the instance.</li>
-<li><strong>Proof-of-work escalation:</strong> Difficulty increases with each recent failed login from the same IP (up to a ceiling), decaying after 15 minutes or on success.</li>
-</ul>
-<p>None of these replace the others; they work together.</p>
-<h2 id="development--security-testing"><a class="header" href="#development--security-testing">Development &amp; Security Testing</a></h2>
-<p>Security-sensitive code should meet these expectations:</p>
-<h3 id="testing-1"><a class="header" href="#testing-1">Testing</a></h3>
-<ul>
-<li><strong>Authentication changes:</strong> Tests for bypass scenarios (missing credentials, modified tokens, expired sessions).</li>
-<li><strong>Authorization changes:</strong> Tests for privilege escalation (users accessing admin endpoints, admins accessing user-scoped data).</li>
-<li><strong>Cryptographic operations:</strong> Tests for correct key derivation, encryption, and decryption.</li>
-<li><strong>Input validation:</strong> Tests for injection attacks (SQL if applicable, command injection, XSS via sanitized HTML).</li>
-</ul>
-<p>See <code>backend/internal/api/*_security_fixes_test.go</code> for patterns.</p>
-<h3 id="code-review"><a class="header" href="#code-review">Code Review</a></h3>
-<p>Security-sensitive PRs should include:</p>
-<ul>
-<li>A description of the trust boundary or attack surface.</li>
-<li>Explanation of why the approach is secure (or why a known limitation is acceptable).</li>
-<li>Test coverage for both the happy path and attack scenarios.</li>
-<li>Any assumptions about the deployment (e.g., “assumes TLS termination in KyPost”).</li>
-</ul>
-<h3 id="examples-of-security-sensitive-code"><a class="header" href="#examples-of-security-sensitive-code">Examples of Security-Sensitive Code</a></h3>
-<ul>
-<li>Authentication and session management (<code>backend/internal/api/auth.go</code>)</li>
-<li>Authorization checks (role-based access)</li>
-<li>Cryptographic operations (key derivation, encryption, decryption)</li>
-<li>Input validation and sanitization (HTML email, filter rules, etc.)</li>
-<li>Rate limiting and lockout logic</li>
-<li>Trust boundary validation (client IP from forwarded headers, etc.)</li>
-</ul>
-<h2 id="security-contacts"><a class="header" href="#security-contacts">Security Contacts</a></h2>
+<h2 id="contact"><a class="header" href="#contact">Contact</a></h2>
 <ul>
 <li><strong>Vulnerability reports:</strong> <a href="https://github.com/Busness-app/KyPost-Server/security/advisories">GitHub Security Advisories</a></li>
 <li><strong>Maintainer:</strong> <a href="https://github.com/Yoshiofthewire">Yoshiofthewire</a></li>
 </ul>
 <div style="break-before: page; page-break-before: always;"></div>
 <h1 id="licensing"><a class="header" href="#licensing">Licensing</a></h1>
-<p>KyPost is developed by Busnes.app and released under the MIT License.</p>
+<p>KyPost is developed by Matthew Beacher d/b/a Busnes.app and released under the MIT License.</p>
 <pre><code>MIT License
 
-Copyright (c) 2026 Busnes.app
+Copyright (c) 2026 Matthew Beacher d/b/a Busnes.app
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -2339,7 +2099,7 @@ not exist.</li>
 <li>Tests that were written to pass rather than to fail when the logic breaks.</li>
 <li>Bulk AI-generated churn across the repo — reformatting, “improved” comments,
 speculative refactors — that nobody asked for. See the <code>ponytail</code> philosophy
-in <a href="AGENTS.html">AGENTS.md</a>: deletion over addition, shortest working diff wins.</li>
+in the server repository’s <a href="https://github.com/Busness-app/KyPost-Server/blob/main/AGENTS.md">AGENTS.md</a>: deletion over addition, shortest working diff wins.</li>
 <li>A security-sensitive change where the disclosure level is <em>Generated</em> or
 <em>Agentic</em> and no human describes the trust boundary in their own words.</li>
 </ul>
@@ -2380,7 +2140,7 @@ A red build is never fixed by loosening the entrypoint.</li>
 <li><strong>New logic ships with tests.</strong> Unit plus integration for new behaviour, a
 regression test for anything high-impact. Security-sensitive changes need
 attack-path coverage, not just the happy path — see
-<a href="#testing-1">SECURITY.md</a> and the
+<a href="#testing">SECURITY.md</a> and the
 <code>backend/internal/api/*_security_fixes_test.go</code> files for the pattern.</li>
 </ul>
 <h2 id="every-pr-must-pass-hostile-ai-code-review"><a class="header" href="#every-pr-must-pass-hostile-ai-code-review">Every PR Must Pass Hostile AI Code Review</a></h2>
@@ -2521,7 +2281,7 @@ walk from the repository root to each file you intend to touch and read every
 <code>AGENTS.md</code> on the way. After editing, update the closest owning <code>AGENTS.md</code> if
 your change affected purpose, scope, contracts, workflows, inputs/outputs,
 constraints, or side effects — and refresh any affected Child DOX Index.</p>
-<p>Read the DOX section of the root <a href="AGENTS.html">AGENTS.md</a> in the session you are
+<p>Read the DOX section of the server repository’s root <a href="https://github.com/Busness-app/KyPost-Server/blob/main/AGENTS.md">AGENTS.md</a> in the session you are
 working in. Do not work from memory of it.</p>
 <h2 id="commits-branches-and-prs"><a class="header" href="#commits-branches-and-prs">Commits, Branches, and PRs</a></h2>
 <ul>
@@ -2605,7 +2365,7 @@ anything an AI tool produced on your behalf.</p>
 <ul>
 <li><strong>Mac known gaps (v2 candidates)</strong>: attachments, read/archive/delete from reader, draft save button, server-side search, QR camera on macOS, and on-device encrypt-and-sign — reading client-protected mail has landed, writing it has not. Cursor/delta sync and folder create/rename/delete have since shipped.</li>
 <li><strong>Linux</strong>: <code>packaging/click/</code> is deferred until UBports releases a Qt6/KF6 track. Inbox window size is an open product question — Linux sends no <code>limit</code> and gets the relay’s default of 500 untruncated bodies where Android asks for 50.</li>
-<li><strong>Releases</strong>: Linux and Android both have published releases; Mac and the server do not yet. Android’s workflow creates its release as a <strong>draft</strong> gated behind a 90-minute wait timer on the <code>Release</code> environment, so a finished build is not the same as a public one — a maintainer publishes it from the Releases page.</li>
+<li><strong>Releases</strong>: Linux, Android, Mac, and the server have tagged releases. Android’s workflow creates its GitHub release as a <strong>draft</strong>, so a finished build is not necessarily public until a maintainer publishes it from the Releases page.</li>
 </ul>
 <h2 id="where-these-gaps-are-tracked-upstream"><a class="header" href="#where-these-gaps-are-tracked-upstream">Where these gaps are tracked upstream</a></h2>
 <ul>

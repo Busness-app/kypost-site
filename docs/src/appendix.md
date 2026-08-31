@@ -30,7 +30,7 @@ This appendix lists sections that exist for structure but have no data. It guard
 
 - **Mac known gaps (v2 candidates)**: attachments, read/archive/delete from reader, draft save button, server-side search, QR camera on macOS, and on-device encrypt-and-sign — reading client-protected mail has landed, writing it has not. Cursor/delta sync and folder create/rename/delete have since shipped.
 - **Linux**: `packaging/click/` is deferred until UBports releases a Qt6/KF6 track. Inbox window size is an open product question — Linux sends no `limit` and gets the relay's default of 500 untruncated bodies where Android asks for 50.
-- **Releases**: Linux and Android both have published releases; Mac and the server do not yet. Android's workflow creates its release as a **draft** gated behind a 90-minute wait timer on the `Release` environment, so a finished build is not the same as a public one — a maintainer publishes it from the Releases page.
+- **Releases**: Linux, Android, Mac, and the server have tagged releases. Android's workflow creates its GitHub release as a **draft**, so a finished build is not necessarily public until a maintainer publishes it from the Releases page.
 
 ## Where these gaps are tracked upstream
 

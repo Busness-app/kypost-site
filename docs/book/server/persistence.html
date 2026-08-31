@@ -36,7 +36,7 @@
             const path_to_root = "../";
             const default_light_theme = "patina-ky";
             const default_dark_theme = "patina-ky";
-            window.path_to_searchindex_js = "../searchindex-0e88e264.js";
+            window.path_to_searchindex_js = "../searchindex-ec5be782.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="../toc-d1d12269.js"></script>
@@ -229,7 +229,7 @@ docker compose up -d
 <p>Confirm archive:</p>
 <pre><code class="language-bash">tar tzf kypost-backup.tar.gz | grep -E 'private/|state/users/' | head
 </code></pre>
-<p>Store the archive and <code>backup-version.txt</code> together, encrypted or in a safe place. The archive holds keys that unwrap IMAP and TOTP secrets. It does not hold data to decrypt a user PGP private key. That half never leaves the browser.</p>
+<p>Store the archive and <code>backup-version.txt</code> together, encrypted or in a safe place. The archive holds keys that unwrap IMAP and TOTP secrets. It may also hold wrapped PGP private-key blobs and sealed device-enrollment envelopes, but it does not contain the password-derived wrapping key or a plaintext PGP private key.</p>
 <h2 id="restore"><a class="header" href="#restore">Restore</a></h2>
 <p>Restore into empty volumes, running the same version the backup came from.</p>
 <pre><code class="language-bash">docker compose down -v

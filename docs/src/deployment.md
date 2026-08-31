@@ -23,11 +23,11 @@ Persistence:
 
 The server README devotes a long note to this. Summary:
 
-- `KYPOST_BIND` decides which interface publishes 5866 and has no default.
+- `KYPOST_BIND` decides which interface publishes 5866. The supplied `.env.example` selects `127.0.0.1`; Compose still requires the variable to be present.
 - For a proxy on the same host, use `127.0.0.1`. For a proxy elsewhere, use the LAN IP or `0.0.0.0` to publish everywhere.
 - Better still, run the proxy as a container on `kypost-net` (the Compose network) and point it at `http://KyPost-Server:5866`. That DNS name stays valid across rebuilds and ignores published ports.
 - To detect a mistake, fetch `GET /api/status` after sign-in. `clientIp` must be your public address and `proxyHeadersTrusted` must be `true` (or `false` for direct TLS termination in KyPost). If `clientIp` is a gateway like `172.x.0.1`, every user shares one lockout bucket and the cookie is not marked `Secure`.
-- Behind different hosts, combine direct TLS in KyPost (`TLS_CERT_FILE` + `TLS_KEY_FILE`) with a proxy. Use a self-signed cert and make the proxy skip verification (`noTLSVerify: true` on cloudflared, `proxy_ssl_verify off` on nginx).
+- Behind different hosts, combine direct TLS in KyPost (`TLS_CERT_FILE` + `TLS_KEY_FILE`) with a proxy. Prefer a certificate the proxy explicitly trusts and keep upstream verification enabled. Disabling upstream verification leaves the proxy-to-KyPost hop vulnerable to interception and should be limited to a network whose trust boundary you understand.
 
 Full snippet and error recovery are in `docs/Reverse_Proxy_Networking.md`.
 

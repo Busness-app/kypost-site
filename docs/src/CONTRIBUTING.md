@@ -145,7 +145,7 @@ defence. If you cannot explain why a line is there, delete the line.
 - Tests that were written to pass rather than to fail when the logic breaks.
 - Bulk AI-generated churn across the repo — reformatting, "improved" comments,
   speculative refactors — that nobody asked for. See the `ponytail` philosophy
-  in [AGENTS.md](AGENTS.md): deletion over addition, shortest working diff wins.
+  in the server repository's [AGENTS.md](https://github.com/Busness-app/KyPost-Server/blob/main/AGENTS.md): deletion over addition, shortest working diff wins.
 - A security-sensitive change where the disclosure level is *Generated* or
   *Agentic* and no human describes the trust boundary in their own words.
 
@@ -319,7 +319,7 @@ walk from the repository root to each file you intend to touch and read every
 your change affected purpose, scope, contracts, workflows, inputs/outputs,
 constraints, or side effects — and refresh any affected Child DOX Index.
 
-Read the DOX section of the root [AGENTS.md](AGENTS.md) in the session you are
+Read the DOX section of the server repository's root [AGENTS.md](https://github.com/Busness-app/KyPost-Server/blob/main/AGENTS.md) in the session you are
 working in. Do not work from memory of it.
 
 ## Commits, Branches, and PRs

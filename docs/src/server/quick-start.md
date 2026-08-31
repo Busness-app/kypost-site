@@ -14,17 +14,18 @@
    ```bash
    cp .env.example .env
    ```
-   Edit the .env to match your configureation.  How this is configured has large security implications, so any changes need to be deliberate.
-   The defaults listed are designed to be sensable, but will need to be changed for your needs.  Please check the .env.example for a full list.
+   Edit `.env` to match your configuration. These choices have significant security implications, so make changes deliberately.
+   The supplied values are sensible starting points, but you must adapt them to your deployment. Read `.env.example` for the complete list and its security notes.
 
    `TZ=America/New_York` sets your local time zone, update as needed.
    `SERVER_BASE_URL=` sets the address your server is located at.
-   `KYPOST_BIND=127.0.0.1` Set this if you are using kypost-net to talk to a proxy for SSH like Cloudfared or NGX
-   `CAPTCHA_PROVIDER=pow` Set this to NONE to turn off CAPTCHA.  **This default requres TLS**
+   `KYPOST_BIND=127.0.0.1` publishes the server only on loopback. Use it when an HTTPS proxy such as cloudflared or nginx reaches KyPost on the same host. A proxy running as a container on `kypost-net` can instead connect directly to `http://KyPost-Server:5866` without publishing the port.
+   `CAPTCHA_PROVIDER=pow` enables the self-hosted proof-of-work CAPTCHA. Set it to `none` to disable CAPTCHA. **The default requires TLS except on localhost.**
 
-3. Build and start the container:
+3. Create the model cache directory, then build and start the container:
 
    ```bash
+   mkdir -p share/ollama/models
    docker compose up --build -d
    ```
 
@@ -49,11 +50,4 @@
 
 ## After setup
 
-- Create the model cache directory once before first run:
-
-  ```bash
-  mkdir -p share/ollama/models
-  ```
-
 - Verify the client IP handling. Sign in and fetch `GET /api/status`. The README says `clientIp` must be your own public address and `proxyHeadersTrusted` must be `true` (or `false` for direct TLS in KyPost). If `clientIp` is a loopback or bridge address, every user shares one lockout key.
-

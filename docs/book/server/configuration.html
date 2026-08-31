@@ -36,7 +36,7 @@
             const path_to_root = "../";
             const default_light_theme = "patina-ky";
             const default_dark_theme = "patina-ky";
-            window.path_to_searchindex_js = "../searchindex-0e88e264.js";
+            window.path_to_searchindex_js = "../searchindex-ec5be782.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="../toc-d1d12269.js"></script>
@@ -176,7 +176,10 @@
                 <div id="mdbook-content" class="content">
                     <main>
                         <h1 id="server--configuration"><a class="header" href="#server--configuration">Server — Configuration</a></h1>
-<h2 id="environment-variables"><a class="header" href="#environment-variables">Environment variables</a></h2>
+<h2 id="common-environment-variables"><a class="header" href="#common-environment-variables">Common environment variables</a></h2>
+<p>This is a practical summary, not the complete configuration contract. Use the
+server repository’s <a href="https://github.com/Busness-app/KyPost-Server/blob/main/.env.example"><code>.env.example</code></a>
+for every supported setting, its current default, and its security notes.</p>
 <ul>
 <li><code>WEB_PORT</code> (5866)</li>
 <li><code>TZ</code> (America/New_York)</li>
@@ -198,6 +201,11 @@
 <li><code>CAPTCHA_PROVIDER</code> (optional; <code>pow</code>, <code>turnstile</code>, <code>friendly</code>, or <code>none</code>; works with 3-strikes/15-minute lockout)</li>
 <li><code>CAPTCHA_SITE_KEY</code> and <code>CAPTCHA_SECRET_KEY</code> (required with <code>turnstile</code> or <code>friendly</code>, not with <code>pow</code>)</li>
 <li><code>POW_MAX_NUMBER</code>, <code>POW_SECRET_FILE</code>, <code>POW_SECRET</code> (optional, <code>CAPTCHA_PROVIDER=pow</code> only; see <code>.env.example</code>)</li>
+<li><code>KYPOST_BIND</code> (required by Compose; <code>.env.example</code> starts at <code>127.0.0.1</code>)</li>
+<li><code>TRUSTED_PROXY_CIDRS</code> (optional; narrowly identifies proxies whose forwarded headers may be trusted)</li>
+<li><code>TLS_CERT_FILE</code> and <code>TLS_KEY_FILE</code> (optional; required together for direct TLS termination)</li>
+<li><code>ALLOW_INSECURE_HTTP</code> and <code>ALLOW_INSECURE_SMTP</code> (optional, default off; explicit security downgrade acknowledgements)</li>
+<li><code>BOOTSTRAP_ADMIN_USER</code> and <code>BOOTSTRAP_ADMIN_PASS</code> (optional, first run only)</li>
 </ul>
 <p>The image also sets <code>OLLAMA_MODELS=/kypost/ollama-models</code>. The classifier default appears in four places: Dockerfile, docker-compose.yml, .env.example, and backend fallback. All use <code>nemotron-3-nano:4b</code>.</p>
 <h2 id="tls-options"><a class="header" href="#tls-options">TLS options</a></h2>
@@ -214,7 +222,8 @@
 </li>
 </ol>
 <p>Options 2 and 3 need <code>TRUSTED_PROXY_CIDRS</code> set to the proxy address, for example <code>127.0.0.1/32</code> or a pinned address on <code>kypost-net</code> (for example <code>10.89.0.10/32</code>). Name the proxy address narrowly, not a wide range, or a peer in the range can forge <code>X-Forwarded-For</code>. Behind Cloudflare, the server reads <code>CF-Connecting-IP</code> before <code>X-Forwarded-For</code>.</p>
-<p>For network layout and DNS details see <code>docs/Reverse_Proxy_Networking.md</code>.</p>
+<p>For network layout and DNS details see
+<a href="https://github.com/Busness-app/KyPost-Server/blob/main/docs/Reverse_Proxy_Networking.md"><code>docs/Reverse_Proxy_Networking.md</code></a>.</p>
 <h2 id="choosing-a-classifier-model"><a class="header" href="#choosing-a-classifier-model">Choosing a classifier model</a></h2>
 <p>Measured on a 60-email benchmark, five repeats, zero run-to-run variance:</p>
 <div class="table-wrapper">

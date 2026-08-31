@@ -1,6 +1,10 @@
 # Server — Configuration
 
-## Environment variables
+## Common environment variables
+
+This is a practical summary, not the complete configuration contract. Use the
+server repository's [`.env.example`](https://github.com/Busness-app/KyPost-Server/blob/main/.env.example)
+for every supported setting, its current default, and its security notes.
 
 - `WEB_PORT` (5866)
 - `TZ` (America/New_York)
@@ -22,6 +26,11 @@
 - `CAPTCHA_PROVIDER` (optional; `pow`, `turnstile`, `friendly`, or `none`; works with 3-strikes/15-minute lockout)
 - `CAPTCHA_SITE_KEY` and `CAPTCHA_SECRET_KEY` (required with `turnstile` or `friendly`, not with `pow`)
 - `POW_MAX_NUMBER`, `POW_SECRET_FILE`, `POW_SECRET` (optional, `CAPTCHA_PROVIDER=pow` only; see `.env.example`)
+- `KYPOST_BIND` (required by Compose; `.env.example` starts at `127.0.0.1`)
+- `TRUSTED_PROXY_CIDRS` (optional; narrowly identifies proxies whose forwarded headers may be trusted)
+- `TLS_CERT_FILE` and `TLS_KEY_FILE` (optional; required together for direct TLS termination)
+- `ALLOW_INSECURE_HTTP` and `ALLOW_INSECURE_SMTP` (optional, default off; explicit security downgrade acknowledgements)
+- `BOOTSTRAP_ADMIN_USER` and `BOOTSTRAP_ADMIN_PASS` (optional, first run only)
 
 The image also sets `OLLAMA_MODELS=/kypost/ollama-models`. The classifier default appears in four places: Dockerfile, docker-compose.yml, .env.example, and backend fallback. All use `nemotron-3-nano:4b`.
 
@@ -37,7 +46,8 @@ There are three ways to get TLS. They are not equivalent.
 
 Options 2 and 3 need `TRUSTED_PROXY_CIDRS` set to the proxy address, for example `127.0.0.1/32` or a pinned address on `kypost-net` (for example `10.89.0.10/32`). Name the proxy address narrowly, not a wide range, or a peer in the range can forge `X-Forwarded-For`. Behind Cloudflare, the server reads `CF-Connecting-IP` before `X-Forwarded-For`.
 
-For network layout and DNS details see `docs/Reverse_Proxy_Networking.md`.
+For network layout and DNS details see
+[`docs/Reverse_Proxy_Networking.md`](https://github.com/Busness-app/KyPost-Server/blob/main/docs/Reverse_Proxy_Networking.md).
 
 ## Choosing a classifier model
 

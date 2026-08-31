@@ -36,7 +36,7 @@
             const path_to_root = "";
             const default_light_theme = "patina-ky";
             const default_dark_theme = "patina-ky";
-            window.path_to_searchindex_js = "searchindex-0e88e264.js";
+            window.path_to_searchindex_js = "searchindex-ec5be782.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="toc-d1d12269.js"></script>
@@ -193,11 +193,11 @@ docker volume ls | grep kypost
 <h2 id="reverse-proxy-networking"><a class="header" href="#reverse-proxy-networking">Reverse proxy networking</a></h2>
 <p>The server README devotes a long note to this. Summary:</p>
 <ul>
-<li><code>KYPOST_BIND</code> decides which interface publishes 5866 and has no default.</li>
+<li><code>KYPOST_BIND</code> decides which interface publishes 5866. The supplied <code>.env.example</code> selects <code>127.0.0.1</code>; Compose still requires the variable to be present.</li>
 <li>For a proxy on the same host, use <code>127.0.0.1</code>. For a proxy elsewhere, use the LAN IP or <code>0.0.0.0</code> to publish everywhere.</li>
 <li>Better still, run the proxy as a container on <code>kypost-net</code> (the Compose network) and point it at <code>http://KyPost-Server:5866</code>. That DNS name stays valid across rebuilds and ignores published ports.</li>
 <li>To detect a mistake, fetch <code>GET /api/status</code> after sign-in. <code>clientIp</code> must be your public address and <code>proxyHeadersTrusted</code> must be <code>true</code> (or <code>false</code> for direct TLS termination in KyPost). If <code>clientIp</code> is a gateway like <code>172.x.0.1</code>, every user shares one lockout bucket and the cookie is not marked <code>Secure</code>.</li>
-<li>Behind different hosts, combine direct TLS in KyPost (<code>TLS_CERT_FILE</code> + <code>TLS_KEY_FILE</code>) with a proxy. Use a self-signed cert and make the proxy skip verification (<code>noTLSVerify: true</code> on cloudflared, <code>proxy_ssl_verify off</code> on nginx).</li>
+<li>Behind different hosts, combine direct TLS in KyPost (<code>TLS_CERT_FILE</code> + <code>TLS_KEY_FILE</code>) with a proxy. Prefer a certificate the proxy explicitly trusts and keep upstream verification enabled. Disabling upstream verification leaves the proxy-to-KyPost hop vulnerable to interception and should be limited to a network whose trust boundary you understand.</li>
 </ul>
 <p>Full snippet and error recovery are in <code>docs/Reverse_Proxy_Networking.md</code>.</p>
 <h2 id="updating-server"><a class="header" href="#updating-server">Updating (server)</a></h2>

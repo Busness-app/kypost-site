@@ -46,9 +46,6 @@ present as light.
 - **macOS & iOS** — Settings (⌘, on macOS).
 - **Linux** — Settings.
 
-This site's landing page carries a scroll-driven preview of six of them, built
-from real screenshots of the web app rather than mockups.
-
 ## Custom themes
 
 There is no custom-theme editor. The preset list is the supported surface; a new

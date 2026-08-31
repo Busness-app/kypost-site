@@ -64,7 +64,7 @@ Confirm archive:
 tar tzf kypost-backup.tar.gz | grep -E 'private/|state/users/' | head
 ```
 
-Store the archive and `backup-version.txt` together, encrypted or in a safe place. The archive holds keys that unwrap IMAP and TOTP secrets. It does not hold data to decrypt a user PGP private key. That half never leaves the browser.
+Store the archive and `backup-version.txt` together, encrypted or in a safe place. The archive holds keys that unwrap IMAP and TOTP secrets. It may also hold wrapped PGP private-key blobs and sealed device-enrollment envelopes, but it does not contain the password-derived wrapping key or a plaintext PGP private key.
 
 ## Restore
 

@@ -36,7 +36,7 @@
             const path_to_root = "../";
             const default_light_theme = "patina-ky";
             const default_dark_theme = "patina-ky";
-            window.path_to_searchindex_js = "../searchindex-0e88e264.js";
+            window.path_to_searchindex_js = "../searchindex-ec5be782.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="../toc-d1d12269.js"></script>
@@ -190,16 +190,17 @@
 <p>Copy the environment file and set <code>KYPOST_BIND</code>:</p>
 <pre><code class="language-bash">cp .env.example .env
 </code></pre>
-<p>Edit the .env to match your configureation.  How this is configured has large security implications, so any changes need to be deliberate.
-The defaults listed are designed to be sensable, but will need to be changed for your needs.  Please check the .env.example for a full list.</p>
+<p>Edit <code>.env</code> to match your configuration. These choices have significant security implications, so make changes deliberately.
+The supplied values are sensible starting points, but you must adapt them to your deployment. Read <code>.env.example</code> for the complete list and its security notes.</p>
 <p><code>TZ=America/New_York</code> sets your local time zone, update as needed.
 <code>SERVER_BASE_URL=</code> sets the address your server is located at.
-<code>KYPOST_BIND=127.0.0.1</code> Set this if you are using kypost-net to talk to a proxy for SSH like Cloudfared or NGX
-<code>CAPTCHA_PROVIDER=pow</code> Set this to NONE to turn off CAPTCHA.  <strong>This default requres TLS</strong></p>
+<code>KYPOST_BIND=127.0.0.1</code> publishes the server only on loopback. Use it when an HTTPS proxy such as cloudflared or nginx reaches KyPost on the same host. A proxy running as a container on <code>kypost-net</code> can instead connect directly to <code>http://KyPost-Server:5866</code> without publishing the port.
+<code>CAPTCHA_PROVIDER=pow</code> enables the self-hosted proof-of-work CAPTCHA. Set it to <code>none</code> to disable CAPTCHA. <strong>The default requires TLS except on localhost.</strong></p>
 </li>
 <li>
-<p>Build and start the container:</p>
-<pre><code class="language-bash">docker compose up --build -d
+<p>Create the model cache directory, then build and start the container:</p>
+<pre><code class="language-bash">mkdir -p share/ollama/models
+docker compose up --build -d
 </code></pre>
 </li>
 <li>
@@ -225,14 +226,7 @@ docker compose exec kypost-server rm /kypost/config/first-run-password.txt
 </ol>
 <h2 id="after-setup"><a class="header" href="#after-setup">After setup</a></h2>
 <ul>
-<li>
-<p>Create the model cache directory once before first run:</p>
-<pre><code class="language-bash">mkdir -p share/ollama/models
-</code></pre>
-</li>
-<li>
-<p>Verify the client IP handling. Sign in and fetch <code>GET /api/status</code>. The README says <code>clientIp</code> must be your own public address and <code>proxyHeadersTrusted</code> must be <code>true</code> (or <code>false</code> for direct TLS in KyPost). If <code>clientIp</code> is a loopback or bridge address, every user shares one lockout key.</p>
-</li>
+<li>Verify the client IP handling. Sign in and fetch <code>GET /api/status</code>. The README says <code>clientIp</code> must be your own public address and <code>proxyHeadersTrusted</code> must be <code>true</code> (or <code>false</code> for direct TLS in KyPost). If <code>clientIp</code> is a loopback or bridge address, every user shares one lockout key.</li>
 </ul>
 
                     </main>

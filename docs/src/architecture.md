@@ -32,7 +32,7 @@ The image sets `OLLAMA_MODELS=/kypost/ollama-models`.
 
 ## Classification flow
 
-The server polls unread mail and applies IMAP keywords. The there are seven steps:
+The server polls unread mail and applies IMAP keywords. There are seven steps:
 
 1. Fetch unread messages from IMAP (`INBOX` by default).
 2. Redact sensitive patterns.

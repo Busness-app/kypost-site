@@ -72,4 +72,4 @@ first — check it against them rather than against itself.
 
 ## License
 
-MIT, developed by Busnes.app
+MIT, developed by Matthew Beacher d/b/a Busnes.app

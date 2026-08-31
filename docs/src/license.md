@@ -1,11 +1,11 @@
 # Licensing
 
-KyPost is developed by Busnes.app and released under the MIT License.
+KyPost is developed by Matthew Beacher d/b/a Busnes.app and released under the MIT License.
 
 ```
 MIT License
 
-Copyright (c) 2026 Busnes.app
+Copyright (c) 2026 Matthew Beacher d/b/a Busnes.app
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal

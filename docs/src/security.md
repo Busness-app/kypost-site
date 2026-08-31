@@ -93,7 +93,7 @@ Options:
 
 - Subject lines are not encrypted in ordinary PGP/MIME. The outer header is visible. Push notifications are generic by default.
 - Encrypted mail is excluded from push payloads by the server whatever the Content Preview setting, because native push travels through a relay and on to FCM or APNs in cleartext at every hop.
-- Notification content is opaque to the push transport. What the transport learns is timing.
+- Native push providers can see the payload sent to them, along with delivery metadata such as device tokens and timing. KyPost therefore omits sender and subject from encrypted-mail payloads regardless of the Content Preview setting. Web Push payloads are separately encrypted to the browser's subscription keys.
 
 ## Push relay protection
 

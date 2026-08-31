@@ -1,6 +1,6 @@
-# Server — API Highlights
+# Server — Selected API Endpoints
 
-This page lists endpoints. It does not describe request or response bodies.
+This page highlights commonly used endpoints; it is not a complete API reference and does not describe every request or response body. The server router is authoritative. Native-client wire contracts are documented in the server repository and must be updated with compatible client changes.
 
 ## Auth
 

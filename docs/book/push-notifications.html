@@ -36,7 +36,7 @@
             const path_to_root = "";
             const default_light_theme = "patina-ky";
             const default_dark_theme = "patina-ky";
-            window.path_to_searchindex_js = "searchindex-0e88e264.js";
+            window.path_to_searchindex_js = "searchindex-ec5be782.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="toc-d1d12269.js"></script>
@@ -200,8 +200,9 @@ user turns previews on.</p>
 Preview setting, because native push travels through a relay and on to FCM or
 APNs in cleartext at every hop. Under Hostile Location Protection on Android,
 notifications carry no sender and no subject whether or not the app is locked.</p>
-<p>Notification content is opaque to the push transport. What the transport learns
-is timing.</p>
+<p>Native push providers handle the payload sent to them and can observe delivery
+metadata such as device tokens and timing. Web Push is different: its payload
+is encrypted to the browser’s subscription keys.</p>
 <h2 id="client-specifics"><a class="header" href="#client-specifics">Client specifics</a></h2>
 <h3 id="android-from-kypost-androidreadmemd"><a class="header" href="#android-from-kypost-androidreadmemd">Android (from <code>kypost-android/README.md</code>)</a></h3>
 <ul>

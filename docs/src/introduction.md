@@ -1,6 +1,6 @@
 # Introduction
 
-KyPost is a self-hosted email ecosystem: a server you run yourself, paired with native apps for Android, iOS, macOS, and Linux — built around local AI sorting, end-to-end PGP your own server can't read, and themes that follow you everywhere.
+KyPost is a self-hosted email ecosystem: a server you run yourself, paired with native apps for Android, iOS, macOS, and Linux — built around local AI sorting, end-to-end encrypted messages that decrypt only on enrolled devices, and themes that follow you everywhere.
 
 The repositories live under the [Busness-app](https://github.com/Busness-app)
 GitHub organization.
@@ -18,7 +18,7 @@ GitHub organization.
 
 ## How this book is organized
 
-Each chapter covers one system, it's install and configuration.
+Each chapter covers one system, its installation, and its configuration.
 
 ## Conventions
 
