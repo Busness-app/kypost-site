@@ -18,10 +18,9 @@ A single-page static site, no build step, no framework:
 ```
 index.html       All page sections
 privacy.html     Privacy policy
-css/styles.css   Layout, typography, @font-face, theme-wipe demo styling
-js/main.js       Mobile nav toggle, scroll-spy nav highlighting, theme-wipe scroll mechanic
+css/styles.css   Tokens, typography, @font-face, hub diagram
 assets/          Logos, mascot art, self-hosted fonts (Space Grotesk, IBM Plex Mono),
-                 and real KyPost web app screenshots used in the theme demo
+                 and KyPost web app screenshots (currently unused by the site)
 architecture/    Generated — the interactive architecture map (see below)
 docs/            mdbook — src/ is the source, book/ is the committed build
 ```

@@ -5,30 +5,45 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Privacy policy — KyPost</title>
 <meta name="description" content="How the KyPost website, services, server, and clients handle information.">
-<meta name="theme-color" content="#0d0f14">
+<meta name="theme-color" content="#0b1214">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'self'; form-action 'self'; object-src 'none'; script-src 'none'; style-src 'self'; img-src 'self'; font-src 'self'">
 <link rel="canonical" href="https://www.kypost.org/privacy.html">
 <link rel="icon" type="image/png" href="assets/ky50p.png">
 <link rel="stylesheet" href="css/styles.css">
-<link rel="stylesheet" href="css/demo.css">
 </head>
-<body class="policy-page example-policy">
+<body>
 <a class="skip-link" href="#main-content">Skip to content</a>
-<header class="site-nav"><div class="wrap"><a href="index.html" class="brand"><img src="assets/ky50p.png" alt="">KyPost</a><a class="btn" href="index.html">Back to site</a></div></header>
+
+<header class="site-nav"><div class="wrap">
+  <a href="index.html" class="brand"><img src="assets/ky50p.png" alt="" width="32" height="32">KyPost</a>
+  <nav aria-label="Primary">
+    <a href="index.html#how">How it fits</a>
+    <a href="index.html#setup">Setup</a>
+    <a href="index.html#get">Downloads</a>
+    <a href="docs/book/index.html">Docs</a>
+    <a href="privacy.html" aria-current="page">Privacy</a>
+    <a class="btn btn-primary" href="docs/book/index.html">Install</a>
+  </nav>
+</div></header>
 
 <main id="main-content">
-  <section class="policy-hero"><div class="wrap"><span class="eyebrow">Privacy</span><h1>Privacy policy</h1><p class="lede">Effective and last updated: August 30, 2026</p></div></section>
+  <section class="policy-hero"><div class="wrap">
+    <h1>Privacy policy</h1>
+    <p>Effective and last updated August 30, 2026.</p>
+  </div></section>
 
   <section class="policy-summary" aria-labelledby="summary-title"><div class="wrap">
-    <span class="eyebrow">TL;DR</span><h2 id="summary-title">The short version</h2>
-    <div class="summary-grid">
-      <article><h3>This website</h3><p>No ads, analytics, cookies, accounts, or third-party embeds. The web host receives ordinary request logs.</p></article>
-      <article><h3>Your server</h3><p>A self-hosted KyPost installation is controlled by its operator. Busnes.app does not receive its mail or account data merely because it uses KyPost.</p></article>
-      <article><h3>Push relays</h3><p>If enabled, maintainer-operated relays process device tokens and limited notification data to deliver Apple or Google push notifications.</p></article>
-      <article><h3>Your choices</h3><p>You can use generic notifications, choose UnifiedPush or polling, and contact the relevant server operator about data on a self-hosted installation.</p></article>
+    <div class="section-head">
+      <h2 id="summary-title">The short version</h2>
+      <p>This summary helps you understand the policy. The full policy below controls.</p>
     </div>
-    <p>This summary helps you understand the policy, but the full policy below controls.</p>
+    <dl class="ledger">
+      <div><dt>This website</dt><dd>No ads, analytics, cookies, accounts, or third-party embeds. The web host receives ordinary request logs.</dd></div>
+      <div><dt>Your server</dt><dd>A self-hosted KyPost installation is controlled by its operator. Busnes.app does not receive its mail or account data merely because it uses KyPost.</dd></div>
+      <div><dt>Push relays</dt><dd>If enabled, maintainer-operated relays process device tokens and limited notification data to deliver Apple or Google push notifications.</dd></div>
+      <div><dt>Your choices</dt><dd>You can use generic notifications, choose UnifiedPush or polling, and contact the relevant server operator about data on a self-hosted installation.</dd></div>
+    </dl>
   </div></section>
 
   <section class="policy-content"><div class="wrap policy-layout">
@@ -79,6 +94,10 @@
     </article>
   </div></section>
 </main>
-<footer><div class="wrap"><span>© 2026 Busnes.app</span><span class="footer-links"><a href="index.html">Home</a><a href="https://github.com/Busness-app">GitHub</a></span></div></footer>
+
+<footer><div class="wrap">
+  <span>© 2026 Busnes.app</span>
+  <nav aria-label="Footer"><a href="index.html">Home</a><a href="docs/book/index.html">Docs</a><a href="architecture/">Architecture</a><a href="https://github.com/Busness-app">GitHub</a></nav>
+</div></footer>
 </body>
 </html>
